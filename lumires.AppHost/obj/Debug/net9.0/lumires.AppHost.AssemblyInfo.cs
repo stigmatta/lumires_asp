@@ -11,21 +11,20 @@ using System;
 using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("8f37821c-25af-4bac-af83-c6c2c3056481")]
-[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\13.1.0\\tools\\" +
-    "dcp.exe"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\13.1.0\\tools\\" +
-    "ext\\"))]
-[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\13.1.0\\tools\\" +
-    "ext\\bin\\"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpclipath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\d" +
+    "cp.exe"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpextensionpaths", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\e" +
+    "xt\\"))]
+[assembly: System.Reflection.AssemblyMetadata("dcpbinpath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.hosting.orchestration.win-x64\\9.0.0\\tools\\e" +
+    "xt\\bin\\"))]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectpath", "C:\\Users\\morri\\RiderProjects\\lumires\\lumires.AppHost")]
 [assembly: System.Reflection.AssemblyMetadata("apphostprojectname", "lumires.AppHost.csproj")]
-[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\13.1.0\\tools\\Aspire.D" +
-    "ashboard.exe"))]
-[assembly: System.Reflection.AssemblyMetadataAttribute("apphostprojectbaseintermediateoutputpath", "C:\\Users\\morri\\RiderProjects\\lumires\\lumires.AppHost\\obj\\")]
+[assembly: System.Reflection.AssemblyMetadata("aspiredashboardpath", ("C:\\Users\\morri\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.0.0\\tools\\Aspire.Da" +
+    "shboard.exe"))]
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea95084a678c29cf60d87a10c05d33ae7ccda35d")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

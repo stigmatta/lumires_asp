@@ -50,6 +50,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Microsoft.Extensions.Http.Resilience": {
               "target": "Package",
               "version": "[8.10.0, )"
@@ -70,6 +74,10 @@
               "target": "Package",
               "version": "[1.9.0, )"
             },
+            "OpenTelemetry.Instrumentation.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[1.14.0-beta.2, )"
+            },
             "OpenTelemetry.Instrumentation.Http": {
               "target": "Package",
               "version": "[1.9.0, )"
@@ -77,6 +85,10 @@
             "OpenTelemetry.Instrumentation.Runtime": {
               "target": "Package",
               "version": "[1.9.0, )"
+            },
+            "OpenTelemetry.Instrumentation.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[1.14.0-beta.1, )"
             }
           },
           "imports": [

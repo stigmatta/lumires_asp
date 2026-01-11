@@ -6,6 +6,7 @@ C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lu
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.AssemblyInfoInputs.cache
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.AssemblyInfo.cs
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.csproj.CoreCompileInputs.cache
+C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.sourcelink.json
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.dll
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\refint\lumires.ServiceDefaults.dll
 C:\Users\morri\RiderProjects\lumires\lumires.ServiceDefaults\obj\Debug\net8.0\lumires.ServiceDefaults.pdb

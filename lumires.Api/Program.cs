@@ -1,41 +1,58 @@
+using FastEndpoints;
+using lumires.Api.Hubs;
+using lumires.Api.Infrastructure;
+using lumires.Api.Infrastructure.Constants;
+using lumires.Api.Infrastructure.Extensions;
+using lumires.Api.Infrastructure.Services;
+using Microsoft.AspNetCore.SignalR;
+using ZiggyCreatures.Caching.Fusion;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-builder.AddServiceDefaults(); 
+builder.Services.AddFastEndpoints();
+builder.AddServiceDefaults();
+builder.AddNpgsqlDbContext<AppDbContext>("supabaseDB");
+builder.Services.AddLumiresAuth(builder.Configuration);
+builder.Services.AddLumiresCache(builder.Configuration);
+builder.Services.AddLumiresSignalR(builder.Configuration);
+builder.Services.AddLumiresSwagger();
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("supabaseDB")!)
+    .AddRedis(builder.Configuration.GetConnectionString("cache")!);
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
+
 app.MapDefaultEndpoints();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseCors("Frontend");
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.UseLumiresSwagger(app.Environment);
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/redis-check", async (IFusionCache cache, IHubContext<NotificationHub> hub) => //TODO remove after
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    const string key = "final_reliable_test";
+    var value = $"Time: {DateTime.Now:T}";
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var result = await cache.GetOrSetAsync(key, _ => Task.FromResult(value), TimeSpan.FromMinutes(10));
 
+    await hub.Clients.All.SendAsync(HubEvents.ReceiveNotification, "Проверка кэша выполнена!");
+
+    return Results.Ok(new
+    {
+        OriginalValue = value,
+        Result = result
+    });
+});
+
+//TODO JWT AND READ AND WRITE ID AS A CLIENT
+
+app.MapHub<NotificationHub>(HubConstants.Notifications);
+app.UseFastEndpoints();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
