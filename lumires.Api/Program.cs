@@ -15,7 +15,7 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AppDbContext>("supabaseDB");
 builder.Services.AddLumiresAuth(builder.Configuration);
 builder.Services.AddLumiresCache(builder.Configuration);
-builder.Services.AddLumiresSignalR(builder.Configuration);
+builder.Services.AddSignalR();
 builder.Services.AddLumiresSwagger();
 
 builder.Services.AddHealthChecks()

@@ -1,4 +1,4 @@
-﻿using lumires.Api.Options;
+﻿using lumires.Api.Infrastructure.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;

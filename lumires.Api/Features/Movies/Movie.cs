@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace;
+﻿namespace lumires.Api.Features.Movies;
 
 public class Movie
 {

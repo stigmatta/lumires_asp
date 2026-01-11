@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using lumires.Api.Features.Movies;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Infrastructure;

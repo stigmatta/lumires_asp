@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Options;
+﻿namespace lumires.Api.Infrastructure.Options;
 
 public class FusionCacheConfig
 {
