@@ -1,4 +1,5 @@
-﻿using lumires.Api.Options;
+﻿using lumires.Api.Infrastructure.Hubs;
+using lumires.Api.Options;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
@@ -23,5 +24,11 @@ public static class SignalRExtensions
             });
 
         return services;
+    }
+    
+    public static void MapLumiresHubs(this IEndpointRouteBuilder endpoints, IConfiguration configuration)
+    {
+        var hubUrl = configuration["SignalRSettings:HubUrl"] ?? "/hubs/notifications";
+        endpoints.MapHub<NotificationHub>(hubUrl);
     }
 }

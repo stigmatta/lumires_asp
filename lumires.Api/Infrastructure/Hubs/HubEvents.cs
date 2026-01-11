@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Hubs;
+﻿namespace lumires.Api.Infrastructure.Hubs;
 
 public static class HubEvents
 {

@@ -1,8 +1,9 @@
-﻿using lumires.Api.Infrastructure.Services;
+﻿using lumires.Api.Features.Notifications;
+using lumires.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace lumires.Api.Hubs;
+namespace lumires.Api.Infrastructure.Hubs;
 
 [Authorize]
 public class NotificationHub(ICurrentUserService currentUser) : Hub<INotificationClient>
@@ -13,7 +14,7 @@ public class NotificationHub(ICurrentUserService currentUser) : Hub<INotificatio
 
         if (userId != Guid.Empty)
         {
-            var userGroup = $"user_{userId:D}"; 
+            var userGroup = $"user_{userId:D}";
             await Groups.AddToGroupAsync(Context.ConnectionId, userGroup);
         }
 

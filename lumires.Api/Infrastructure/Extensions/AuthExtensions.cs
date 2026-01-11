@@ -10,6 +10,7 @@ public static class AuthExtensions
     {
         var projectUrl = config["Supabase:Url"]
                          ?? throw new InvalidOperationException("Supabase URL is missing!");
+        var hubUrl = config["SignalR:HubUrl"];
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -36,7 +37,7 @@ public static class AuthExtensions
                     {
                         var accessToken = context.Request.Query["access_token"];
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            context.Request.Path.StartsWithSegments(HubConstants.Notifications))
+                            context.Request.Path.StartsWithSegments(hubUrl))
                             context.Token = accessToken;
                         return Task.CompletedTask;
                     },
@@ -54,10 +55,14 @@ public static class AuthExtensions
         {
             options.AddPolicy("Frontend", policy =>
             {
-                policy.WithOrigins("http://localhost:3000")
+                policy.WithOrigins(
+                        "http://localhost:3000",  //TODO CHANGE
+                        "http://127.0.0.1:5500",   
+                        "http://localhost:5500"   
+                    )
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowCredentials(); 
             });
         });
 

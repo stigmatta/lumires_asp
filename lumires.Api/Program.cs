@@ -1,8 +1,9 @@
 using FastEndpoints;
-using lumires.Api.Hubs;
+using lumires.Api.Features.Notifications;
 using lumires.Api.Infrastructure;
 using lumires.Api.Infrastructure.Constants;
 using lumires.Api.Infrastructure.Extensions;
+using lumires.Api.Infrastructure.Hubs;
 using lumires.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.SignalR;
 using ZiggyCreatures.Caching.Fusion;
@@ -26,33 +27,32 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 
+app.UseCors("Frontend");
 app.MapDefaultEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("Frontend");
 
 if (app.Environment.IsDevelopment()) app.UseLumiresSwagger(app.Environment);
 
 app.UseHttpsRedirection();
 
-app.MapGet("/redis-check", async (IFusionCache cache, IHubContext<NotificationHub> hub) => //TODO remove after
+//TODO remove
+app.MapGet("/redis-check", async (IFusionCache cache, IHubContext<NotificationHub, INotificationClient> hub) =>
 {
     const string key = "final_reliable_test";
     var value = $"Time: {DateTime.Now:T}";
-
     var result = await cache.GetOrSetAsync(key, _ => Task.FromResult(value), TimeSpan.FromMinutes(10));
 
-    await hub.Clients.All.SendAsync(HubEvents.ReceiveNotification, "Проверка кэша выполнена!");
+    await hub.Clients.All.ReceiveNotification(new NotificationCommand(
+        Type: EventTypes.LikedReview,
+        SenderId: "System",
+        TargetId: "All",
+        CreatedAt: DateTime.UtcNow
+    ));
 
-    return Results.Ok(new
-    {
-        OriginalValue = value,
-        Result = result
-    });
+    return Results.Ok(new { Result = result });
 });
 
-//TODO JWT AND READ AND WRITE ID AS A CLIENT
-
-app.MapHub<NotificationHub>(HubConstants.Notifications);
+app.MapLumiresHubs(app.Configuration);
 app.UseFastEndpoints();
 app.Run();
