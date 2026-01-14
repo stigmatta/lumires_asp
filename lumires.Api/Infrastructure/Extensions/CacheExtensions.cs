@@ -1,4 +1,4 @@
-﻿using lumires.Api.Infrastructure.Options;
+﻿using lumires.Api.Shared.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
@@ -10,7 +10,7 @@ public static class CacheExtensions
     public static IServiceCollection AddLumiresCache(this IServiceCollection services, IConfiguration configuration)
     {
         var fusionConfig = configuration
-            .GetSection("CacheSettings")
+            .GetSection(FusionCacheConfig.Section)
             .Get<FusionCacheConfig>() ?? new FusionCacheConfig();
 
         var redisConnectionString = configuration.GetConnectionString("cache")

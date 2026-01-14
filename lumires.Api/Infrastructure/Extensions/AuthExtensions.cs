@@ -1,5 +1,4 @@
-﻿using lumires.Api.Infrastructure.Constants;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace lumires.Api.Infrastructure.Extensions;
@@ -56,13 +55,13 @@ public static class AuthExtensions
             options.AddPolicy("Frontend", policy =>
             {
                 policy.WithOrigins(
-                        "http://localhost:3000",  //TODO CHANGE
-                        "http://127.0.0.1:5500",   
-                        "http://localhost:5500"   
+                        "http://localhost:3000", //TODO CHANGE
+                        "http://127.0.0.1:5500",
+                        "http://localhost:5500"
                     )
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials(); 
+                    .AllowCredentials();
             });
         });
 

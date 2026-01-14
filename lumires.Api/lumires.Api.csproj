@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>8f37821c-25af-4bac-af83-c6c2c3056481</UserSecretsId>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+        <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,15 +14,19 @@
         <PackageReference Include="Aspire.StackExchange.Redis" Version="13.1.0"/>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0"/>
         <PackageReference Include="FastEndpoints.Swagger" Version="7.2.0-beta.12"/>
+        <PackageReference Include="FluentEmail.Core" Version="3.0.2"/>
+        <PackageReference Include="FluentEmail.Razor" Version="3.0.2"/>
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7"/>
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="9.0.9"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0"/>
+        <PackageReference Include="Resend" Version="0.2.1"/>
+        <PackageReference Include="Resend.FluentEmail" Version="0.2.1"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.12.4"/>
         <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.5.0"/>
         <PackageReference Include="ZiggyCreatures.FusionCache.Backplane.StackExchangeRedis" Version="2.5.0"/>
@@ -29,6 +35,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\lumires.ServiceDefaults\lumires.ServiceDefaults.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Features\Movies\"/>
     </ItemGroup>
 
 </Project>

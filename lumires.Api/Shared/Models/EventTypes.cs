@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Features.Notifications;
+﻿namespace lumires.Api.Shared.Models;
 
 public static class EventTypes
 {

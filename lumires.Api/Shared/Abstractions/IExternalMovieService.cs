@@ -1,0 +1,8 @@
+﻿using lumires.Api.Shared.Models;
+
+namespace lumires.Api.Shared.Abstractions;
+
+public interface IExternalMovieService
+{
+    Task<MovieImportResult?> GetMovieDetailsAsync(int movieId, CancellationToken ct = default);
+}

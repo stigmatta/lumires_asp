@@ -1,5 +1,4 @@
-﻿using lumires.Api.Features.Notifications;
-using lumires.Api.Infrastructure.Services;
+﻿using lumires.Api.Shared.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

@@ -70,6 +70,18 @@
               "target": "Package",
               "version": "[7.2.0-beta.12, )"
             },
+            "FluentEmail.Core": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
+            "FluentEmail.Razor": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
+            "FluentEmail.Smtp": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[9.0.9, )"
@@ -77,10 +89,6 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.7, )"
-            },
-            "Microsoft.AspNetCore.SignalR.StackExchangeRedis": {
-              "target": "Package",
-              "version": "[9.0.9, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -95,6 +103,14 @@
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Resend": {
+              "target": "Package",
+              "version": "[0.2.1, )"
+            },
+            "Resend.FluentEmail": {
+              "target": "Package",
+              "version": "[0.2.1, )"
             },
             "Scalar.AspNetCore": {
               "target": "Package",

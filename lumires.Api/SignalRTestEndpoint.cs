@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
-using lumires.Api.Features.Notifications;
 using lumires.Api.Infrastructure.Hubs;
+using lumires.Api.Shared.Abstractions;
+using lumires.Api.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace lumires.Api;
@@ -16,18 +17,18 @@ public class SignalRTestEndpoint(IHubContext<NotificationHub, INotificationClien
     public override void Configure()
     {
         Post("/api/test/signalr-send-anonymous");
-        AllowAnonymous(); 
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(SignalRTestRequest req, CancellationToken ct)
     {
         var command = new NotificationCommand(
-            Type: EventTypes.LikedReview, 
-            SenderId: req.TargetUserId,
-            TargetId: req.TargetUserId,
-            CreatedAt: DateTime.UtcNow
+            EventTypes.LikedReview,
+            req.TargetUserId,
+            req.TargetUserId,
+            DateTime.UtcNow
         );
-        
+
         await hubContext.Clients
             .User(req.TargetUserId)
             .ReceiveNotification(command);

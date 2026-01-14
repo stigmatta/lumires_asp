@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Infrastructure.Constants;
+﻿namespace lumires.Api.Shared.Constants;
 
 public static class CacheKeys
 {

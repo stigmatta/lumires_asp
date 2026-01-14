@@ -1,7 +1,7 @@
-﻿using lumires.Api.Features.Movies;
+﻿using lumires.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Infrastructure;
+namespace lumires.Api.Infrastructure.Persistence;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

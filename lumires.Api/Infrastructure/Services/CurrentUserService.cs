@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using lumires.Api.Shared.Abstractions;
 
 namespace lumires.Api.Infrastructure.Services;
 
