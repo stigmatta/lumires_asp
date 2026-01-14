@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Features.Movies;
+﻿namespace lumires.Api.Domain.Entities;
 
 public class Movie
 {
