@@ -104,6 +104,10 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Microsoft.Extensions.Localization": {
+              "target": "Package",
+              "version": "[9.0.12, )"
+            },
             "Resend": {
               "target": "Package",
               "version": "[0.2.1, )"

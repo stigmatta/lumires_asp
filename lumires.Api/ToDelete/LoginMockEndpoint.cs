@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 
-namespace lumires.Api;
+namespace lumires.Api.ToDelete;
 
 public record AuthRequest(string Email, string Password);
 

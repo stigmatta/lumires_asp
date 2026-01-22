@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Globalization;
+using System.Security.Claims;
 using lumires.Api.Shared.Abstractions;
 
 namespace lumires.Api.Infrastructure.Services;
@@ -21,4 +22,12 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
         ) && confirmed;
 
     public bool IsAuthenticated => _user?.Identity?.IsAuthenticated ?? false;
+    public string CurrentLanguage => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    
+    public string LangCulture => CurrentLanguage switch
+    {
+        "uk" => "uk-UA",
+        "en" => "en-US",
+        _ => "en-US" 
+    };
 }

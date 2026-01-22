@@ -224,8 +224,6 @@ C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Microsoft.Code
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\RazorLight.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Resend.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Resend.FluentEmail.dll
-C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.RazorAssemblyInfo.cache
-C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.RazorAssemblyInfo.cs
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.AspNetCore.Antiforgery.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.AspNetCore.Authentication.Abstractions.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.AspNetCore.Authentication.BearerToken.dll
@@ -333,8 +331,6 @@ C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Http.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Identity.Core.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Identity.Stores.dll
-C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Localization.Abstractions.dll
-C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Localization.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Logging.Configuration.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Logging.Console.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\Microsoft.Extensions.Logging.Debug.dll
@@ -509,3 +505,14 @@ C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\System.Xm
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\System.Xml.XPath.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\System.Xml.XPath.XDocument.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\refs\WindowsBase.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\en-US\lumires.Api.resources.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\uk-UA\lumires.Api.resources.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Microsoft.Extensions.Localization.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Microsoft.Extensions.Localization.Abstractions.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.csproj.GenerateResource.cache
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\en-US\lumires.Api.resources.cs
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\en-US\lumires.Api.resources.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\uk-UA\lumires.Api.resources.cs
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\uk-UA\lumires.Api.resources.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.Resources.SharedResource.en-US.resources
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.Resources.SharedResource.uk-UA.resources

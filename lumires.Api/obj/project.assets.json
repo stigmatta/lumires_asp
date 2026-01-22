@@ -1450,6 +1450,38 @@
           "buildTransitive/net6.0/Microsoft.Extensions.Http.Resilience.targets": {}
         }
       },
+      "Microsoft.Extensions.Localization/9.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Localization.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Options": "9.0.12"
+        },
+        "compile": {
+          "lib/net9.0/Microsoft.Extensions.Localization.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.Localization.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Extensions.Localization.Abstractions/9.0.12": {
+        "type": "package",
+        "compile": {
+          "lib/net9.0/Microsoft.Extensions.Localization.Abstractions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.Localization.Abstractions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Extensions.Logging/9.0.11": {
         "type": "package",
         "dependencies": {
@@ -5171,6 +5203,44 @@
         "microsoft.extensions.http.resilience.nuspec"
       ]
     },
+    "Microsoft.Extensions.Localization/9.0.12": {
+      "sha512": "Pi+FFwGg56daSSsG2nuL08lMvkbAa7sPzbwaqZq5uoiv8qbvbl1bqNYRJIkq9brg4AgfWIwSQ67kM0cauYDEDA==",
+      "type": "package",
+      "path": "microsoft.extensions.localization/9.0.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net462/Microsoft.Extensions.Localization.dll",
+        "lib/net462/Microsoft.Extensions.Localization.xml",
+        "lib/net9.0/Microsoft.Extensions.Localization.dll",
+        "lib/net9.0/Microsoft.Extensions.Localization.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.xml",
+        "microsoft.extensions.localization.9.0.12.nupkg.sha512",
+        "microsoft.extensions.localization.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Localization.Abstractions/9.0.12": {
+      "sha512": "CSOlBof8Jo31QjYu3NqbK9SD1ZF9xFY+uL98ussGuhYvIv/sFG1xa/Fgtv1VD0rHwUr4nIZFcOBFIme2748CTw==",
+      "type": "package",
+      "path": "microsoft.extensions.localization.abstractions/9.0.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net462/Microsoft.Extensions.Localization.Abstractions.dll",
+        "lib/net462/Microsoft.Extensions.Localization.Abstractions.xml",
+        "lib/net9.0/Microsoft.Extensions.Localization.Abstractions.dll",
+        "lib/net9.0/Microsoft.Extensions.Localization.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.Abstractions.xml",
+        "microsoft.extensions.localization.abstractions.9.0.12.nupkg.sha512",
+        "microsoft.extensions.localization.abstractions.nuspec"
+      ]
+    },
     "Microsoft.Extensions.Logging/9.0.11": {
       "sha512": "PVHYgMmMZFEE3PGpc7oZ9CnoyNonNyT5klrV9pNIzCPxL12FpQ7kNhliXAwowmtaDVBmKnG/1db6d7gqPwDj8g==",
       "type": "package",
@@ -7149,6 +7219,7 @@
       "Microsoft.EntityFrameworkCore.Design >= 9.0.9",
       "Microsoft.Extensions.Caching.StackExchangeRedis >= 10.0.1",
       "Microsoft.Extensions.Configuration.Json >= 9.0.0",
+      "Microsoft.Extensions.Localization >= 9.0.12",
       "Resend >= 0.2.1",
       "Resend.FluentEmail >= 0.2.1",
       "Scalar.AspNetCore >= 2.12.4",
@@ -7261,6 +7332,10 @@
           "Microsoft.Extensions.Configuration.Json": {
             "target": "Package",
             "version": "[9.0.0, )"
+          },
+          "Microsoft.Extensions.Localization": {
+            "target": "Package",
+            "version": "[9.0.12, )"
           },
           "Resend": {
             "target": "Package",

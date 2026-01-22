@@ -25,6 +25,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0"/>
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.12" />
         <PackageReference Include="Resend" Version="0.2.1"/>
         <PackageReference Include="Resend.FluentEmail" Version="0.2.1"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.12.4"/>
@@ -39,6 +40,38 @@
 
     <ItemGroup>
         <Folder Include="Features\Movies\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Shared\Resources\SharedResource.en-US.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SharedResource.en-US.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Shared\Resources\SharedResource.uk-UA.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SharedResource.uk-UA.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\SharedResource.en-US.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SharedResource.en-US.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\SharedResource.uk-UA.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SharedResource.uk-UA.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Shared\Resources\SharedResource.en-US.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SharedResource.en-US.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Shared\Resources\SharedResource.uk-UA.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SharedResource.uk-UA.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

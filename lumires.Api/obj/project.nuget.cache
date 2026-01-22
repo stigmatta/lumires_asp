@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1nlH0+3bAog=",
+  "dgSpecHash": "rhuQAU2xfuM=",
   "success": true,
   "projectFilePath": "C:\\Users\\morri\\RiderProjects\\lumires\\lumires.Api\\lumires.Api.csproj",
   "expectedPackageFiles": [
@@ -74,6 +74,8 @@
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.http\\8.0.1\\microsoft.extensions.http.8.0.1.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.http.diagnostics\\8.10.0\\microsoft.extensions.http.diagnostics.8.10.0.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.http.resilience\\8.10.0\\microsoft.extensions.http.resilience.8.10.0.nupkg.sha512",
+    "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.localization\\9.0.12\\microsoft.extensions.localization.9.0.12.nupkg.sha512",
+    "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.localization.abstractions\\9.0.12\\microsoft.extensions.localization.abstractions.9.0.12.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.logging\\9.0.11\\microsoft.extensions.logging.9.0.11.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.1\\microsoft.extensions.logging.abstractions.10.0.1.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\microsoft.extensions.logging.configuration\\9.0.0\\microsoft.extensions.logging.configuration.9.0.0.nupkg.sha512",

@@ -4,5 +4,5 @@ namespace lumires.Api.Shared.Abstractions;
 
 public interface INotificationClient
 {
-    Task ReceiveNotification(NotificationCommand command);
+    Task ReceiveNotification(NotificationMessage message);
 }

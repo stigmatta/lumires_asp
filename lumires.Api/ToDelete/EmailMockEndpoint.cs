@@ -2,7 +2,7 @@
 using lumires.Api.Shared.Abstractions;
 using lumires.Api.Shared.Models;
 
-namespace lumires.Api;
+namespace lumires.Api.ToDelete;
 
 //TODO remove
 public class EmailMockEndpoint(IEmailSenderService emailService)
