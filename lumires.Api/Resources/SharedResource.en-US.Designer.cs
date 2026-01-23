@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 namespace lumires.Api.Resources {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -35,7 +38,7 @@ namespace lumires.Api.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("lumires.Api.Shared.Resources.SharedResource.en-US", typeof(SharedResource_en_US).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("lumires.Api.Resources.SharedResource.en-US", typeof(SharedResource_en_US).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -53,6 +56,51 @@ namespace lumires.Api.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to access this resource.
+        /// </summary>
+        internal static string Error_Forbidden {
+            get {
+                return ResourceManager.GetString("Error_Forbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal server error.
+        /// </summary>
+        internal static string Error_Internal {
+            get {
+                return ResourceManager.GetString("Error_Internal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The resource was not found.
+        /// </summary>
+        internal static string Error_NotFound {
+            get {
+                return ResourceManager.GetString("Error_NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred.
+        /// </summary>
+        internal static string Error_Title {
+            get {
+                return ResourceManager.GetString("Error_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authentication failed or credentials missing.
+        /// </summary>
+        internal static string Error_Unauthorized {
+            get {
+                return ResourceManager.GetString("Error_Unauthorized", resourceCulture);
             }
         }
         

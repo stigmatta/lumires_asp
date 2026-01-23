@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.Connections;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
-public static class SignalRExtensions
+internal static class SignalRExtensions
 {
     public static void MapLumiresHubs(this IEndpointRouteBuilder endpoints, IConfiguration configuration)
     {

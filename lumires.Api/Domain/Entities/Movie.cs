@@ -1,8 +1,8 @@
 ﻿namespace lumires.Api.Domain.Entities;
 
-public class Movie
+public sealed class Movie
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public required string Title { get; set; }
-    public int Year { get; set; }
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public required string Title { get; init; }
+    public int Year { get; init; }
 }

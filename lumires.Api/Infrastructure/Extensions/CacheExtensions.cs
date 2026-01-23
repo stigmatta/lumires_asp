@@ -1,11 +1,11 @@
-﻿using lumires.Api.Shared.Options;
+﻿using lumires.Api.Core.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
-public static class CacheExtensions
+internal static class CacheExtensions
 {
     public static IServiceCollection AddLumiresCache(this IServiceCollection services, IConfiguration configuration)
     {

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
-public static class AuthExtensions
+internal static class AuthExtensions
 {
     public static IServiceCollection AddLumiresAuth(this IServiceCollection services, IConfiguration config)
     {
@@ -36,7 +36,7 @@ public static class AuthExtensions
                     {
                         var accessToken = context.Request.Query["access_token"];
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            context.Request.Path.StartsWithSegments(hubUrl))
+                            context.Request.Path.StartsWithSegments(hubUrl, StringComparison.OrdinalIgnoreCase))
                             context.Token = accessToken;
                         return Task.CompletedTask;
                     },

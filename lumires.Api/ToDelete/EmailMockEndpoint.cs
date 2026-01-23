@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
-using lumires.Api.Shared.Abstractions;
-using lumires.Api.Shared.Models;
+using lumires.Api.Core.Abstractions;
+using lumires.Api.Core.Models;
 
 namespace lumires.Api.ToDelete;
 
 //TODO remove
-public class EmailMockEndpoint(IEmailSenderService emailService)
+internal class EmailMockEndpoint(IEmailSenderService emailService)
     : EndpointWithoutRequest
 {
     public override void Configure()

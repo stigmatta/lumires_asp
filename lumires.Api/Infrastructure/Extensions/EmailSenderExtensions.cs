@@ -1,13 +1,13 @@
 ﻿using FluentEmail.Core.Interfaces;
+using lumires.Api.Core.Abstractions;
+using lumires.Api.Core.Options;
 using lumires.Api.Infrastructure.Services;
-using lumires.Api.Shared.Abstractions;
-using lumires.Api.Shared.Options;
 using Resend;
 using Resend.FluentEmail;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
-public static class EmailSenderExtensions
+internal static class EmailSenderExtensions
 {
     public static IServiceCollection AddLumiresEmail(this IServiceCollection services, IConfiguration configuration,
         IWebHostEnvironment env)

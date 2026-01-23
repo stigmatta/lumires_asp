@@ -1,16 +1,20 @@
 ﻿using FastEndpoints;
+using JetBrains.Annotations;
 
 namespace lumires.Api.ToDelete;
 
-public record AuthRequest(string Email, string Password);
 
-public record AuthResponse(string Token, string UserId, int ExpiresIn);
+[UsedImplicitly]
+internal record AuthRequest(string Email, string Password);
+
+internal record AuthResponse(string Token, string UserId, int ExpiresIn);
 
 internal record SupabaseTokenResponse(string access_token, int expires_in, SupabaseUser user);
 
+[UsedImplicitly]
 internal record SupabaseUser(string id);
 
-public class LoginMockEndpoint(IConfiguration config) : Endpoint<AuthRequest, AuthResponse>
+internal class LoginMockEndpoint(IConfiguration config) : Endpoint<AuthRequest, AuthResponse>, IDisposable
 {
     private readonly HttpClient _httpClient = new();
 
@@ -41,5 +45,10 @@ public class LoginMockEndpoint(IConfiguration config) : Endpoint<AuthRequest, Au
             data.user.id,
             data.expires_in
         ), ct);
+    }
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
     }
 }

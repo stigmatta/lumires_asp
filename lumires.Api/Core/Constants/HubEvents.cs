@@ -1,6 +1,6 @@
-﻿namespace lumires.Api.Shared.Constants;
+﻿namespace lumires.Api.Core.Constants;
 
-public static class HubEvents
+internal static class HubEvents
 {
     public const string ReceiveNotification = nameof(ReceiveNotification);
 }

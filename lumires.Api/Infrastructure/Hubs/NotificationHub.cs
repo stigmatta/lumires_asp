@@ -1,11 +1,11 @@
-﻿using lumires.Api.Shared.Abstractions;
+﻿using lumires.Api.Core.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace lumires.Api.Infrastructure.Hubs;
 
 [Authorize]
-public class NotificationHub(ICurrentUserService currentUser) : Hub<INotificationClient>
+public sealed class NotificationHub(ICurrentUserService currentUser) : Hub<INotificationClient>
 {
     public override async Task OnConnectedAsync()
     {

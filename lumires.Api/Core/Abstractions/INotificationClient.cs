@@ -1,6 +1,6 @@
-﻿using lumires.Api.Shared.Models;
+﻿using lumires.Api.Core.Models;
 
-namespace lumires.Api.Shared.Abstractions;
+namespace lumires.Api.Core.Abstractions;
 
 public interface INotificationClient
 {

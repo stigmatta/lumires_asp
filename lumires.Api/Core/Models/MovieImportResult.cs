@@ -1,10 +1,13 @@
-﻿namespace lumires.Api.Shared.Models;
+﻿using JetBrains.Annotations;
 
+namespace lumires.Api.Core.Models;
+
+[UsedImplicitly]
 public record MovieImportResult(
     int ExternalId,
     string Title,
     string? Overview,
     string? PosterPath,
     DateTime? ReleaseDate,
-    string? TrailerUrl = null
+    Uri? TrailerUrl = null
 );

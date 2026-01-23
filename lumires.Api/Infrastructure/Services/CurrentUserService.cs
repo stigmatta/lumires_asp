@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using lumires.Api.Shared.Abstractions;
+using lumires.Api.Core.Abstractions;
 
 namespace lumires.Api.Infrastructure.Services;
 
-public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
+public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
     private readonly ClaimsPrincipal? _user = httpContextAccessor.HttpContext?.User;
 
@@ -23,11 +23,11 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
 
     public bool IsAuthenticated => _user?.Identity?.IsAuthenticated ?? false;
     public string CurrentLanguage => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-    
+
     public string LangCulture => CurrentLanguage switch
     {
         "uk" => "uk-UA",
         "en" => "en-US",
-        _ => "en-US" 
+        _ => "en-US"
     };
 }

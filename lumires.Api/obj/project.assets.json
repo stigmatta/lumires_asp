@@ -344,6 +344,19 @@
           }
         }
       },
+      "JetBrains.Annotations/2025.2.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/JetBrains.Annotations.dll": {
+            "related": ".deps.json;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/JetBrains.Annotations.dll": {
+            "related": ".deps.json;.xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer/9.0.9": {
         "type": "package",
         "dependencies": {
@@ -1005,11 +1018,11 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
-      "Microsoft.Extensions.Configuration/9.0.0": {
+      "Microsoft.Extensions.Configuration/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.0",
-          "Microsoft.Extensions.Primitives": "9.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Primitives": "9.0.12"
         },
         "compile": {
           "lib/net9.0/Microsoft.Extensions.Configuration.dll": {
@@ -1044,10 +1057,10 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "Microsoft.Extensions.Configuration.Binder/9.0.11": {
+      "Microsoft.Extensions.Configuration.Binder/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.11"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.12"
         },
         "compile": {
           "lib/net9.0/Microsoft.Extensions.Configuration.Binder.dll": {
@@ -1108,10 +1121,10 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "Microsoft.Extensions.DependencyInjection/9.0.11": {
+      "Microsoft.Extensions.DependencyInjection/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.11"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.12"
         },
         "compile": {
           "lib/net9.0/Microsoft.Extensions.DependencyInjection.dll": {
@@ -1178,25 +1191,25 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "Microsoft.Extensions.Diagnostics/8.0.1": {
+      "Microsoft.Extensions.Diagnostics/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Configuration": "8.0.0",
-          "Microsoft.Extensions.Diagnostics.Abstractions": "8.0.1",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0"
+          "Microsoft.Extensions.Configuration": "9.0.12",
+          "Microsoft.Extensions.Diagnostics.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "9.0.12"
         },
         "compile": {
-          "lib/net8.0/Microsoft.Extensions.Diagnostics.dll": {
+          "lib/net9.0/Microsoft.Extensions.Diagnostics.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.Diagnostics.dll": {
+          "lib/net9.0/Microsoft.Extensions.Diagnostics.dll": {
             "related": ".xml"
           }
         },
         "build": {
-          "buildTransitive/net6.0/_._": {}
+          "buildTransitive/net8.0/_._": {}
         }
       },
       "Microsoft.Extensions.Diagnostics.Abstractions/10.0.1": {
@@ -1381,28 +1394,28 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "Microsoft.Extensions.Http/8.0.1": {
+      "Microsoft.Extensions.Http/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
-          "Microsoft.Extensions.Diagnostics": "8.0.1",
-          "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
-          "Microsoft.Extensions.Options": "8.0.2"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.12",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Diagnostics": "9.0.12",
+          "Microsoft.Extensions.Logging": "9.0.12",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Options": "9.0.12"
         },
         "compile": {
-          "lib/net8.0/Microsoft.Extensions.Http.dll": {
+          "lib/net9.0/Microsoft.Extensions.Http.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.Http.dll": {
+          "lib/net9.0/Microsoft.Extensions.Http.dll": {
             "related": ".xml"
           }
         },
         "build": {
-          "buildTransitive/net6.0/_._": {}
+          "buildTransitive/net8.0/_._": {}
         }
       },
       "Microsoft.Extensions.Http.Diagnostics/8.10.0": {
@@ -1426,6 +1439,24 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "Microsoft.Extensions.Http.Polly/9.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Http": "9.0.12",
+          "Polly": "7.2.4",
+          "Polly.Extensions.Http": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Http.Polly.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Http.Polly.dll": {
+            "related": ".xml"
+          }
         }
       },
       "Microsoft.Extensions.Http.Resilience/8.10.0": {
@@ -1482,12 +1513,12 @@
           }
         }
       },
-      "Microsoft.Extensions.Logging/9.0.11": {
+      "Microsoft.Extensions.Logging/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "9.0.11",
-          "Microsoft.Extensions.Logging.Abstractions": "9.0.11",
-          "Microsoft.Extensions.Options": "9.0.11"
+          "Microsoft.Extensions.DependencyInjection": "9.0.12",
+          "Microsoft.Extensions.Logging.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Options": "9.0.12"
         },
         "compile": {
           "lib/net9.0/Microsoft.Extensions.Logging.dll": {
@@ -1582,14 +1613,14 @@
           "buildTransitive/net8.0/Microsoft.Extensions.Options.targets": {}
         }
       },
-      "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.0": {
+      "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.12": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "9.0.0",
-          "Microsoft.Extensions.Configuration.Binder": "9.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0",
-          "Microsoft.Extensions.Options": "9.0.0",
-          "Microsoft.Extensions.Primitives": "9.0.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Configuration.Binder": "9.0.12",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.12",
+          "Microsoft.Extensions.Options": "9.0.12",
+          "Microsoft.Extensions.Primitives": "9.0.12"
         },
         "compile": {
           "lib/net9.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll": {
@@ -2359,6 +2390,19 @@
           }
         }
       },
+      "Polly/7.2.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Polly.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Polly.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "Polly.Core/8.4.2": {
         "type": "package",
         "compile": {
@@ -2387,6 +2431,22 @@
         "runtime": {
           "lib/net8.0/Polly.Extensions.dll": {
             "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Polly.Extensions.Http/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Polly": "7.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Polly.Extensions.Http.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Polly.Extensions.Http.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -2433,6 +2493,40 @@
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
         ]
+      },
+      "Refit/9.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net9.0/Refit.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Refit.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/netstandard2.0/refit.props": {},
+          "buildTransitive/netstandard2.0/refit.targets": {}
+        }
+      },
+      "Refit.HttpClientFactory/9.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Http": "9.0.3",
+          "Refit": "9.0.2"
+        },
+        "compile": {
+          "lib/net9.0/Refit.HttpClientFactory.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Refit.HttpClientFactory.dll": {
+            "related": ".xml"
+          }
+        }
       },
       "Resend/0.2.1": {
         "type": "package",
@@ -3301,6 +3395,29 @@
         "lib/netstandard2.0/Humanizer.dll",
         "lib/netstandard2.0/Humanizer.xml",
         "logo.png"
+      ]
+    },
+    "JetBrains.Annotations/2025.2.4": {
+      "sha512": "TwbgxAkXxY+vNEhNVx/QXjJ4vqxmepOjsgRvvImQPbHkHMMb4W+ahL3laMsxXKtNT7iMy+E1B3xkqao2hf1n3A==",
+      "type": "package",
+      "path": "jetbrains.annotations/2025.2.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "jetbrains.annotations.2025.2.4.nupkg.sha512",
+        "jetbrains.annotations.nuspec",
+        "lib/net20/JetBrains.Annotations.dll",
+        "lib/net20/JetBrains.Annotations.xml",
+        "lib/netstandard1.0/JetBrains.Annotations.deps.json",
+        "lib/netstandard1.0/JetBrains.Annotations.dll",
+        "lib/netstandard1.0/JetBrains.Annotations.xml",
+        "lib/netstandard2.0/JetBrains.Annotations.deps.json",
+        "lib/netstandard2.0/JetBrains.Annotations.dll",
+        "lib/netstandard2.0/JetBrains.Annotations.xml",
+        "lib/portable40-net40+sl5+win8+wp8+wpa81/JetBrains.Annotations.dll",
+        "lib/portable40-net40+sl5+win8+wp8+wpa81/JetBrains.Annotations.xml",
+        "readme.md"
       ]
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/9.0.9": {
@@ -4596,10 +4713,10 @@
         "microsoft.extensions.compliance.abstractions.nuspec"
       ]
     },
-    "Microsoft.Extensions.Configuration/9.0.0": {
-      "sha512": "YIMO9T3JL8MeEXgVozKt2v79hquo/EFtnY0vgxmLnUvk1Rei/halI7kOWZL2RBeV9FMGzgM9LZA8CVaNwFMaNA==",
+    "Microsoft.Extensions.Configuration/9.0.12": {
+      "sha512": "ATSurHTbvZmw2ITcEyPPrKbtBh5FHA/p9JAMuKbgfurm+U+qPE5KkYHW7NIpayL3/ML3GGPmro1hOozJ/O8VuA==",
       "type": "package",
-      "path": "microsoft.extensions.configuration/9.0.0",
+      "path": "microsoft.extensions.configuration/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4619,7 +4736,7 @@
         "lib/net9.0/Microsoft.Extensions.Configuration.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Configuration.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Configuration.xml",
-        "microsoft.extensions.configuration.9.0.0.nupkg.sha512",
+        "microsoft.extensions.configuration.9.0.12.nupkg.sha512",
         "microsoft.extensions.configuration.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -4653,10 +4770,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Extensions.Configuration.Binder/9.0.11": {
-      "sha512": "iPE1jROL5uK/6iJSRzwpEIJt6BuANN36Io+6bLss67JVjbG6DdVedrMnB9nqsxs+Lx3X9RxvARTgFsUgP0MB0g==",
+    "Microsoft.Extensions.Configuration.Binder/9.0.12": {
+      "sha512": "J0nlmzF3gChGiEkNoSy+1ScAcs2xzZc49x4tfxSX+cuL2aA362qBlDXJzCekBuXwtlcDpfy/2DN3Pol/FkDkcw==",
       "type": "package",
-      "path": "microsoft.extensions.configuration.binder/9.0.11",
+      "path": "microsoft.extensions.configuration.binder/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4687,7 +4804,7 @@
         "lib/net9.0/Microsoft.Extensions.Configuration.Binder.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Configuration.Binder.xml",
-        "microsoft.extensions.configuration.binder.9.0.11.nupkg.sha512",
+        "microsoft.extensions.configuration.binder.9.0.12.nupkg.sha512",
         "microsoft.extensions.configuration.binder.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -4750,10 +4867,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Extensions.DependencyInjection/9.0.11": {
-      "sha512": "UquyDzvz0EneIQrrU67GJkIgynS+VD7t+RDtNv6VgKMOFrLBjldn6hzlXppGGecFMvAkMTqn4T8RYvzw7j7fQA==",
+    "Microsoft.Extensions.DependencyInjection/9.0.12": {
+      "sha512": "Ao81p3RGYdYUMsP4ST5p+DgF/8oLXJUMH8IQyLHb9Whr0JRqbe8+20/y6fUIpiRxe3xFypXlxGoIcwKixVtyfA==",
       "type": "package",
-      "path": "microsoft.extensions.dependencyinjection/9.0.11",
+      "path": "microsoft.extensions.dependencyinjection/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4775,7 +4892,7 @@
         "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.xml",
         "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.dll",
         "lib/netstandard2.1/Microsoft.Extensions.DependencyInjection.xml",
-        "microsoft.extensions.dependencyinjection.9.0.11.nupkg.sha512",
+        "microsoft.extensions.dependencyinjection.9.0.12.nupkg.sha512",
         "microsoft.extensions.dependencyinjection.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -4864,10 +4981,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Extensions.Diagnostics/8.0.1": {
-      "sha512": "doVPCUUCY7c6LhBsEfiy3W1bvS7Mi6LkfQMS8nlC22jZWNxBv8VO8bdfeyvpYFst6Kxqk7HBC6lytmEoBssvSQ==",
+    "Microsoft.Extensions.Diagnostics/9.0.12": {
+      "sha512": "0II8aBqWfBlArJmKWy0SvqKrQPYgmfHnGkY2vH2oU0/mbVL6ox582a32HsWpGvvRfMOEd5xx7rhbBnIdWWckBw==",
       "type": "package",
-      "path": "microsoft.extensions.diagnostics/8.0.1",
+      "path": "microsoft.extensions.diagnostics/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4876,19 +4993,17 @@
         "THIRD-PARTY-NOTICES.TXT",
         "buildTransitive/net461/Microsoft.Extensions.Diagnostics.targets",
         "buildTransitive/net462/_._",
-        "buildTransitive/net6.0/_._",
+        "buildTransitive/net8.0/_._",
         "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Diagnostics.targets",
         "lib/net462/Microsoft.Extensions.Diagnostics.dll",
         "lib/net462/Microsoft.Extensions.Diagnostics.xml",
-        "lib/net6.0/Microsoft.Extensions.Diagnostics.dll",
-        "lib/net6.0/Microsoft.Extensions.Diagnostics.xml",
-        "lib/net7.0/Microsoft.Extensions.Diagnostics.dll",
-        "lib/net7.0/Microsoft.Extensions.Diagnostics.xml",
         "lib/net8.0/Microsoft.Extensions.Diagnostics.dll",
         "lib/net8.0/Microsoft.Extensions.Diagnostics.xml",
+        "lib/net9.0/Microsoft.Extensions.Diagnostics.dll",
+        "lib/net9.0/Microsoft.Extensions.Diagnostics.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Diagnostics.xml",
-        "microsoft.extensions.diagnostics.8.0.1.nupkg.sha512",
+        "microsoft.extensions.diagnostics.9.0.12.nupkg.sha512",
         "microsoft.extensions.diagnostics.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -5130,10 +5245,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Extensions.Http/8.0.1": {
-      "sha512": "kDYeKJUzh0qeg/AI+nSr3ffthmXYQTEb0nS9qRC7YhSbbuN4M4NPbaB77AJwtkTnCV9XZ7qYj3dkZaNcyl73EA==",
+    "Microsoft.Extensions.Http/9.0.12": {
+      "sha512": "20sitfhsBuyPp+mvxvborD6hd5xaIcyFrrlMiwohgY28qiRLLQwWYCixY5P9PCXqrHUe8OWnHVmCdDqYSZ8Q2w==",
       "type": "package",
-      "path": "microsoft.extensions.http/8.0.1",
+      "path": "microsoft.extensions.http/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -5143,19 +5258,17 @@
         "THIRD-PARTY-NOTICES.TXT",
         "buildTransitive/net461/Microsoft.Extensions.Http.targets",
         "buildTransitive/net462/_._",
-        "buildTransitive/net6.0/_._",
+        "buildTransitive/net8.0/_._",
         "buildTransitive/netcoreapp2.0/Microsoft.Extensions.Http.targets",
         "lib/net462/Microsoft.Extensions.Http.dll",
         "lib/net462/Microsoft.Extensions.Http.xml",
-        "lib/net6.0/Microsoft.Extensions.Http.dll",
-        "lib/net6.0/Microsoft.Extensions.Http.xml",
-        "lib/net7.0/Microsoft.Extensions.Http.dll",
-        "lib/net7.0/Microsoft.Extensions.Http.xml",
         "lib/net8.0/Microsoft.Extensions.Http.dll",
         "lib/net8.0/Microsoft.Extensions.Http.xml",
+        "lib/net9.0/Microsoft.Extensions.Http.dll",
+        "lib/net9.0/Microsoft.Extensions.Http.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Http.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Http.xml",
-        "microsoft.extensions.http.8.0.1.nupkg.sha512",
+        "microsoft.extensions.http.9.0.12.nupkg.sha512",
         "microsoft.extensions.http.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -5179,6 +5292,21 @@
         "lib/net8.0/Microsoft.Extensions.Http.Diagnostics.xml",
         "microsoft.extensions.http.diagnostics.8.10.0.nupkg.sha512",
         "microsoft.extensions.http.diagnostics.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Http.Polly/9.0.12": {
+      "sha512": "9SmQha3zWSK23OwJzUMxdJPwrfK6thBPNBFa5MB1NI+jiCSPkR+EeZhV3FqE0VARSLdsFffRbrSchZna7JSTDQ==",
+      "type": "package",
+      "path": "microsoft.extensions.http.polly/9.0.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netstandard2.0/Microsoft.Extensions.Http.Polly.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Http.Polly.xml",
+        "microsoft.extensions.http.polly.9.0.12.nupkg.sha512",
+        "microsoft.extensions.http.polly.nuspec"
       ]
     },
     "Microsoft.Extensions.Http.Resilience/8.10.0": {
@@ -5241,10 +5369,10 @@
         "microsoft.extensions.localization.abstractions.nuspec"
       ]
     },
-    "Microsoft.Extensions.Logging/9.0.11": {
-      "sha512": "PVHYgMmMZFEE3PGpc7oZ9CnoyNonNyT5klrV9pNIzCPxL12FpQ7kNhliXAwowmtaDVBmKnG/1db6d7gqPwDj8g==",
+    "Microsoft.Extensions.Logging/9.0.12": {
+      "sha512": "4SVZdAe2bJOaE2nj8aY5xQlfz1iDZwxeV992jGn7XafCWmvH7wPlewcv+QqORbww1Aez78nyxspJOEnaa0cU+w==",
       "type": "package",
-      "path": "microsoft.extensions.logging/9.0.11",
+      "path": "microsoft.extensions.logging/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -5266,7 +5394,7 @@
         "lib/netstandard2.0/Microsoft.Extensions.Logging.xml",
         "lib/netstandard2.1/Microsoft.Extensions.Logging.dll",
         "lib/netstandard2.1/Microsoft.Extensions.Logging.xml",
-        "microsoft.extensions.logging.9.0.11.nupkg.sha512",
+        "microsoft.extensions.logging.9.0.12.nupkg.sha512",
         "microsoft.extensions.logging.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -5435,10 +5563,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.0": {
-      "sha512": "Ob3FXsXkcSMQmGZi7qP07EQ39kZpSBlTcAZLbJLdI4FIf0Jug8biv2HTavWmnTirchctPlq9bl/26CXtQRguzA==",
+    "Microsoft.Extensions.Options.ConfigurationExtensions/9.0.12": {
+      "sha512": "8pdzO+arUAm6MgeBTm29XUi5sl6bLEPJLYfHA4I2ZIJYbQnVJRYH3NqRlHXoQaGRez92gc7DkOkqetXr6pFnHg==",
       "type": "package",
-      "path": "microsoft.extensions.options.configurationextensions/9.0.0",
+      "path": "microsoft.extensions.options.configurationextensions/9.0.12",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -5458,7 +5586,7 @@
         "lib/net9.0/Microsoft.Extensions.Options.ConfigurationExtensions.xml",
         "lib/netstandard2.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll",
         "lib/netstandard2.0/Microsoft.Extensions.Options.ConfigurationExtensions.xml",
-        "microsoft.extensions.options.configurationextensions.9.0.0.nupkg.sha512",
+        "microsoft.extensions.options.configurationextensions.9.0.12.nupkg.sha512",
         "microsoft.extensions.options.configurationextensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -6360,6 +6488,31 @@
         "pipelines.sockets.unofficial.nuspec"
       ]
     },
+    "Polly/7.2.4": {
+      "sha512": "bw00Ck5sh6ekduDE3mnCo1ohzuad946uslCDEENu3091+6UKnBuKLo4e+yaNcCzXxOZCXWY2gV4a35+K1d4LDA==",
+      "type": "package",
+      "path": "polly/7.2.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net461/Polly.dll",
+        "lib/net461/Polly.pdb",
+        "lib/net461/Polly.xml",
+        "lib/net472/Polly.dll",
+        "lib/net472/Polly.pdb",
+        "lib/net472/Polly.xml",
+        "lib/netstandard1.1/Polly.dll",
+        "lib/netstandard1.1/Polly.pdb",
+        "lib/netstandard1.1/Polly.xml",
+        "lib/netstandard2.0/Polly.dll",
+        "lib/netstandard2.0/Polly.pdb",
+        "lib/netstandard2.0/Polly.xml",
+        "package-icon.png",
+        "polly.7.2.4.nupkg.sha512",
+        "polly.nuspec"
+      ]
+    },
     "Polly.Core/8.4.2": {
       "sha512": "BpE2I6HBYYA5tF0Vn4eoQOGYTYIK1BlF5EXVgkWGn3mqUUjbXAr13J6fZVbp7Q3epRR8yshacBMlsHMhpOiV3g==",
       "type": "package",
@@ -6416,6 +6569,21 @@
         "polly.extensions.nuspec"
       ]
     },
+    "Polly.Extensions.Http/3.0.0": {
+      "sha512": "drrG+hB3pYFY7w1c3BD+lSGYvH2oIclH8GRSehgfyP5kjnFnHKQuuBhuHLv+PWyFuaTDyk/vfRpnxOzd11+J8g==",
+      "type": "package",
+      "path": "polly.extensions.http/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard1.1/Polly.Extensions.Http.dll",
+        "lib/netstandard1.1/Polly.Extensions.Http.xml",
+        "lib/netstandard2.0/Polly.Extensions.Http.dll",
+        "lib/netstandard2.0/Polly.Extensions.Http.xml",
+        "polly.extensions.http.3.0.0.nupkg.sha512",
+        "polly.extensions.http.nuspec"
+      ]
+    },
     "Polly.RateLimiting/8.4.2": {
       "sha512": "ehTImQ/eUyO07VYW2WvwSmU9rRH200SKJ/3jku9rOkyWE0A2JxNFmAVms8dSn49QLSjmjFRRSgfNyOgr/2PSmA==",
       "type": "package",
@@ -6460,6 +6628,59 @@
         "lib/netstandard2.0/RazorLight.xml",
         "razorlight.2.0.0-rc.3.nupkg.sha512",
         "razorlight.nuspec"
+      ]
+    },
+    "Refit/9.0.2": {
+      "sha512": "zLAfOh1iYE1bXFdnPjX5V6Nq8d4vBwxXaCovNNcAt9Fz3mfxAqHS3fckbBX4wetVgN1A6tIOzrDtPTN2c4FNrQ==",
+      "type": "package",
+      "path": "refit/9.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE/LICENSE",
+        "README.md",
+        "analyzers/dotnet/roslyn3.8/cs/InterfaceStubGeneratorV1.dll",
+        "analyzers/dotnet/roslyn4.1/cs/InterfaceStubGeneratorV2.dll",
+        "build/netstandard2.0/refit.targets",
+        "buildTransitive/netstandard2.0/refit.props",
+        "buildTransitive/netstandard2.0/refit.targets",
+        "lib/net10.0/Refit.dll",
+        "lib/net10.0/Refit.xml",
+        "lib/net462/Refit.dll",
+        "lib/net462/Refit.xml",
+        "lib/net8.0/Refit.dll",
+        "lib/net8.0/Refit.xml",
+        "lib/net9.0/Refit.dll",
+        "lib/net9.0/Refit.xml",
+        "lib/netstandard2.0/Refit.dll",
+        "lib/netstandard2.0/Refit.xml",
+        "refit.9.0.2.nupkg.sha512",
+        "refit.nuspec",
+        "refit_logo.png"
+      ]
+    },
+    "Refit.HttpClientFactory/9.0.2": {
+      "sha512": "lv9vBbPaOZ6PARmWLkB3v+wBqoBDiI5ROS5KTbJEAAXMVaPG5V+AdjNmU+8NFkztZzJRqujREqmY69w7afRhJA==",
+      "type": "package",
+      "path": "refit.httpclientfactory/9.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE/LICENSE",
+        "README.md",
+        "lib/net10.0/Refit.HttpClientFactory.dll",
+        "lib/net10.0/Refit.HttpClientFactory.xml",
+        "lib/net462/Refit.HttpClientFactory.dll",
+        "lib/net462/Refit.HttpClientFactory.xml",
+        "lib/net8.0/Refit.HttpClientFactory.dll",
+        "lib/net8.0/Refit.HttpClientFactory.xml",
+        "lib/net9.0/Refit.HttpClientFactory.dll",
+        "lib/net9.0/Refit.HttpClientFactory.xml",
+        "lib/netstandard2.0/Refit.HttpClientFactory.dll",
+        "lib/netstandard2.0/Refit.HttpClientFactory.xml",
+        "refit.httpclientfactory.9.0.2.nupkg.sha512",
+        "refit.httpclientfactory.nuspec",
+        "refit_logo.png"
       ]
     },
     "Resend/0.2.1": {
@@ -7214,12 +7435,15 @@
       "FluentEmail.Core >= 3.0.2",
       "FluentEmail.Razor >= 3.0.2",
       "FluentEmail.Smtp >= 3.0.2",
+      "JetBrains.Annotations >= 2025.2.4",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.9",
       "Microsoft.AspNetCore.OpenApi >= 9.0.7",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.9",
       "Microsoft.Extensions.Caching.StackExchangeRedis >= 10.0.1",
       "Microsoft.Extensions.Configuration.Json >= 9.0.0",
+      "Microsoft.Extensions.Http.Polly >= 9.0.12",
       "Microsoft.Extensions.Localization >= 9.0.12",
+      "Refit.HttpClientFactory >= 9.0.2",
       "Resend >= 0.2.1",
       "Resend.FluentEmail >= 0.2.1",
       "Scalar.AspNetCore >= 2.12.4",
@@ -7311,6 +7535,10 @@
             "target": "Package",
             "version": "[3.0.2, )"
           },
+          "JetBrains.Annotations": {
+            "target": "Package",
+            "version": "[2025.2.4, )"
+          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[9.0.9, )"
@@ -7333,9 +7561,17 @@
             "target": "Package",
             "version": "[9.0.0, )"
           },
+          "Microsoft.Extensions.Http.Polly": {
+            "target": "Package",
+            "version": "[9.0.12, )"
+          },
           "Microsoft.Extensions.Localization": {
             "target": "Package",
             "version": "[9.0.12, )"
+          },
+          "Refit.HttpClientFactory": {
+            "target": "Package",
+            "version": "[9.0.2, )"
           },
           "Resend": {
             "target": "Package",

@@ -4,7 +4,7 @@ using Scalar.AspNetCore;
 
 namespace lumires.Api.Infrastructure.Extensions;
 
-public static class SwaggerExtensions
+internal static class SwaggerExtensions
 {
     public static IServiceCollection AddLumiresSwagger(this IServiceCollection services)
     {

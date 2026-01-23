@@ -1,16 +1,16 @@
 ﻿using FastEndpoints;
-using lumires.Api.Shared.Abstractions;
-using lumires.Api.Shared.Models;
+using lumires.Api.Core.Abstractions;
+using lumires.Api.Core.Models;
 
 namespace lumires.Api.ToDelete;
 
-public class GetMovieSourcesEndpoint(IStreamingService streamingService) 
+internal class GetMovieSourcesEndpoint(IStreamingService streamingService)
     : EndpointWithoutRequest<List<MovieSource>>
 {
     public override void Configure()
     {
         Get("/api/movies/{tmdbId}/sources");
-        AllowAnonymous(); 
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)

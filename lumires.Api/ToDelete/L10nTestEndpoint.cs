@@ -1,11 +1,11 @@
 ﻿using FastEndpoints;
+using lumires.Api.Core.Abstractions;
 using lumires.Api.Resources;
-using lumires.Api.Shared.Abstractions;
 using Microsoft.Extensions.Localization;
 
 namespace lumires.Api.ToDelete;
 
-public class L10nTestEndpoint(IStringLocalizer<SharedResource> localizer, ICurrentUserService currentUserService)
+internal class L10NTestEndpoint(IStringLocalizer<SharedResource> localizer, ICurrentUserService currentUserService)
     : EndpointWithoutRequest
 {
     public override void Configure()

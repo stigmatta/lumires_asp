@@ -1,18 +1,18 @@
 ﻿using FastEndpoints;
+using lumires.Api.Core.Abstractions;
+using lumires.Api.Core.Models;
 using lumires.Api.Domain.Entities;
 using lumires.Api.Infrastructure.Hubs;
 using lumires.Api.Infrastructure.Persistence;
-using lumires.Api.Shared.Abstractions;
-using lumires.Api.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace lumires.Api.ToDelete;
 
-public class SignalRTestEndpoint(
+internal class SignalRTestEndpoint(
     IHubContext<NotificationHub, INotificationClient> hubContext,
     ICurrentUserService currentUserService,
     AppDbContext db
-    )
+)
     : EndpointWithoutRequest
 {
     public override void Configure()

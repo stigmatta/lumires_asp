@@ -1,6 +1,8 @@
-﻿namespace lumires.Api.Resources;
+﻿using JetBrains.Annotations;
 
+namespace lumires.Api.Resources;
+
+[UsedImplicitly]
 public class SharedResource
 {
-    
 }

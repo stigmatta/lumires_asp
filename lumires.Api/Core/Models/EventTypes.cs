@@ -1,6 +1,6 @@
-﻿namespace lumires.Api.Shared.Models;
+﻿namespace lumires.Api.Core.Models;
 
-public static class EventTypes
+internal static class EventTypes
 {
     public const string LikedReview = nameof(LikedReview);
     public const string Followed = nameof(Followed);

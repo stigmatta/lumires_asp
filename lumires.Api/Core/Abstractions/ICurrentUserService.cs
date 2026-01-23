@@ -1,4 +1,4 @@
-﻿namespace lumires.Api.Shared.Abstractions;
+﻿namespace lumires.Api.Core.Abstractions;
 
 public interface ICurrentUserService
 {

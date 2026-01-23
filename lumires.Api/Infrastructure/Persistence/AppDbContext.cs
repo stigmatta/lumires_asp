@@ -1,4 +1,5 @@
-﻿using lumires.Api.Domain.Entities;
+﻿using System.Diagnostics;
+using lumires.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Infrastructure.Persistence;
@@ -6,12 +7,13 @@ namespace lumires.Api.Infrastructure.Persistence;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Movie> Movies => Set<Movie>();
-    public DbSet<UserNotification> UserNotifications  => Set<UserNotification>();
+    public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        Debug.Assert(modelBuilder != null, nameof(modelBuilder) + " != null");
         
         //Movie
         modelBuilder.Entity<Movie>(entity =>
@@ -19,8 +21,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(255);
         });
-        
-        
+
+
         //Notification
         modelBuilder.Entity<UserNotification>(entity =>
         {
@@ -43,6 +45,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasIndex(x => x.UserId);
             entity.HasIndex(x => new { x.UserId, x.ReadAt });
         });
-
     }
 }
