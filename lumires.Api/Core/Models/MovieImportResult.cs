@@ -9,5 +9,5 @@ public record MovieImportResult(
     string? Overview,
     string? PosterPath,
     DateTime? ReleaseDate,
-    Uri? TrailerUrl = null
+    Uri? TrailerUrl 
 );
