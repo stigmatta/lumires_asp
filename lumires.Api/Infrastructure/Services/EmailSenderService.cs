@@ -13,8 +13,12 @@ public sealed class EmailSenderService(IFluentEmail fluentEmail, IStringLocalize
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var templatePath = Path.Combine(AppContext.BaseDirectory, $"{command.TemplateName}.cshtml");
-
+        var templatePath = Path.Combine(
+            Directory.GetCurrentDirectory(), 
+            "Resources", 
+            "EmailTemplates", 
+            $"{command.TemplateName}.cshtml");
+        
         var email = await fluentEmail
             .To(command.To)
             .Subject(command.Subject)

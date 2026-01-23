@@ -522,3 +522,5 @@ C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\refint\lumires
 C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.pdb
 C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.genruntimeconfig.cache
 C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\ref\lumires.Api.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.RazorAssemblyInfo.cache
+C:\Users\morri\RiderProjects\lumires\lumires.Api\obj\Debug\net9.0\lumires.Api.RazorAssemblyInfo.cs
