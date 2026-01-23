@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a257aabecb7b9efa25b9ac580b50763dcc707836")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5276b6dc4efb3ac9dff875f8065c504171908080")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

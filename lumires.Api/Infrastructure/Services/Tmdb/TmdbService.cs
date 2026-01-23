@@ -10,13 +10,37 @@ public sealed class TmdbService(ITmdbApi tmdbApi, ICurrentUserService currentUse
         var lang = currentUserService.LangCulture;
         var response = await tmdbApi.GetMovieAsync(movieId, lang, ct);
 
-        if (!response.IsSuccessStatusCode) return null;
+        if (!response.IsSuccessStatusCode || response.Content == null) return null;
 
-        var result = response.Content;
+        var result = MapToDomain(response.Content);
 
-        if (!string.IsNullOrWhiteSpace(result?.Overview) || lang == "en-US") return result;
+        if ((!string.IsNullOrWhiteSpace(result.Overview) && result.TrailerUrl != null) || lang == "en-US")
+            return result;
 
-        var fallback = await tmdbApi.GetMovieAsync(movieId, "en-US", ct);
-        return fallback.Content ?? result;
+        var fallbackResponse = await tmdbApi.GetMovieAsync(movieId, "en-US", ct);
+        if (fallbackResponse.Content == null) return result;
+
+        var fallback = MapToDomain(fallbackResponse.Content);
+
+        return result with 
+        { 
+            Overview = string.IsNullOrWhiteSpace(result.Overview) ? fallback.Overview : result.Overview,
+            TrailerUrl = result.TrailerUrl ?? fallback.TrailerUrl
+        };
+    }
+
+    private static MovieImportResult MapToDomain(TmdbMovieResponse tmdb)
+    {
+        var trailerKey = tmdb.Videos?.Results?
+            .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
+
+        return new MovieImportResult(
+            tmdb.Id,
+            tmdb.Title,
+            tmdb.Overview,
+            tmdb.PosterPath,
+            tmdb.ReleaseDate,
+            trailerKey != null ? new Uri($"https://www.youtube.com/watch?v={trailerKey}") : null
+        );
     }
 }
