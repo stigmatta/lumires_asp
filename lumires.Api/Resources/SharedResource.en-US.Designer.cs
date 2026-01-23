@@ -60,6 +60,15 @@ namespace lumires.Api.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to send email.
+        /// </summary>
+        internal static string Error_EmailSendFailed {
+            get {
+                return ResourceManager.GetString("Error_EmailSendFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You do not have permission to access this resource.
         /// </summary>
         internal static string Error_Forbidden {

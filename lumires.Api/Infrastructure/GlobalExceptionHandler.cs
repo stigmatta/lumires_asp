@@ -44,7 +44,7 @@ internal partial class GlobalExceptionHandler(
 
         httpContext.Response.StatusCode = (int)statusCode;
 
-        await httpContext.Response.WriteAsJsonAsync<ProblemDetails>(
+        await httpContext.Response.WriteAsJsonAsync(
             value: problemDetails, 
             cancellationToken: ct)
             .ConfigureAwait(false);

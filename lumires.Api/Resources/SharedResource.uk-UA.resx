@@ -41,4 +41,7 @@
     <data name="Error_Forbidden" xml:space="preserve">
         <value>У вас немає доступу до цього ресурсу</value>
     </data>
+    <data name="Error_EmailSendFailed" xml:space="preserve">
+        <value>Не вдалося надіслати лист</value>
+    </data>
 </root>

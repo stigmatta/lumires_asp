@@ -41,4 +41,7 @@
     <data name="Error_Forbidden" xml:space="preserve">
         <value>You do not have permission to access this resource</value>
     </data>
+    <data name="Error_EmailSendFailed" xml:space="preserve">
+        <value>Failed to send email</value>
+    </data>
 </root>
