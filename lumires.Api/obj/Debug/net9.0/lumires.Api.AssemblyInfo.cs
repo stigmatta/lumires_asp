@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64c65999eed83e8c73ea908f3e1f1dce01566d69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6c894de59139d5c66037f323a45ed8215caa3ac")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

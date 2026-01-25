@@ -13,7 +13,7 @@ internal sealed partial class GlobalExceptionHandler(
 {
     [LoggerMessage(
         Level = LogLevel.Error,
-        Message = "[{TraceId}] An unhandled exception occurred: {Message}")]
+        Message = "[{TraceId}] Exception: {Message}")]
     static partial void LogUnhandledException(ILogger logger, Exception ex, string traceId, string message);
 
     public async ValueTask<bool> TryHandleAsync(

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using FastEndpoints;
 using lumires.Api.Core.Abstractions;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints();
 builder.AddServiceDefaults();
+builder.AddLumiresLogging(builder.Configuration);
 builder.AddNpgsqlDbContext<AppDbContext>("supabaseDB");
 builder.Services.AddLumiresAuth(builder.Configuration);
 builder.Services.AddLumiresCache(builder.Configuration);
@@ -43,12 +45,11 @@ builder.Services.AddProblemDetails(options =>
 
 var app = builder.Build();
 
+
 app.UseCors("Frontend");
 app.MapDefaultEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
-
-if (app.Environment.IsDevelopment()) app.UseLumiresSwagger(app.Environment);
 
 app.UseHttpsRedirection();
 
@@ -60,6 +61,12 @@ app.UseRequestLocalization(new RequestLocalizationOptions()
     .AddSupportedUICultures(supportedCultures));
 app.UseExceptionHandler();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseLumiresSwagger(app.Environment);
+    app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
+}
+
 //TODO remove
 app.MapGet("/tmdb-test/{id}", async (int id, IExternalMovieService tmdb) =>
 {
@@ -67,4 +74,27 @@ app.MapGet("/tmdb-test/{id}", async (int id, IExternalMovieService tmdb) =>
     return movie is not null ? Results.Ok(movie) : Results.NotFound();
 });
 
+
+
 app.Run();
+return;
+
+
+// ---------------------------------------------------------------
+static void OpenLogtailDashboard()
+{
+    try
+    {
+        const string url = "https://telemetry.betterstack.com/team/t498261/tail?s=1694678";
+        var psi = new ProcessStartInfo
+        {
+            FileName = url,
+            UseShellExecute = true
+        };
+        Process.Start(psi);
+    }
+    catch (Win32Exception ex)
+    {
+        Console.WriteLine("Failed to open Logtail URL: " + ex.Message);
+    }
+}
