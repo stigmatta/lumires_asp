@@ -17,7 +17,7 @@ internal class SignalRTestEndpoint(
 {
     public override void Configure()
     {
-        Post("/api/test/signalr-send-anonymous");
+        Post("/signalr/send-anonymous");
     }
 
     public override async Task HandleAsync(CancellationToken ct)

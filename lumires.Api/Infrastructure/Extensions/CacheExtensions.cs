@@ -39,7 +39,8 @@ internal static class CacheExtensions
             .WithDistributedCache(
                 sp => sp.GetRequiredService<IDistributedCache>(),
                 fusionSerializer
-            );
+            )
+            .AsHybridCache();
 
         return services;
     }

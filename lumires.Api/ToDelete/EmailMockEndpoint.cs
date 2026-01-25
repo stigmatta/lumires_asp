@@ -10,7 +10,7 @@ internal class EmailMockEndpoint(IEmailSenderService emailService)
 {
     public override void Configure()
     {
-        Get("/api/admin/test-email");
+        Get("/email/test-send");
         AllowAnonymous();
     }
 

@@ -2,7 +2,8 @@
 
 namespace lumires.Api.Infrastructure.Services.Tmdb;
 
-public record TmdbMovieResponse(
+[UsedImplicitly]
+public sealed record TmdbMovieResponse(
     int Id,
     string Title,
     string? Overview,
@@ -10,8 +11,9 @@ public record TmdbMovieResponse(
     DateTime? ReleaseDate,
     VideoResponse? Videos
 );
-[UsedImplicitly]
-public record VideoResponse(IReadOnlyList<VideoItem> Results);
 
 [UsedImplicitly]
-public record VideoItem(string Key, string Site, string Type);
+public sealed record VideoResponse(IReadOnlyList<VideoItem> Results);
+
+[UsedImplicitly]
+public sealed record VideoItem(string Key, string Site, string Type);

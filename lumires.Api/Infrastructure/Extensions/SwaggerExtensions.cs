@@ -21,7 +21,7 @@ internal static class SwaggerExtensions
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = OpenApiSecurityApiKeyLocation.Header,
-                    Description = "Вставь сюда свой Supabase JWT токен"
+                    Description = "Paste your Supabase JWT access token here"
                 });
             };
 

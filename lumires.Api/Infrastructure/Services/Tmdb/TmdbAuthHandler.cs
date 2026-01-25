@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace lumires.Api.Infrastructure.Services.Tmdb;
 
-internal class TmdbAuthHandler(IOptions<TmdbConfig> options) : DelegatingHandler
+internal sealed class TmdbAuthHandler(IOptions<TmdbConfig> options) : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
     {

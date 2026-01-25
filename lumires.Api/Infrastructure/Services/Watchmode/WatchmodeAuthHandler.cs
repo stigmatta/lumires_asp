@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace lumires.Api.Infrastructure.Services.Watchmode;
 
-internal class WatchmodeAuthHandler(IOptions<WatchmodeOptions> options) : DelegatingHandler
+internal sealed class WatchmodeAuthHandler(IOptions<WatchmodeOptions> options) : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
     {

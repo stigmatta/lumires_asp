@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace lumires.Api.Infrastructure;
 
-internal partial class GlobalExceptionHandler(
+internal sealed partial class GlobalExceptionHandler(
     IStringLocalizer<SharedResource> localizer,
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
