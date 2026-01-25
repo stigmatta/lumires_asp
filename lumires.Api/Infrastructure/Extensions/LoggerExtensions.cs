@@ -9,7 +9,7 @@ namespace lumires.Api.Infrastructure.Extensions;
 
 internal static class LoggerExtensions
 {
-    public static void AddLumiresLogging(this WebApplicationBuilder builder, IConfiguration configuration)
+    public static void AddCustomLogging(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         var logtailConfig = configuration
             .GetSection(LogtailConfig.SectionName)

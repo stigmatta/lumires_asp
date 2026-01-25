@@ -536,3 +536,4 @@ C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Serilog.Sinks.
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Serilog.Sinks.File.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\BetterStack.Logs.Serilog.dll
 C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\Serilog.Sinks.Http.dll
+C:\Users\morri\RiderProjects\lumires\lumires.Api\bin\Debug\net9.0\FastEndpoints.Security.dll

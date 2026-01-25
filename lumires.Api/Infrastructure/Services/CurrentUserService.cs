@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using lumires.Api.Core.Abstractions;
+using lumires.Api.Core.Auth;
 
 namespace lumires.Api.Infrastructure.Services;
 
@@ -27,7 +28,9 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
     public string LangCulture => CurrentLanguage switch
     {
         "uk" => "uk-UA",
-        "en" => "en-US",
         _ => "en-US"
     };
+    
+    public string UserRole => _user?.FindFirstValue("role") ?? UserRoles.User;
+    public string UserTier => _user?.FindFirstValue("tier") ?? UserTiers.Free;
 }

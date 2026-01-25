@@ -41,6 +41,7 @@
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "13.1.0",
           "Aspire.StackExchange.Redis": "13.1.0",
           "BetterStack.Logs.Serilog": "1.2.0",
+          "FastEndpoints.Security": "7.0.1",
           "FastEndpoints.Swagger": "7.2.0-beta.12",
           "FluentEmail.Core": "3.0.2",
           "FluentEmail.Razor": "3.0.2",
@@ -541,6 +542,21 @@
         },
         "compile": {
           "lib/netstandard2.1/FastEndpoints.Messaging.Core.dll": {}
+        }
+      },
+      "FastEndpoints.Security/7.0.1": {
+        "dependencies": {
+          "FastEndpoints": "7.2.0-beta.12",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "9.0.9"
+        },
+        "runtime": {
+          "lib/net9.0/FastEndpoints.Security.dll": {
+            "assemblyVersion": "7.0.1.0",
+            "fileVersion": "7.0.1.0"
+          }
+        },
+        "compile": {
+          "lib/net9.0/FastEndpoints.Security.dll": {}
         }
       },
       "FastEndpoints.Swagger/7.2.0-beta.12": {
@@ -4605,6 +4621,13 @@
       "sha512": "sha512-BqmPy9y2/4rfaxlrfVx/o4urY/oGL9XKvlgHZxSv/2lpwGorRIYV6usVM5XOkb8uwoDTSQznguiE1P4HrVNBIQ==",
       "path": "fastendpoints.messaging.core/7.2.0-beta.12",
       "hashPath": "fastendpoints.messaging.core.7.2.0-beta.12.nupkg.sha512"
+    },
+    "FastEndpoints.Security/7.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oi25/gBEoUtAYEL5hGBtMmHkn+m1/bpZ6yH+mHFmFGb63hTarN8079mV9Vcpzr7bolUwC5d/Cxug8mSZdrXvxg==",
+      "path": "fastendpoints.security/7.0.1",
+      "hashPath": "fastendpoints.security.7.0.1.nupkg.sha512"
     },
     "FastEndpoints.Swagger/7.2.0-beta.12": {
       "type": "package",

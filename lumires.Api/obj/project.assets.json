@@ -216,6 +216,23 @@
           }
         }
       },
+      "FastEndpoints.Security/7.0.1": {
+        "type": "package",
+        "dependencies": {
+          "FastEndpoints": "7.0.1",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "9.0.7"
+        },
+        "compile": {
+          "lib/net9.0/FastEndpoints.Security.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/FastEndpoints.Security.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "FastEndpoints.Swagger/7.2.0-beta.12": {
         "type": "package",
         "dependencies": {
@@ -3423,6 +3440,24 @@
         "icon.png",
         "lib/netstandard2.1/FastEndpoints.Messaging.Core.dll",
         "lib/netstandard2.1/FastEndpoints.Messaging.Core.xml"
+      ]
+    },
+    "FastEndpoints.Security/7.0.1": {
+      "sha512": "oi25/gBEoUtAYEL5hGBtMmHkn+m1/bpZ6yH+mHFmFGb63hTarN8079mV9Vcpzr7bolUwC5d/Cxug8mSZdrXvxg==",
+      "type": "package",
+      "path": "fastendpoints.security/7.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fastendpoints.security.7.0.1.nupkg.sha512",
+        "fastendpoints.security.nuspec",
+        "icon.png",
+        "lib/net10.0/FastEndpoints.Security.dll",
+        "lib/net10.0/FastEndpoints.Security.xml",
+        "lib/net8.0/FastEndpoints.Security.dll",
+        "lib/net8.0/FastEndpoints.Security.xml",
+        "lib/net9.0/FastEndpoints.Security.dll",
+        "lib/net9.0/FastEndpoints.Security.xml"
       ]
     },
     "FastEndpoints.Swagger/7.2.0-beta.12": {
@@ -7900,6 +7935,7 @@
       "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL >= 13.1.0",
       "Aspire.StackExchange.Redis >= 13.1.0",
       "BetterStack.Logs.Serilog >= 1.2.0",
+      "FastEndpoints.Security >= 7.0.1",
       "FastEndpoints.Swagger >= 7.2.0-beta.12",
       "FluentEmail.Core >= 3.0.2",
       "FluentEmail.Razor >= 3.0.2",
@@ -7993,6 +8029,10 @@
           "BetterStack.Logs.Serilog": {
             "target": "Package",
             "version": "[1.2.0, )"
+          },
+          "FastEndpoints.Security": {
+            "target": "Package",
+            "version": "[7.0.1, )"
           },
           "FastEndpoints.Swagger": {
             "target": "Package",

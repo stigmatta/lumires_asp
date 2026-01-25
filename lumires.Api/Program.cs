@@ -12,13 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints();
 builder.AddServiceDefaults();
-builder.AddLumiresLogging(builder.Configuration);
+builder.AddCustomLogging(builder.Configuration);
 builder.AddNpgsqlDbContext<AppDbContext>("supabaseDB");
-builder.Services.AddLumiresAuth(builder.Configuration);
-builder.Services.AddLumiresCache(builder.Configuration);
+builder.Services.AddCustomAuth(builder.Configuration);
+builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddSignalR();
-builder.Services.AddLumiresEmail(builder.Configuration, builder.Environment);
-builder.Services.AddLumiresSwagger();
+builder.Services.AddEmailSender(builder.Configuration, builder.Environment);
+builder.Services.AddSwaggerDoc();
 
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("supabaseDB")!)
@@ -53,7 +53,7 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapLumiresHubs(app.Configuration);
+app.MapCustomHubs(app.Configuration);
 app.UseFastEndpoints();
 app.UseRequestLocalization(new RequestLocalizationOptions()
     .SetDefaultCulture("en-US")
@@ -63,7 +63,7 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseLumiresSwagger(app.Environment);
+    app.UseSwaggerDoc(app.Environment);
     app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
 }
 

@@ -6,7 +6,7 @@ namespace lumires.Api.Infrastructure.Extensions;
 
 internal static class SwaggerExtensions
 {
-    public static IServiceCollection AddLumiresSwagger(this IServiceCollection services)
+    public static IServiceCollection AddSwaggerDoc(this IServiceCollection services)
     {
         services.SwaggerDocument(o =>
         {
@@ -31,7 +31,7 @@ internal static class SwaggerExtensions
         return services;
     }
 
-    public static IApplicationBuilder UseLumiresSwagger(this IApplicationBuilder app, IWebHostEnvironment env)
+    public static IApplicationBuilder UseSwaggerDoc(this IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (!env.IsDevelopment()) return app;
 

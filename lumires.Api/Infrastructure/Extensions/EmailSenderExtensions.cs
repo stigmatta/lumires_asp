@@ -9,7 +9,7 @@ namespace lumires.Api.Infrastructure.Extensions;
 
 internal static class EmailSenderExtensions
 {
-    public static IServiceCollection AddLumiresEmail(this IServiceCollection services, IConfiguration configuration,
+    public static IServiceCollection AddEmailSender(this IServiceCollection services, IConfiguration configuration,
         IWebHostEnvironment env)
     {
         var emailConfig = configuration

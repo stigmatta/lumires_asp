@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "BhbpTOi4WE0=",
+  "dgSpecHash": "UXU9ffs7sXU=",
   "success": true,
   "projectFilePath": "C:\\Users\\morri\\RiderProjects\\lumires\\lumires.Api\\lumires.Api.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "C:\\Users\\morri\\.nuget\\packages\\fastendpoints.jobqueues\\7.2.0-beta.12\\fastendpoints.jobqueues.7.2.0-beta.12.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\fastendpoints.messaging\\7.2.0-beta.12\\fastendpoints.messaging.7.2.0-beta.12.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\fastendpoints.messaging.core\\7.2.0-beta.12\\fastendpoints.messaging.core.7.2.0-beta.12.nupkg.sha512",
+    "C:\\Users\\morri\\.nuget\\packages\\fastendpoints.security\\7.0.1\\fastendpoints.security.7.0.1.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\fastendpoints.swagger\\7.2.0-beta.12\\fastendpoints.swagger.7.2.0-beta.12.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\fluentemail.core\\3.0.2\\fluentemail.core.3.0.2.nupkg.sha512",
     "C:\\Users\\morri\\.nuget\\packages\\fluentemail.razor\\3.0.2\\fluentemail.razor.3.0.2.nupkg.sha512",

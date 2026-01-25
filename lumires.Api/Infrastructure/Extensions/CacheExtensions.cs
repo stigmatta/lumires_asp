@@ -7,7 +7,7 @@ namespace lumires.Api.Infrastructure.Extensions;
 
 internal static class CacheExtensions
 {
-    public static IServiceCollection AddLumiresCache(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
     {
         var fusionConfig = configuration
             .GetSection(FusionCacheConfig.Section)

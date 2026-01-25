@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Security;
 using lumires.Api.Resources;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ internal sealed partial class GlobalExceptionHandler(
         {
             KeyNotFoundException => (HttpStatusCode.NotFound, "Error_NotFound"),
             UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Error_Unauthorized"),
+            SecurityException => (HttpStatusCode.Forbidden, "Error_Forbidden"),
             _ => (HttpStatusCode.InternalServerError, "Error_Internal")
         };
 
