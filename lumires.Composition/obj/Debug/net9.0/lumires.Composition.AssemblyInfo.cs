@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.Composition")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1fc066f835f2cc5c88f019c8f7d61878fdf71460")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1badcacfdea1af24ed97891efaf3bf0e3a04f811")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.Composition")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.Composition")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
