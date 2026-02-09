@@ -1,0 +1,290 @@
+2026-02-09 12:18:50.336 +02:00 [INF] Executed DbCommand (75ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-02-09 12:18:51.236 +02:00 [INF] Executed DbCommand (84ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-02-09 12:18:51.255 +02:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-02-09 12:18:51.314 +02:00 [INF] Executed DbCommand (51ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-02-09 12:18:51.382 +02:00 [INF] Executed DbCommand (51ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-02-09 12:18:51.401 +02:00 [INF] Applying migration '20260209101709_Added_GuidV7_To_UserNotification_Entity'.
+2026-02-09 12:18:51.477 +02:00 [INF] Executed DbCommand (53ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260209101709_Added_GuidV7_To_UserNotification_Entity', '9.0.11');
+2026-02-09 12:34:58.644 +02:00 [INF] Registered 9 endpoints in 2 138 milliseconds.
+2026-02-09 12:34:59.112 +02:00 [INF] No validators found in the system!
+2026-02-09 12:34:59.205 +02:00 [INF] User profile is available. Using 'C:\Users\morri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-02-09 12:34:59.674 +02:00 [INF] Now listening on: http://localhost:54781
+2026-02-09 12:34:59.684 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-02-09 12:34:59.686 +02:00 [INF] Hosting environment: Development
+2026-02-09 12:34:59.687 +02:00 [INF] Content root path: C:\Users\morri\RiderProjects\lumires\lumires.Composition
+2026-02-09 12:35:02.096 +02:00 [INF] CORS policy execution failed.
+2026-02-09 12:35:02.449 +02:00 [INF] Request origin http://localhost:54781 does not have permission to access the resource.
+2026-02-09 12:35:03.024 +02:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2026-02-09 12:35:17.520 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ5 K=movie:550:en-US): GetOrSetAsync<T> call FEO[DUR=01:00:00 LKTO=/ SKMR=N SKMW=N SKDR=N SKDW=N SKDRWS=N MDUR=5m DDUR=/ JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N ABBO=Y AC=N]
+2026-02-09 12:35:23.543 +02:00 [INF] Executed DbCommand (321ms) [Parameters=[@__tmdbId='?' (DbType = Int32), @__lang='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT m1."TmdbId", m1."Year", m3."LanguageCode", m3."Title", m3."Description", m3.c
+FROM (
+    SELECT m."TmdbId", m."Year", m."Id"
+    FROM "Movies" AS m
+    WHERE m."TmdbId" = @__tmdbId
+    LIMIT 2
+) AS m1
+LEFT JOIN (
+    SELECT m2."LanguageCode", m2."Title", m2."Description", m2.c, m2."MovieId"
+    FROM (
+        SELECT m0."LanguageCode", m0."Title", m0."Description", 1 AS c, m0."MovieId", ROW_NUMBER() OVER(PARTITION BY m0."MovieId" ORDER BY m0."LanguageCode" = @__lang DESC) AS row
+        FROM "MovieLocalizations" AS m0
+        WHERE m0."LanguageCode" = @__lang OR m0."LanguageCode" = 'en-US'
+    ) AS m2
+    WHERE m2.row <= 1
+) AS m3 ON m1."Id" = m3."MovieId"
+2026-02-09 12:35:23.706 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:23.854 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.201 +02:00 [INF] Received HTTP response headers after 335.5173ms - 200
+2026-02-09 12:35:24.252 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 479.9596ms
+2026-02-09 12:35:24.275 +02:00 [INF] End processing HTTP request after 575.4868ms - 200
+2026-02-09 12:35:24.431 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.432 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.436 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.436 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.436 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ5 K=movie:550:en-US): GetOrSetAsync<T> return FE(M)[T=2026-02-09T10:35:17.669661, LEXP=2026-02-09T10:40:24.412150][S=N, EEXP=/, LM=/, ET=/, S=/, P=Normal]
+2026-02-09 12:35:24.504 +02:00 [INF] GET /movies/get/550 (HTTP: GET /movies/get/{id:int}) executed in 7027 ms
+2026-02-09 12:35:24.592 +02:00 [INF] Received HTTP response headers after 157.6116ms - 200
+2026-02-09 12:35:24.606 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 174.1476ms
+2026-02-09 12:35:24.611 +02:00 [INF] End processing HTTP request after 180.3529ms - 200
+2026-02-09 12:35:24.622 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.624 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:24.660 +02:00 [INF] Received HTTP response headers after 223.471ms - 200
+2026-02-09 12:35:24.661 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 225.0905ms
+2026-02-09 12:35:24.662 +02:00 [INF] End processing HTTP request after 226.2952ms - 200
+2026-02-09 12:35:24.681 +02:00 [INF] Received HTTP response headers after 56.8609ms - 200
+2026-02-09 12:35:24.687 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 60.2339ms
+2026-02-09 12:35:24.688 +02:00 [INF] End processing HTTP request after 66.4052ms - 200
+2026-02-09 12:35:25.372 +02:00 [ERR] Failed executing DbCommand (101ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Int32), @p2='?' (DbType = Int32), @p3='?' (DbType = Guid), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?', @p8='?' (DbType = Guid), @p9='?', @p10='?', @p11='?' (DbType = Guid), @p12='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Movies" ("Id", "TmdbId", "Year")
+VALUES (@p0, @p1, @p2);
+INSERT INTO "MovieLocalizations" ("Id", "Description", "LanguageCode", "MovieId", "Title")
+VALUES (@p3, @p4, @p5, @p6, @p7);
+INSERT INTO "MovieLocalizations" ("Id", "Description", "LanguageCode", "MovieId", "Title")
+VALUES (@p8, @p9, @p10, @p11, @p12);
+2026-02-09 12:35:25.622 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'lumires.Domain.Persistence.AppDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 22001: value too long for type character varying(500)
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 22001
+    MessageText: value too long for type character varying(500)
+    File: varchar.c
+    Line: 637
+    Routine: varchar
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 22001: value too long for type character varying(500)
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 22001
+    MessageText: value too long for type character varying(500)
+    File: varchar.c
+    Line: 637
+    Routine: varchar
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-02-09 12:35:27.554 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ6 K=movie:550:en-US): GetOrSetAsync<T> call FEO[DUR=01:00:00 LKTO=/ SKMR=N SKMW=N SKDR=N SKDW=N SKDRWS=N MDUR=5m DDUR=/ JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N ABBO=Y AC=N]
+2026-02-09 12:35:27.563 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ6 K=movie:550:en-US): GetOrSetAsync<T> return FE(M)[T=2026-02-09T10:35:17.669661, LEXP=2026-02-09T10:40:24.412150][S=N, EEXP=/, LM=/, ET=/, S=/, P=Normal]
+2026-02-09 12:35:27.564 +02:00 [INF] GET /movies/get/550 (HTTP: GET /movies/get/{id:int}) executed in 10 ms
+2026-02-09 12:35:28.481 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ7 K=movie:550:en-US): GetOrSetAsync<T> call FEO[DUR=01:00:00 LKTO=/ SKMR=N SKMW=N SKDR=N SKDW=N SKDRWS=N MDUR=5m DDUR=/ JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N ABBO=Y AC=N]
+2026-02-09 12:35:28.481 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ7 K=movie:550:en-US): GetOrSetAsync<T> return FE(M)[T=2026-02-09T10:35:17.669661, LEXP=2026-02-09T10:40:24.412150][S=N, EEXP=/, LM=/, ET=/, S=/, P=Normal]
+2026-02-09 12:35:28.482 +02:00 [INF] GET /movies/get/550 (HTTP: GET /movies/get/{id:int}) executed in 1 ms
+2026-02-09 12:35:42.645 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ8 K=movie:550:uk-UA): GetOrSetAsync<T> call FEO[DUR=01:00:00 LKTO=/ SKMR=N SKMW=N SKDR=N SKDW=N SKDRWS=N MDUR=5m DDUR=/ JIT=0 PR=N SZ=/ FS=Y FSMAX=02:00:00 DFSMAX=/ FSTHR=30s FSTO=500ms FHTO=/ TOFC=Y DSTO=/ DHTO=/ ABDO=N SBN=N ABBO=Y AC=N]
+2026-02-09 12:35:42.711 +02:00 [INF] Executed DbCommand (63ms) [Parameters=[@__tmdbId='?' (DbType = Int32), @__lang='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT m1."TmdbId", m1."Year", m3."LanguageCode", m3."Title", m3."Description", m3.c
+FROM (
+    SELECT m."TmdbId", m."Year", m."Id"
+    FROM "Movies" AS m
+    WHERE m."TmdbId" = @__tmdbId
+    LIMIT 2
+) AS m1
+LEFT JOIN (
+    SELECT m2."LanguageCode", m2."Title", m2."Description", m2.c, m2."MovieId"
+    FROM (
+        SELECT m0."LanguageCode", m0."Title", m0."Description", 1 AS c, m0."MovieId", ROW_NUMBER() OVER(PARTITION BY m0."MovieId" ORDER BY m0."LanguageCode" = @__lang DESC) AS row
+        FROM "MovieLocalizations" AS m0
+        WHERE m0."LanguageCode" = @__lang OR m0."LanguageCode" = 'en-US'
+    ) AS m2
+    WHERE m2.row <= 1
+) AS m3 ON m1."Id" = m3."MovieId"
+2026-02-09 12:35:42.715 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.717 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.782 +02:00 [INF] Received HTTP response headers after 62.5784ms - 200
+2026-02-09 12:35:42.784 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 66.8908ms
+2026-02-09 12:35:42.785 +02:00 [INF] End processing HTTP request after 69.2428ms - 200
+2026-02-09 12:35:42.794 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.796 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.835 +02:00 [INF] Received HTTP response headers after 39.029ms - 200
+2026-02-09 12:35:42.836 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 40.518ms
+2026-02-09 12:35:42.839 +02:00 [INF] End processing HTTP request after 44.722ms - 200
+2026-02-09 12:35:42.860 +02:00 [INF] FUSION [N=FusionCache I=0HNJ7ORFH4OQ4] (O=0HNJ7ORFH4OQ8 K=movie:550:uk-UA): GetOrSetAsync<T> return FE(M)[T=2026-02-09T10:35:42.646880, LEXP=2026-02-09T10:40:42.860352][S=N, EEXP=/, LM=/, ET=/, S=/, P=Normal]
+2026-02-09 12:35:42.863 +02:00 [INF] GET /movies/get/550 (HTTP: GET /movies/get/{id:int}) executed in 217 ms
+2026-02-09 12:35:42.868 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.870 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.875 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.876 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.923 +02:00 [INF] Received HTTP response headers after 48.8396ms - 200
+2026-02-09 12:35:42.924 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 54.5864ms
+2026-02-09 12:35:42.927 +02:00 [INF] End processing HTTP request after 58.5072ms - 200
+2026-02-09 12:35:42.945 +02:00 [INF] Start processing HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.947 +02:00 [INF] Sending HTTP request GET https://api.themoviedb.org/3//movie/550?*
+2026-02-09 12:35:42.954 +02:00 [INF] Received HTTP response headers after 75.3885ms - 200
+2026-02-09 12:35:42.956 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 79.8346ms
+2026-02-09 12:35:42.960 +02:00 [INF] End processing HTTP request after 85.7239ms - 200
+2026-02-09 12:35:43.029 +02:00 [INF] Received HTTP response headers after 75.9864ms - 200
+2026-02-09 12:35:43.041 +02:00 [INF] Execution attempt. Source: '-standard//Standard-Retry', Operation Key: 'null', Result: '200', Handled: 'false', Attempt: '0', Execution Time: 94.2508ms
+2026-02-09 12:35:43.043 +02:00 [INF] End processing HTTP request after 98.0908ms - 200
+2026-02-09 12:35:43.149 +02:00 [ERR] Failed executing DbCommand (70ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Int32), @p2='?' (DbType = Int32), @p3='?' (DbType = Guid), @p4='?', @p5='?', @p6='?' (DbType = Guid), @p7='?', @p8='?' (DbType = Guid), @p9='?', @p10='?', @p11='?' (DbType = Guid), @p12='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Movies" ("Id", "TmdbId", "Year")
+VALUES (@p0, @p1, @p2);
+INSERT INTO "MovieLocalizations" ("Id", "Description", "LanguageCode", "MovieId", "Title")
+VALUES (@p3, @p4, @p5, @p6, @p7);
+INSERT INTO "MovieLocalizations" ("Id", "Description", "LanguageCode", "MovieId", "Title")
+VALUES (@p8, @p9, @p10, @p11, @p12);
+2026-02-09 12:35:43.209 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'lumires.Domain.Persistence.AppDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 22001: value too long for type character varying(500)
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 22001
+    MessageText: value too long for type character varying(500)
+    File: varchar.c
+    Line: 637
+    Routine: varchar
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 22001: value too long for type character varying(500)
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 22001
+    MessageText: value too long for type character varying(500)
+    File: varchar.c
+    Line: 637
+    Routine: varchar
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-02-09 13:04:39.262 +02:00 [INF] Registered 9 endpoints in 2 580 milliseconds.
+2026-02-09 13:04:39.641 +02:00 [INF] No validators found in the system!
+2026-02-09 13:04:39.713 +02:00 [INF] User profile is available. Using 'C:\Users\morri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-02-09 13:04:40.254 +02:00 [INF] Now listening on: http://localhost:52890
+2026-02-09 13:04:40.260 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-02-09 13:04:40.262 +02:00 [INF] Hosting environment: Development
+2026-02-09 13:04:40.263 +02:00 [INF] Content root path: C:\Users\morri\RiderProjects\lumires\lumires.Composition
+2026-02-09 13:04:42.778 +02:00 [INF] CORS policy execution failed.
+2026-02-09 13:04:42.796 +02:00 [INF] Request origin http://localhost:52890 does not have permission to access the resource.
+2026-02-09 13:04:45.363 +02:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2026-02-09 13:10:26.578 +02:00 [INF] Registered 9 endpoints in 2 821 milliseconds.
+2026-02-09 13:10:26.926 +02:00 [INF] No validators found in the system!
+2026-02-09 13:10:27.867 +02:00 [INF] User profile is available. Using 'C:\Users\morri\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-02-09 13:10:29.086 +02:00 [INF] Now listening on: http://localhost:60776
+2026-02-09 13:10:29.101 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-02-09 13:10:29.109 +02:00 [INF] Hosting environment: Development
+2026-02-09 13:10:29.113 +02:00 [INF] Content root path: C:\Users\morri\RiderProjects\lumires\lumires.Composition
+2026-02-09 13:10:30.804 +02:00 [INF] CORS policy execution failed.
+2026-02-09 13:10:30.819 +02:00 [INF] Request origin http://localhost:60776 does not have permission to access the resource.
+2026-02-09 13:10:32.520 +02:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts

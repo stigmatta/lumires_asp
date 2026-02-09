@@ -28,11 +28,6 @@ internal static class LoggerExtensions
             .Enrich.WithSpan()
             .Enrich.WithProperty("App", "Lumires.lumires.Api")
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-            .WriteTo.File(
-                "logs/lumires_log-.txt",
-                rollingInterval: RollingInterval.Day,
-                formatProvider: CultureInfo.InvariantCulture
-            )
             .WriteTo.BetterStack(
                 logtailConfig.ApiKey,
                 logtailConfig.BaseUrl.ToString())
