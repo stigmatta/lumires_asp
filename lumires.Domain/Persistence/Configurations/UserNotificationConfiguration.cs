@@ -9,6 +9,7 @@ public class UserNotificationConfiguration : IEntityTypeConfiguration<UserNotifi
     public void Configure(EntityTypeBuilder<UserNotification> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedNever();
 
         builder.Property(x => x.Type)
             .IsRequired()

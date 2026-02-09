@@ -1,0 +1,21 @@
+﻿# --- IDE & JetBrains ---
+.idea/
+*.idea/
+**/workspace.xml
+**/contentModel.xml
+**/modules.xml
+**/encodings.xml
+**/indexLayout.xml
+
+# --- .NET Build Output ---
+bin/
+obj/
+**/bin/
+**/obj/
+*.assets.cache
+*.csproj.EntityFrameworkCore.targets
+
+# --- Local Configs ---
+dotnet-tools.json
+appsettings.Development.json
+*.user
