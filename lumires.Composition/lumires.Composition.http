@@ -1,0 +1,6 @@
+@lumires.Composition_HostAddress = http://localhost:5003
+
+GET {{lumires.Composition_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,6 +1,6 @@
-﻿using FastEndpoints;
-using lumires.Api.Core.Abstractions;
-using lumires.Api.Core.Models;
+﻿using Contracts.Abstractions;
+using Contracts.Models;
+using FastEndpoints;
 
 namespace lumires.Api.ToDelete;
 
@@ -9,21 +9,15 @@ internal class GetMovieSourcesEndpoint(IStreamingService streamingService)
 {
     public override void Configure()
     {
-        Get("/api/movies/{tmdbId}/sources");
+        Get("/api/movies/{tmdbId:int}/sources");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var tmdbId = Route<string>("tmdbId");
+        var tmdbId = Route<int>("tmdbId");
 
-        if (string.IsNullOrEmpty(tmdbId))
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
-        var sources = await streamingService.GetSourcesAsync(tmdbId);
+        var sources = await streamingService.GetSourcesAsync(tmdbId, ct);
 
         if (sources.Count == 0)
         {

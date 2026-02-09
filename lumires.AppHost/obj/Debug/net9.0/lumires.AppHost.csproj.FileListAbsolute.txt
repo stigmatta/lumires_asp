@@ -53,7 +53,6 @@ C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.Ap
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.AssemblyInfoInputs.cache
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.AssemblyInfo.cs
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.csproj.CoreCompileInputs.cache
-C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\Aspire\references\lumires_Api.ProjectMetadata.g.cs
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\Aspire\references\_AppHost.ProjectMetadata.g.cs
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.sourcelink.json
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires..2C1C2FC8.Up2Date
@@ -62,3 +61,4 @@ C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\refint\lum
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.pdb
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\lumires.AppHost.genruntimeconfig.cache
 C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\ref\lumires.AppHost.dll
+C:\Users\morri\RiderProjects\lumires\lumires.AppHost\obj\Debug\net9.0\Aspire\references\lumires_Composition.ProjectMetadata.g.cs

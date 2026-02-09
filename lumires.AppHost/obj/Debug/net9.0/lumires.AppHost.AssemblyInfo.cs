@@ -24,7 +24,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88a3b21d33a9b499caa10530e097e607e1c08d5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb760e5fc2b4c56e455e95d7aa5c1688d6ec6a99")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

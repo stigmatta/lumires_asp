@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 
 namespace lumires.Api.ToDelete;
 
-
 [UsedImplicitly]
 internal record AuthRequest(string Email, string Password);
 
@@ -17,6 +16,11 @@ internal record SupabaseUser(string id);
 internal class LoginMockEndpoint(IConfiguration config) : Endpoint<AuthRequest, AuthResponse>, IDisposable
 {
     private readonly HttpClient _httpClient = new();
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
+    }
 
     public override void Configure()
     {
@@ -45,10 +49,5 @@ internal class LoginMockEndpoint(IConfiguration config) : Endpoint<AuthRequest, 
             data.user.id,
             data.expires_in
         ), ct);
-    }
-
-    public void Dispose()
-    {
-        _httpClient.Dispose();
     }
 }

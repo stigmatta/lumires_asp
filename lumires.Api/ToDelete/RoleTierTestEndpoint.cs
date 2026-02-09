@@ -1,10 +1,9 @@
-﻿using FastEndpoints;
-using lumires.Api.Core.Auth;
+﻿using Contracts.Auth;
+using FastEndpoints;
 
 namespace lumires.Api.ToDelete;
 
-internal class RoleTierTestEndpoint()
-    : EndpointWithoutRequest
+internal class RoleTierTestEndpoint : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -14,6 +13,5 @@ internal class RoleTierTestEndpoint()
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        
     }
 }

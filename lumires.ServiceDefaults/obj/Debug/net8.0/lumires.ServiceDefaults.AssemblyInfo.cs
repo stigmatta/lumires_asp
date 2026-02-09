@@ -10,11 +10,11 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("f9b99019-2b6c-4483-9691-6492c561ecac")]
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("f9b99019-2b6c-4483-969-6492c561ecac")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88a3b21d33a9b499caa10530e097e607e1c08d5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb760e5fc2b4c56e455e95d7aa5c1688d6ec6a99")]
 [assembly: System.Reflection.AssemblyProductAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyTitleAttribute("lumires.ServiceDefaults")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

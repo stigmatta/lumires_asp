@@ -4,12 +4,10 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var db = builder.AddConnectionString("supabaseDB");
 // var db = builder.AddPostgres("postgres").AddDatabase("supabaseDB");
-var cache = builder.AddConnectionString("cache");
+// var cache = builder.AddConnectionString("cache");
 
-
-builder.AddProject<lumires_Api>("api")
+builder.AddProject<lumires_Composition>("api")
     .WithReference(db)
-    .WithReference(cache)
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

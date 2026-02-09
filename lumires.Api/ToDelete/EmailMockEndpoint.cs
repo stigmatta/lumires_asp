@@ -1,6 +1,6 @@
-﻿using FastEndpoints;
-using lumires.Api.Core.Abstractions;
-using lumires.Api.Core.Models;
+﻿using Contracts.Abstractions;
+using Contracts.Models;
+using FastEndpoints;
 
 namespace lumires.Api.ToDelete;
 

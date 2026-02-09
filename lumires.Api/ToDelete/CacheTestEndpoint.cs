@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics;
+using FastEndpoints;
 using JetBrains.Annotations;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace lumires.Api.ToDelete;
 
-using FastEndpoints;
-using Microsoft.Extensions.Caching.Hybrid;
-
-public class GetMovieByIdEndpoint(HybridCache cache) : Endpoint<MovieRequest, MovieResponse>
+public class GetMovieByIdEndpoint(IFusionCache cache) : Endpoint<MovieRequest, MovieResponse>
 {
     public override void Configure()
     {
@@ -17,25 +16,31 @@ public class GetMovieByIdEndpoint(HybridCache cache) : Endpoint<MovieRequest, Mo
     public override async Task HandleAsync(MovieRequest req, CancellationToken ct)
     {
         Debug.Assert(req != null, nameof(req) + " != null");
-        var movieName = await cache.GetOrCreateAsync(
-            key: $"movie-{req.ID}",
-            factory: async cancel => await FakeDbCall(req.ID, cancel),
-            cancellationToken: ct,
-            tags:["movie"]
-        );
+        var movieName = await cache.GetOrSetAsync(
+            $"movie-{req.ID}",
+            async cancel => await FakeDbCall(req.ID, cancel),
+            tags: ["movie"],
+            token: ct);
 
         await Send.OkAsync(new MovieResponse { Title = movieName }, ct);
     }
 
     private async Task<string> FakeDbCall(int id, CancellationToken ct)
     {
-        if (id == 999) ThrowError("Внешний сервис временно недоступен", 502); 
-        
-        await Task.Delay(50, ct); 
+        if (id == 999) ThrowError("Внешний сервис временно недоступен", 502);
+
+        await Task.Delay(50, ct);
         return $"Movie {id}";
     }
 }
 
 [UsedImplicitly]
-public record MovieRequest { public int ID { get; set; } }
-public record MovieResponse { public string Title { get; set; } }
+public record MovieRequest
+{
+    public int ID { get; set; }
+}
+
+public record MovieResponse
+{
+    public string Title { get; set; }
+}

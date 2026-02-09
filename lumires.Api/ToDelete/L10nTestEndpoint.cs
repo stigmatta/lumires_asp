@@ -1,6 +1,6 @@
-﻿using FastEndpoints;
-using lumires.Api.Core.Abstractions;
-using lumires.Api.Resources;
+﻿using Contracts.Abstractions;
+using Contracts.Resources;
+using FastEndpoints;
 using Microsoft.Extensions.Localization;
 
 namespace lumires.Api.ToDelete;

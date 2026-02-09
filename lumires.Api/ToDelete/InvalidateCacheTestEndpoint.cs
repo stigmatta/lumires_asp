@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
+using FastEndpoints;
 using JetBrains.Annotations;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace lumires.Api.ToDelete;
-
-using FastEndpoints;
-using Microsoft.Extensions.Caching.Hybrid;
 
 [UsedImplicitly]
 public record InvalidateMovieCacheRequest
@@ -12,7 +11,7 @@ public record InvalidateMovieCacheRequest
     public int MovieId { get; set; }
 }
 
-public class InvalidateMovieCacheEndpoint(HybridCache cache) : Endpoint<InvalidateMovieCacheRequest>
+public class InvalidateMovieCacheEndpoint(IFusionCache cache) : Endpoint<InvalidateMovieCacheRequest>
 {
     public override void Configure()
     {
@@ -23,10 +22,10 @@ public class InvalidateMovieCacheEndpoint(HybridCache cache) : Endpoint<Invalida
     public override async Task HandleAsync(InvalidateMovieCacheRequest req, CancellationToken ct)
     {
         Debug.Assert(req != null, nameof(req) + " != null");
-        
+
         var tag = $"movie-{req.MovieId}";
 
-        await cache.RemoveByTagAsync(tag, ct);
+        await cache.RemoveAsync(tag, token: ct);
 
         await Send.NoContentAsync(ct);
     }

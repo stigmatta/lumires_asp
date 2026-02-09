@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <OutputType>Library</OutputType>
+        <RootNamespace>Contracts</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Ardalis.Result" Version="10.1.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="Resources\EmailTemplates\Welcome.cshtml"/>
+        <AdditionalFiles Include="Resources\SharedResource.en-US.resx"/>
+        <AdditionalFiles Include="Resources\SharedResource.uk-UA.resx"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\SharedResource.en-US.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>SharedResource.en-US.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\SharedResource.uk-UA.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>SharedResource.uk-UA.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\lumires.Domain\lumires.Domain.csproj"/>
+    </ItemGroup>
+
+</Project>

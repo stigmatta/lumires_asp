@@ -1,15 +1,14 @@
-﻿using FastEndpoints;
-using lumires.Api.Core.Abstractions;
-using lumires.Api.Core.Models;
-using lumires.Api.Domain.Entities;
-using lumires.Api.Infrastructure.Hubs;
-using lumires.Api.Infrastructure.Persistence;
-using Microsoft.AspNetCore.SignalR;
+﻿using Contracts.Abstractions;
+using Contracts.Messaging;
+using FastEndpoints;
+using lumires.Domain.Entities;
+using lumires.Domain.Enums;
+using lumires.Domain.Persistence;
 
 namespace lumires.Api.ToDelete;
 
 internal class SignalRTestEndpoint(
-    IHubContext<NotificationHub, INotificationClient> hubContext,
+    INotificationService notificationService,
     ICurrentUserService currentUserService,
     AppDbContext db
 )
@@ -27,7 +26,7 @@ internal class SignalRTestEndpoint(
         {
             Id = Guid.NewGuid(),
             UserId = currentUserId,
-            Type = EventTypes.Followed,
+            Type = NotificationType.Followed,
             SenderId = currentUserId.ToString(),
             TargetId = currentUserId.ToString(),
             CreatedAt = DateTime.UtcNow
@@ -43,9 +42,7 @@ internal class SignalRTestEndpoint(
             notification.CreatedAt
         );
 
-        await hubContext.Clients
-            .User(currentUserId.ToString())
-            .ReceiveNotification(command);
+        await notificationService.SendToUserAsync(currentUserId, command);
 
         await Send.NoContentAsync(ct);
     }
