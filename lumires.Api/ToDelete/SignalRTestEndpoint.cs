@@ -1,16 +1,16 @@
-﻿using Contracts.Abstractions;
-using Contracts.Messaging;
+﻿using Core.Abstractions.Data;
+using Core.Abstractions.Services;
+using Core.Messaging;
+using Domain.Entities;
+using Domain.Enums;
 using FastEndpoints;
-using lumires.Domain.Entities;
-using lumires.Domain.Enums;
-using lumires.Domain.Persistence;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 internal class SignalRTestEndpoint(
     INotificationService notificationService,
     ICurrentUserService currentUserService,
-    AppDbContext db
+    IAppDbContext db
 )
     : EndpointWithoutRequest
 {

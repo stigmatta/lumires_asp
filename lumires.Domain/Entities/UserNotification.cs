@@ -1,6 +1,6 @@
-﻿using lumires.Domain.Enums;
+﻿using Domain.Enums;
 
-namespace lumires.Domain.Entities;
+namespace Domain.Entities;
 
 public sealed class UserNotification
 {

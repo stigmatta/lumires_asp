@@ -1,4 +1,4 @@
-﻿using Contracts.Messaging;
+﻿using Core.Messaging;
 
 namespace Infrastructure.Hubs;
 

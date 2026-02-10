@@ -11,7 +11,7 @@
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <RootNamespace>lumires.Api</RootNamespace>
+        <RootNamespace>Api</RootNamespace>
         <OutputType>Library</OutputType>
     </PropertyGroup>
 
@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\lumires.Contracts\lumires.Contracts.csproj"/>
+        <ProjectReference Include="..\lumires.Core\lumires.Core.csproj" />
         <ProjectReference Include="..\lumires.ServiceDefaults\lumires.ServiceDefaults.csproj"/>
     </ItemGroup>
 

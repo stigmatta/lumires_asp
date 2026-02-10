@@ -1,9 +1,9 @@
-﻿using Contracts.Abstractions;
-using Contracts.Resources;
+﻿using Core.Abstractions.Services;
+using Core.Resources;
 using FastEndpoints;
 using Microsoft.Extensions.Localization;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 internal class L10NTestEndpoint(IStringLocalizer<SharedResource> localizer, ICurrentUserService currentUserService)
     : EndpointWithoutRequest

@@ -1,11 +1,11 @@
-﻿using Contracts.Abstractions;
-using Contracts.Messaging;
+﻿using Core.Abstractions.Services;
+using Core.Messaging;
 using Infrastructure.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infrastructure.Services;
 
-internal class NotificationService(
+public sealed class NotificationService(
     IHubContext<NotificationHub, INotificationClient> hubContext
 ) : INotificationService
 {

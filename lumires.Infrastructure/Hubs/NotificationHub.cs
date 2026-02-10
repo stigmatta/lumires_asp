@@ -1,11 +1,11 @@
-﻿using Contracts.Abstractions;
+﻿using Core.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infrastructure.Hubs;
 
 [Authorize]
-internal sealed class NotificationHub(ICurrentUserService currentUser) : Hub<INotificationClient>
+public sealed class NotificationHub(ICurrentUserService currentUser) : Hub<INotificationClient>
 {
     public override async Task OnConnectedAsync()
     {

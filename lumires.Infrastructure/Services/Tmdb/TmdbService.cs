@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Ardalis.Result;
-using Contracts.Abstractions;
-using Contracts.Constants;
-using Contracts.Models;
+using Core.Abstractions.Services;
+using Core.Constants;
+using Core.Models;
 
 namespace Infrastructure.Services.Tmdb;
 

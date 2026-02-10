@@ -1,5 +1,5 @@
 ﻿
-namespace lumires.Domain.Entities;
+namespace Domain.Entities;
 
 public sealed class MovieLocalization
 {

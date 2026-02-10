@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using Contracts.Abstractions;
-using Contracts.Auth;
+using Core.Abstractions.Services;
+using Core.Auth;
 
 namespace Infrastructure.Services;
 

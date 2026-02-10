@@ -1,8 +1,8 @@
-﻿using Contracts.Abstractions;
-using Contracts.Models;
+﻿using Core.Abstractions.Services;
+using Core.Models;
 using FastEndpoints;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 internal class GetMovieSourcesEndpoint(IStreamingService streamingService)
     : EndpointWithoutRequest<List<MovieSource>>

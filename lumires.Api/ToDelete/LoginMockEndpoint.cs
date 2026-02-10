@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 [UsedImplicitly]
 internal record AuthRequest(string Email, string Password);

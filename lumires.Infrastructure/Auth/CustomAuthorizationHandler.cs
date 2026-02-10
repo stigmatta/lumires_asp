@@ -1,9 +1,9 @@
-﻿using Contracts.Auth;
+﻿using Core.Auth;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Infrastructure.Auth;
 
-internal class CustomAuthorizationHandler
+internal sealed class CustomAuthorizationHandler
     : AuthorizationHandler<CustomRequirement>
 {
     protected override Task HandleRequirementAsync(

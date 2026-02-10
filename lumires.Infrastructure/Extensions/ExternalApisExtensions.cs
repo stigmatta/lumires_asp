@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
-using Contracts.Abstractions;
+using Core.Abstractions.Services;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
 using Infrastructure.Services.Watchmode;

@@ -1,7 +1,7 @@
-﻿using Contracts.Auth;
+﻿using Core.Auth;
 using FastEndpoints;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 internal class RoleTierTestEndpoint : EndpointWithoutRequest
 {

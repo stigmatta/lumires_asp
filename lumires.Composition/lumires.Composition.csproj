@@ -5,10 +5,10 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>bd3dae77-4e34-4362-bb97-77cf0c9a1041</UserSecretsId>
+        <RootNamespace>Composition</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

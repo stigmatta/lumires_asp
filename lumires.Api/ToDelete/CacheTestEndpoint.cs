@@ -3,7 +3,7 @@ using FastEndpoints;
 using JetBrains.Annotations;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace lumires.Api.ToDelete;
+namespace Api.ToDelete;
 
 public class GetMovieByIdEndpoint(IFusionCache cache) : Endpoint<MovieRequest, MovieResponse>
 {

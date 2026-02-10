@@ -1,15 +1,15 @@
 ﻿using Ardalis.Result;
-using Contracts.Abstractions;
+using Core.Abstractions.Services;
+using Core.Constants;
+using Core.Events.Movies;
 using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Core.Constants;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace lumires.Api.Features.Movies.GetMovie;
+namespace Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
 internal sealed record Request(int Id);
-
 
 [UsedImplicitly]
 internal sealed record LocalizationResponse(
@@ -26,7 +26,7 @@ internal sealed record Response(
 );
 
 
-internal class Endpoint(
+internal sealed class Endpoint(
     IExternalMovieService externalMovieService,
     ICurrentUserService currentUserService,
     IFusionCache cache,
@@ -42,7 +42,7 @@ internal class Endpoint(
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = $"movie:{req.Id}:{lang}";
+        var cacheKey = CacheKeys.MovieKey(req.Id, currentUserService.LangCulture);
 
         ResultStatus? failureStatus = null;
 
@@ -63,7 +63,7 @@ internal class Endpoint(
                 }
 
                 var importedMovie = result.Value;
-                var command = new ImportedEvent { TmdbId = importedMovie.ExternalId };
+                var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
                 await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
                 
                 var localizationResponse = new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview);

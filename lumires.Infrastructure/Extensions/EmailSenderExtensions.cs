@@ -1,4 +1,4 @@
-﻿using Contracts.Abstractions;
+﻿using Core.Abstractions.Services;
 using FluentEmail.Core.Interfaces;
 using Infrastructure.Options;
 using Infrastructure.Services;

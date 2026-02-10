@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
-using Contracts.Auth;
-using Contracts.Resources;
+using Core.Auth;
+using Core.Resources;
 using Infrastructure.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -53,8 +53,8 @@ internal static partial class AuthExtensions
                         var appMetadata = context.Principal?.FindFirst("app_metadata")?.Value;
                         if (string.IsNullOrEmpty(appMetadata)) return Task.CompletedTask;
 
-                        var logger = context.HttpContext.RequestServices
-                            .GetRequiredService<ILogger<Program>>();
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("Auth.JwtBearer");  
                         try
                         {
                             using var db = JsonDocument.Parse(appMetadata);

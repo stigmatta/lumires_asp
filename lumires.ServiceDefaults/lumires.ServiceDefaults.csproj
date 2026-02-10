@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <IsAspireSharedProject>true</IsAspireSharedProject>
         <UserSecretsId>f9b99019-2b6c-4483-969-6492c561ecac</UserSecretsId>
+        <RootNamespace>ServiceDefaults</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,7 +21,6 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.14.0-beta.2"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0"/>
-        <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.14.0-beta.1"/>
     </ItemGroup>
 
 </Project>

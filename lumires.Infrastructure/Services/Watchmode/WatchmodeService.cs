@@ -1,5 +1,6 @@
-﻿using Contracts.Abstractions;
-using Contracts.Models;
+﻿using Core.Abstractions.Services;
+using Core.Constants;
+using Core.Models;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Infrastructure.Services.Watchmode;
@@ -8,7 +9,7 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
 {
     public async Task<List<MovieSource>> GetSourcesAsync(int tmdbId, CancellationToken ct, string region = "US")
     {
-        var sourcesKey = $"sources:{tmdbId}:{region}";
+        var sourcesKey = CacheKeys.MovieSources(tmdbId, region);
 
         return await cache.GetOrSetAsync(sourcesKey, async token =>
         {

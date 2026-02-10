@@ -1,5 +1,5 @@
-﻿using Contracts.Abstractions;
-using Contracts.Models;
+﻿using Core.Abstractions.Services;
+using Core.Models;
 using FluentEmail.Core;
 
 namespace Infrastructure.Services;

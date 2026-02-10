@@ -9,7 +9,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace lumires.ServiceDefaults;
+namespace ServiceDefaults;
 
 // Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 // This project should be referenced by each service project in your solution.
@@ -61,7 +61,7 @@ public static class Extensions
             {
                 tracing.AddAspNetCoreInstrumentation()
                     .AddEntityFrameworkCoreInstrumentation()
-                    .AddRedisInstrumentation()
+                    // .AddRedisInstrumentation()
                     .AddHttpClientInstrumentation();
             });
 

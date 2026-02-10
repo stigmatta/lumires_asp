@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Api", "lumires.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Infrastructure", "lumires.Infrastructure\lumires.Infrastructure.csproj", "{916CE9E5-AB96-4D58-81B9-25595E2FA87D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Contracts", "lumires.Contracts\lumires.Contracts.csproj", "{8ECC09A8-95E7-421A-8770-E8EA62B1B451}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Core", "lumires.Core\lumires.Core.csproj", "{8ECC09A8-95E7-421A-8770-E8EA62B1B451}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Domain", "lumires.Domain\lumires.Domain.csproj", "{E6296608-2493-4303-9FF4-DA2C022EEF8F}"
 EndProject
