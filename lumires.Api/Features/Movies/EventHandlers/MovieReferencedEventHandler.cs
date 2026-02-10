@@ -80,7 +80,7 @@ internal sealed partial class MovieReferencedEventHandler(
 
         await using var scope = scopeFactory.CreateAsyncScope();
 
-        var db = scope.ServiceProvider
+        await using var db = scope.ServiceProvider
             .GetRequiredService<IAppDbContext>();
         
         try
