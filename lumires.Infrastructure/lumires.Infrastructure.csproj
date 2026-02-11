@@ -6,11 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Infrastructure</RootNamespace>
         <OutputType>Library</OutputType>
-        <UserSecretsId>bd3dae77-4e34-4362-bb97-77cf0c9a1041</UserSecretsId>
+        <UserSecretsId>bd3dae77-4e34-4362-bb97-77cf0c9a1042</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
         <PackageReference Include="BetterStack.Logs.Serilog" Version="1.2.0"/>
         <PackageReference Include="FastEndpoints.Messaging.Core" Version="7.2.0-beta.12" />
         <PackageReference Include="FluentEmail.Core" Version="3.0.2"/>

@@ -36,16 +36,13 @@ public static class ApiRegistration
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = OpenApiSecurityApiKeyLocation.Header,
-                    Description = "Paste your Supabase JWT access token here"
+                    Description = "Paste your JWT access token here"
                 });
             };
 
             o.ShortSchemaNames = true;
         });
-
-        builder.Services.AddHealthChecks()
-            .AddNpgSql(builder.Configuration.GetConnectionString("supabaseDB")!);
-        // .AddRedis(builder.Configuration.GetConnectionString("cache")!);
+        
 
         var supportedCultures = new[] { "uk-UA", "en-US" };
         builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -100,30 +97,12 @@ public static class ApiRegistration
                     .WithTitle("Lumires API")
                     .AddPreferredSecuritySchemes("Bearer");
             });
-            app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
             app.Lifetime.ApplicationStarted.Register(() => OpenScalar(app));
         }
 
         return app;
     }
-
-    private static void OpenLogtailDashboard()
-    {
-        try
-        {
-            const string url = "https://telemetry.betterstack.com/team/t498261/tail?s=1694678";
-            var psi = new ProcessStartInfo
-            {
-                FileName = url,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
-        }
-        catch (Win32Exception ex)
-        {
-            Console.WriteLine("Failed to open Logtail URL: " + ex.Message);
-        }
-    }
+    
 
     private static IServiceCollection RegisterQueryClasses(this IServiceCollection services)
     {

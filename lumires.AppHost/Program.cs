@@ -1,7 +1,6 @@
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-
 // Database
 var db = builder.AddConnectionString("supabaseDB");
 
@@ -59,5 +58,6 @@ builder.AddProject<lumires_Composition>("composition")
     .WithEnvironment("EmailSender__FromEmail", emailFromEmail)
     .WithEnvironment("EmailSender__FromName", emailFromName)
     .WithExternalHttpEndpoints();
+
 
 builder.Build().Run();

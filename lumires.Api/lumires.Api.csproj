@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>bd3dae77-4e34-4362-bb97-77cf0c9a1041</UserSecretsId>
+        <UserSecretsId>bd3dae77-4e34-4362-bb97-77cf0c9a1043</UserSecretsId>
         <PreserveCompilationContext>true</PreserveCompilationContext>
         <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
         <AnalysisLevel>latest-all</AnalysisLevel>
@@ -16,7 +16,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0"/>
         <PackageReference Include="FastEndpoints.Security" Version="7.0.1"/>
         <PackageReference Include="FastEndpoints.Swagger" Version="7.2.0-beta.12"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
