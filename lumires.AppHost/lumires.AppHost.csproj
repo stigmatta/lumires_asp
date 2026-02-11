@@ -18,7 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\lumires.Composition\lumires.Composition.csproj"/>
+      <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" />
+      <ProjectReference Include="..\lumires.Composition\lumires.Composition.csproj" />
+      <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
