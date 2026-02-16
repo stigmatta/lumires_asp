@@ -35,10 +35,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="appsettings*.json">
-            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-        </None>
+        <Content Remove="appsettings*.json" />
+        <None Remove="appsettings*.json" />
     </ItemGroup>
 
 </Project>
