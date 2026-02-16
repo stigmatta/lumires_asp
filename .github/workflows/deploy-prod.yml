@@ -9,14 +9,12 @@ env:
   DOTNET_VERSION: 8.0.x
   ASPNETCORE_ENVIRONMENT: Production
   
+  TMDB__ApiKey: ${{ secrets.TMDB__APIKEY }}
+  TMDB__BearerToken: ${{ secrets.TMDB__BEARERTOKEN }}
+  WATCHMODE__ApiKey: ${{ secrets.WATCHMODE__APIKEY }}
+  RESEND__ApiKey: ${{ secrets.RESEND__APIKEY }}
   CONNECTIONSTRINGS__SUPABASEDB: ${{ secrets.CONNECTIONSTRINGS__SUPABASEDB }}
-  LOGTAIL__APIKEY: ${{ secrets.LOGTAIL__APIKEY }}
-  
-  TMDB__APIKEY: ${{ secrets.TMDB__APIKEY }}
-  TMDB__BEARERTOKEN: ${{ secrets.TMDB__BEARERTOKEN }}
-  
-  RESEND__APIKEY: ${{ secrets.RESEND__APIKEY }}
-  WATCHMODE__APIKEY: ${{ secrets.WATCHMODE__APIKEY }} 
+  LOGTAIL__ApiKey: ${{ secrets.LOGTAIL__APIKEY }}
 
 
 jobs:
@@ -39,12 +37,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish ./src/lumires_Composition/lumires_Composition.csproj -c Release -o ./publish
+        run: dotnet publish ./lumires.Composition/lumires.Composition.csproj -c Release -o ./publish
 
-      # Якщо ти використовуєш Aspire orchestration
       - name: Deploy via Aspire
         run: |
-          dotnet run --project ./src/lumires.AppHost \
+          dotnet run --project ./lumires.AppHost \
             --configuration Release \
             -- \
             --environment Production
