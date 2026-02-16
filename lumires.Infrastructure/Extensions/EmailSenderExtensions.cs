@@ -2,6 +2,9 @@
 using FluentEmail.Core.Interfaces;
 using Infrastructure.Options;
 using Infrastructure.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Resend;
 using Resend.FluentEmail;
 

@@ -1,5 +1,8 @@
 ﻿using System.Globalization;
 using Infrastructure.Options;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
