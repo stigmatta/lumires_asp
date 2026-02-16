@@ -18,9 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" />
+      <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" IsAspireProjectResource="false" />
       <ProjectReference Include="..\lumires.Composition\lumires.Composition.csproj" />
-      <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj" />
+      <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj" IsAspireProjectResource="false" />
     </ItemGroup>
 
 </Project>

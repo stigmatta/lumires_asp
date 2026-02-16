@@ -11,6 +11,8 @@
     <ItemGroup>
         <ProjectReference Include="..\lumires.Api\lumires.Api.csproj"/>
         <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj"/>
+        <None Update="..\**\appsettings*.json" CopyToOutputDirectory="Never" />
+
     </ItemGroup>
 
 </Project>
