@@ -37,11 +37,8 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish ./lumires.Composition/lumires.Composition.csproj -c Release -o ./publish
+        run: dotnet publish ./lumires.Composition/lumires.Composition.csproj \
+          -c Release \
+          -o ./publish \
+          --no-build
 
-      - name: Deploy via Aspire
-        run: |
-          dotnet run --project ./lumires.AppHost \
-            --configuration Release \
-            -- \
-            --environment Production
