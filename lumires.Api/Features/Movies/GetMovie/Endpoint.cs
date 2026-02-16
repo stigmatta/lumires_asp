@@ -25,7 +25,6 @@ internal sealed record Response(
     LocalizationResponse? Localization
 );
 
-
 internal sealed class Endpoint(
     IExternalMovieService externalMovieService,
     ICurrentUserService currentUserService,
@@ -38,7 +37,7 @@ internal sealed class Endpoint(
         Get("/movies/get/{id:int}");
         AllowAnonymous();
     }
-    
+
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
@@ -54,24 +53,24 @@ internal sealed class Endpoint(
                 if (existingMovie is not null)
                     return existingMovie;
 
-                var result = await externalMovieService.GetMovieDetailsAsync(req.Id, lang, ct);
+                var externalMovie = await externalMovieService.GetMovieDetailsAsync(req.Id, lang, ct);
 
-                if (!result.IsSuccess)
+                if (!externalMovie.IsSuccess)
                 {
-                    failureStatus = result.Status;
+                    failureStatus = externalMovie.Status;
                     return null;
                 }
 
-                var importedMovie = result.Value;
+                var importedMovie = externalMovie.Value;
                 var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
                 await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
-                
-                var localizationResponse = new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview);
+
+                LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
                 return new Response(
                     importedMovie.ExternalId,
                     importedMovie.ReleaseDate.Year,
                     localizationResponse
-                    );
+                );
             },
             options => options.SetDuration(CacheDuration.Medium), ct);
 

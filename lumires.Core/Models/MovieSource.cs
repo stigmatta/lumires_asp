@@ -1,8 +1,10 @@
-﻿namespace Core.Models;
+﻿using JetBrains.Annotations;
 
-//TDOO this dto belongs only to the one endpoint. when GetMovieSources slice will be created - remove
+namespace Core.Models;
+
+[UsedImplicitly]
 public record MovieSource(
-    int TmdbId,
+    int ExternalId,
     string ProviderName,
     string Type,
     Uri Url,

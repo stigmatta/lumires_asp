@@ -8,6 +8,7 @@ public sealed record TmdbMovieResponse(
     string Title,
     string? Overview,
     string? PosterPath,
+    string? BackdropPath,
     DateTime ReleaseDate,
     VideoResponse? Videos
 );

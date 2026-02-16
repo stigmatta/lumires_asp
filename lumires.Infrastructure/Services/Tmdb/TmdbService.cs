@@ -52,8 +52,9 @@ public sealed class TmdbService(ITmdbApi tmdbApi) : IExternalMovieService
             tmdb.Title,
             tmdb.Overview,
             tmdb.PosterPath,
+            tmdb.BackdropPath,
             tmdb.ReleaseDate,
-            trailerKey != null ? new Uri($"https://www.youtube.com/watch?v={trailerKey}") : null
+            trailerKey
         );
     }
 }

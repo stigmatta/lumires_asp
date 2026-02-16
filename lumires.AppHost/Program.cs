@@ -57,7 +57,11 @@ builder.AddProject<lumires_Composition>("composition")
     // Email Sender
     .WithEnvironment("EmailSender__FromEmail", emailFromEmail)
     .WithEnvironment("EmailSender__FromName", emailFromName)
+
+    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Production")
+
     .WithExternalHttpEndpoints();
+    
 
 
 builder.Build().Run();

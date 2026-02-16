@@ -8,6 +8,7 @@ public record ExternalMovie(
     string Title,
     string? Overview,
     string? PosterPath,
+    string? BackdropPath,
     DateTime ReleaseDate,
-    Uri? TrailerUrl
+    string? TrailerUrl
 );

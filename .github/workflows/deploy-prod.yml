@@ -1,0 +1,50 @@
+﻿name: Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  DOTNET_VERSION: 8.0.x
+  ASPNETCORE_ENVIRONMENT: Production
+  
+  CONNECTIONSTRINGS__SUPABASEDB: ${{ secrets.CONNECTIONSTRINGS__SUPABASEDB }}
+  LOGTAIL__APIKEY: ${{ secrets.LOGTAIL__APIKEY }}
+  
+  TMDB__APIKEY: ${{ secrets.TMDB__APIKEY }}
+  TMDB__BEARERTOKEN: ${{ secrets.TMDB__BEARERTOKEN }}
+  
+  RESEND__APIKEY: ${{ secrets.RESEND__APIKEY }}
+  WATCHMODE__APIKEY: ${{ secrets.WATCHMODE__APIKEY }} 
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ./src/lumires_Composition/lumires_Composition.csproj -c Release -o ./publish
+
+      # Якщо ти використовуєш Aspire orchestration
+      - name: Deploy via Aspire
+        run: |
+          dotnet run --project ./src/lumires.AppHost \
+            --configuration Release \
+            -- \
+            --environment Production
