@@ -13,7 +13,8 @@ public record InvalidateMovieCacheRequest
     public int MovieId { get; set; }
 }
 
-public class InvalidateMovieCacheEndpoint(IFusionCache cache, ICurrentUserService userService) : Endpoint<InvalidateMovieCacheRequest>
+public class InvalidateMovieCacheEndpoint(IFusionCache cache, ICurrentUserService userService)
+    : Endpoint<InvalidateMovieCacheRequest>
 {
     public override void Configure()
     {
@@ -26,7 +27,7 @@ public class InvalidateMovieCacheEndpoint(IFusionCache cache, ICurrentUserServic
         Debug.Assert(req != null, nameof(req) + " != null");
 
         var key = CacheKeys.MovieKey(req.MovieId, userService.LangCulture);
-        
+
         await cache.RemoveAsync(key, token: ct);
 
         await Send.NoContentAsync(ct);

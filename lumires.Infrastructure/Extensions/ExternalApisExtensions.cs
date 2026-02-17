@@ -4,8 +4,6 @@ using Core.Abstractions.Services;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
 using Infrastructure.Services.Watchmode;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
 using Refit;

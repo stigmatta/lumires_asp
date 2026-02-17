@@ -2,7 +2,13 @@
 
 public static class CacheKeys
 {
-    public static string MovieKey(int id, string lang) => $"movie:{id}:{lang}";
-    public static string MovieSources(int id, string region) => $"sources:{id}:{region}";
+    public static string MovieKey(int id, string lang)
+    {
+        return $"movie:{id}:{lang}";
+    }
 
+    public static string MovieSources(int id, string region)
+    {
+        return $"sources:{id}:{region}";
+    }
 }

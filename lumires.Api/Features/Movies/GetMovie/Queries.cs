@@ -20,13 +20,13 @@ internal sealed class Queries(IAppDbContext db) : IQuery
                 m.Year,
                 m.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
-                    .OrderByDescending(l => l.LanguageCode == lang) 
+                    .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => new LocalizationResponse(
                         l.LanguageCode,
                         l.Title,
                         l.Description
                     ))
-                    .FirstOrDefault() 
+                    .FirstOrDefault()
             ))
             .SingleOrDefaultAsync(ct);
     }

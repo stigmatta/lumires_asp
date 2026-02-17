@@ -22,7 +22,7 @@ namespace Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("lumires.Domain.Entities.Movie", b =>
+            modelBuilder.Entity("Domain.Entities.Movie", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -41,7 +41,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieLocalization", b =>
+            modelBuilder.Entity("Domain.Entities.MovieLocalization", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -71,7 +71,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("MovieLocalizations");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.UserNotification", b =>
+            modelBuilder.Entity("Domain.Entities.UserNotification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -107,9 +107,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("UserNotifications");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieLocalization", b =>
+            modelBuilder.Entity("Domain.Entities.MovieLocalization", b =>
                 {
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
+                    b.HasOne("Domain.Entities.Movie", "Movie")
                         .WithMany("Localizations")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -118,7 +118,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.Movie", b =>
+            modelBuilder.Entity("Domain.Entities.Movie", b =>
                 {
                     b.Navigation("Localizations");
                 });

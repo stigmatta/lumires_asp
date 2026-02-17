@@ -1,10 +1,9 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Core.Abstractions.Data;
 
-public interface IAppDbContext: IDisposable, IAsyncDisposable
+public interface IAppDbContext : IDisposable, IAsyncDisposable
 {
     DbSet<Movie> Movies { get; }
     DbSet<MovieLocalization> MovieLocalizations { get; }

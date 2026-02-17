@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations;
 
-internal sealed class MovieLocalizationConfiguration: IEntityTypeConfiguration<MovieLocalization>
+internal sealed class MovieLocalizationConfiguration : IEntityTypeConfiguration<MovieLocalization>
 {
     public void Configure(EntityTypeBuilder<MovieLocalization> builder)
     {
@@ -13,11 +13,11 @@ internal sealed class MovieLocalizationConfiguration: IEntityTypeConfiguration<M
         builder.Property(m => m.Description).IsRequired().HasMaxLength(500);
         builder.Property(m => m.Title).IsRequired().HasMaxLength(50);
         builder.Property(m => m.LanguageCode).IsRequired().HasMaxLength(10);
-        builder.HasOne(m => m.Movie)             
-            .WithMany(m => m.Localizations)      
-            .HasForeignKey(m => m.MovieId)       
+        builder.HasOne(m => m.Movie)
+            .WithMany(m => m.Localizations)
+            .HasForeignKey(m => m.MovieId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         // builder.Property(e => e.SearchVector)
         //     .HasColumnType("tsvector")
         //     .HasComputedColumnSql(

@@ -19,11 +19,11 @@ internal sealed class Summary : Summary<Endpoint>
                       - **Accept-Language** — Preferred language (e.g., `uk-UA`, `en-US`)
                       """;
 
-        ExampleRequest = new Request(550); 
+        ExampleRequest = new Request(550);
         Response(200, "Movie details retrieved successfully.", example: new Response(
-            Id: 550,
-            Year: 1999,
-            Localization: new LocalizationResponse("en", "Fight Club", "An insomniac office worker...")
+            550,
+            1999,
+            new LocalizationResponse("en", "Fight Club", "An insomniac office worker...")
         ));
         Response(404);
         Response(500);

@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="Ardalis.Result" Version="10.1.0"/>
-        <PackageReference Include="FastEndpoints.Messaging.Core" Version="7.2.0-beta.12" />
+        <PackageReference Include="FastEndpoints.Messaging.Core" Version="7.2.0-beta.12"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
     </ItemGroup>
 

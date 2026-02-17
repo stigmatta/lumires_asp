@@ -82,7 +82,7 @@ internal sealed partial class MovieReferencedEventHandler(
 
         await using var db = scope.ServiceProvider
             .GetRequiredService<IAppDbContext>();
-        
+
         try
         {
             db.Movies.Add(movie);
@@ -91,13 +91,12 @@ internal sealed partial class MovieReferencedEventHandler(
         catch (DbUpdateException)
         {
             LogMovieAlreadyExists(logger, command.ExternalId);
-
         }
         catch (Exception ex)
         {
             LogUnexpectedError(logger, ex, command.ExternalId);
 
-            throw; 
+            throw;
         }
     }
 

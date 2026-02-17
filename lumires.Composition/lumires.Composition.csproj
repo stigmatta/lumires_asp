@@ -11,9 +11,16 @@
     <ItemGroup>
         <ProjectReference Include="..\lumires.Api\lumires.Api.csproj"/>
         <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj"/>
-        <None Update="..\lumires.Api\appsettings*.json" CopyToOutputDirectory="Never" />
-        <None Update="..\lumires.Infrastructure\appsettings*.json" CopyToOutputDirectory="Never" />
-        <None Update="..\lumires.Core\appsettings*.json" CopyToOutputDirectory="Never" />
+        <None Update="..\lumires.Api\appsettings*.json" CopyToOutputDirectory="Never"/>
+        <None Update="..\lumires.Infrastructure\appsettings*.json" CopyToOutputDirectory="Never"/>
+        <None Update="..\lumires.Core\appsettings*.json" CopyToOutputDirectory="Never"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

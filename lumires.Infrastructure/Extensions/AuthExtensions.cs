@@ -6,12 +6,8 @@ using Core.Resources;
 using Infrastructure.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Extensions;
@@ -58,7 +54,7 @@ internal static partial class AuthExtensions
                         if (string.IsNullOrEmpty(appMetadata)) return Task.CompletedTask;
 
                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                            .CreateLogger("Auth.JwtBearer");  
+                            .CreateLogger("Auth.JwtBearer");
                         try
                         {
                             using var db = JsonDocument.Parse(appMetadata);

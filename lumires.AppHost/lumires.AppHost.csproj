@@ -15,12 +15,16 @@
     <ItemGroup>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0"/>
         <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" IsAspireProjectResource="false" />
-      <ProjectReference Include="..\lumires.Composition\lumires.Composition.csproj" />
-      <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" IsAspireProjectResource="false"/>
+        <ProjectReference Include="..\lumires.Composition\lumires.Composition.csproj"/>
+        <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj" IsAspireProjectResource="false"/>
     </ItemGroup>
 
 </Project>

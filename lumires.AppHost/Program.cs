@@ -1,40 +1,42 @@
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-// Database
-var db = builder.AddConnectionString("supabaseDB");
 
-// Parameters
-var supabaseUrl = builder.AddParameter("supabase-url");
+
+var db = builder.AddConnectionString("db");
+
+var supabaseUrl = builder.AddParameter("supabase-url", true);
 var signalRUrl = builder.AddParameter("signalr-url");
 
-// TMDB Configuration
-var tmdbBaseUrl = builder.Configuration["TMDB:BaseUrl"] 
-    ?? throw new InvalidOperationException("TMDB:BaseUrl is required");
-var tmdbImageBaseUrl = builder.Configuration["TMDB:ImageBaseUrl"] 
-    ?? throw new InvalidOperationException("TMDB:ImageBaseUrl is required");
-var tmdbApiKey = builder.Configuration["TMDB:ApiKey"] 
-    ?? throw new InvalidOperationException("TMDB:ApiKey is required");
-var tmdbBearer = builder.Configuration["TMDB:BearerToken"] 
-    ?? throw new InvalidOperationException("TMDB:BearerToken is required");
+// --- TMDB Configuration ---
+var tmdbBaseUrl = builder.Configuration["TMDB:BaseUrl"]
+                  ?? "https://api.themoviedb.org/3/";
 
-// Watchmode Configuration
-var watchmodeBaseUrl = builder.Configuration["Watchmode:BaseUrl"] 
-    ?? throw new InvalidOperationException("Watchmode:BaseUrl is required");
-var watchmodeApiKey = builder.Configuration["Watchmode:ApiKey"] 
-    ?? throw new InvalidOperationException("Watchmode:ApiKey is required");
+var tmdbImageBaseUrl = builder.Configuration["TMDB:ImageBaseUrl"]
+                       ?? "https://image.tmdb.org/t/p/";
 
-// Cache Settings
+var tmdbApiKey = builder.Configuration["TMDB:ApiKey"]
+                 ?? throw new InvalidOperationException("TMDB__APIKEY is missing in .env");
+
+var tmdbBearer = builder.Configuration["TMDB:BearerToken"]
+                 ?? throw new InvalidOperationException("TMDB__BEARERTOKEN is missing in .env");
+
+var watchmodeBaseUrl = builder.Configuration["Watchmode:BaseUrl"]
+                       ?? "https://api.watchmode.com/v1/";
+
+var watchmodeApiKey = builder.Configuration["Watchmode:ApiKey"]
+                      ?? throw new InvalidOperationException("WATCHMODE__APIKEY is missing in .env");
+
+var resendApiKey = builder.Configuration["Resend:ApiKey"]
+                   ?? throw new InvalidOperationException("RESEND__APIKEY is missing in .env");
+
 var cacheMemoryDuration = builder.Configuration["CacheSettings:MemoryDurationMin"] ?? "5";
 var cacheDistributedDuration = builder.Configuration["CacheSettings:DistributedDurationMin"] ?? "20";
 var cacheFailSafeMaxDuration = builder.Configuration["CacheSettings:FailSafeMaxDurationHours"] ?? "2";
 var cacheFactoryTimeout = builder.Configuration["CacheSettings:FactoryTimeoutMs"] ?? "500";
 
-// Email Settings
-var emailFromEmail = builder.Configuration["EmailSender:FromEmail"] 
-    ?? throw new InvalidOperationException("EmailSender:FromEmail is required");
-var emailFromName = builder.Configuration["EmailSender:FromName"] 
-    ?? throw new InvalidOperationException("EmailSender:FromName is required");
+var emailFromEmail = builder.Configuration["EmailSender:FromEmail"] ?? "no-reply@yourdomain.com";
+var emailFromName = builder.Configuration["EmailSender:FromName"] ?? "Lumires App";
 
 builder.AddProject<lumires_Composition>("composition")
     .WithReference(db)
@@ -57,11 +59,8 @@ builder.AddProject<lumires_Composition>("composition")
     // Email Sender
     .WithEnvironment("EmailSender__FromEmail", emailFromEmail)
     .WithEnvironment("EmailSender__FromName", emailFromName)
-
-    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Production")
-
+    // Resend
+    .WithEnvironment("Resend__ApiKey", resendApiKey)
     .WithExternalHttpEndpoints();
-    
-
 
 builder.Build().Run();

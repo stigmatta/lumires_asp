@@ -24,7 +24,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi) : IExternalMovieService
         if (!response.IsSuccessStatusCode || response.Content == null) return Result.Error();
 
         var result = MapToDomain(response.Content);
-        
+
         const string defLang = LocalizationConstants.DefaultCulture;
 
         if ((!string.IsNullOrWhiteSpace(result.Overview) && result.TrailerUrl != null) || lang == defLang)

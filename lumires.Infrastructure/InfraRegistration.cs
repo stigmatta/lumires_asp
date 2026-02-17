@@ -4,11 +4,7 @@ using Core.Abstractions.Services;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure;
 
@@ -20,21 +16,26 @@ public static class InfraRegistration
         var services = builder.Services;
         var config = builder.Configuration;
         var env = builder.Environment;
-        
-        builder.Services.AddScoped<IAppDbContext>(provider => 
+
+
+        var dbString = builder.Configuration.GetConnectionString("db");
+
+        builder.Services.AddScoped<IAppDbContext>(provider =>
             provider.GetRequiredService<AppDbContext>());
 
-        builder.AddNpgsqlDbContext<AppDbContext>("supabaseDB", null, options =>
-        {
-            options.UseNpgsql(npgsqlOptions =>
-                npgsqlOptions.MigrationsAssembly("lumires.Infrastructure"));
-        });
+        builder.AddNpgsqlDbContext<AppDbContext>("db", settings => { settings.ConnectionString = dbString; },
+            options =>
+            {
+                options.UseNpgsql(npgsqlOptions =>
+                    npgsqlOptions.MigrationsAssembly("lumires.Infrastructure"));
+            });
         builder.Services.AddHealthChecks()
-            .AddNpgSql(builder.Configuration.GetConnectionString("supabaseDB")!);
+            .AddNpgSql(dbString
+                       ?? throw new InvalidOperationException("db connection string not found"));
 
         // Auth
         services.AddCustomAuth(config);
-        
+
         //Logging
         builder.AddCustomLogging();
 
@@ -63,16 +64,13 @@ public static class InfraRegistration
         this WebApplication app)
     {
         app.MapCustomHubs(app.Configuration);
-        
-        if (app.Environment.IsDevelopment())
-        {
-            app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
-        }
+
+        if (app.Environment.IsDevelopment()) app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
 
         return app;
     }
-    
-    
+
+
     private static void OpenLogtailDashboard()
     {
         try

@@ -41,7 +41,7 @@ public static class ApiRegistration
 
             o.ShortSchemaNames = true;
         });
-        
+
 
         var supportedCultures = new[] { "uk-UA", "en-US" };
         builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -85,23 +85,20 @@ public static class ApiRegistration
         });
 
         Debug.Assert(app != null, nameof(app) + " != null");
-        
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwaggerGen(options => { options.Path = "/openapi/{documentName}.json"; });
 
-            app.MapScalarApiReference(options =>
-            {
-                options.ForceDarkMode()
-                    .WithTitle("Lumires API")
-                    .AddPreferredSecuritySchemes("Bearer");
-            });
-            app.Lifetime.ApplicationStarted.Register(() => OpenScalar(app));
-        }
+        app.UseSwaggerGen(options => { options.Path = "/openapi/{documentName}.json"; });
+
+        app.MapScalarApiReference(options =>
+        {
+            options.ForceDarkMode()
+                .WithTitle("Lumires API")
+                .AddPreferredSecuritySchemes("Bearer");
+        });
+        app.Lifetime.ApplicationStarted.Register(() => OpenScalar(app));
 
         return app;
     }
-    
+
 
     private static IServiceCollection RegisterQueryClasses(this IServiceCollection services)
     {
