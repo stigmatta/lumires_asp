@@ -14,7 +14,8 @@ internal static class EmailSenderExtensions
     {
         var emailConfig = configuration
             .GetSection(EmailSenderConfig.Section)
-            .Get<EmailSenderConfig>() ?? new EmailSenderConfig();
+            .Get<EmailSenderConfig>() ??
+                          throw new InvalidOperationException("Email sender configuration is missing.");
 
         var builder = services
             .AddFluentEmail(emailConfig.FromEmail, emailConfig.FromName)

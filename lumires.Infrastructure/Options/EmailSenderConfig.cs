@@ -4,6 +4,6 @@ public class EmailSenderConfig
 {
     public const string Section = "EmailSender";
 
-    public string FromEmail { get; init; } = string.Empty;
-    public string FromName { get; init; } = string.Empty;
+    public required string FromEmail { get; init; }
+    public required string FromName { get; init; }
 }

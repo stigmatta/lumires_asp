@@ -7,7 +7,7 @@ public record ExternalMovie(
     int ExternalId,
     string Title,
     string? Overview,
-    string? PosterPath,
+    string PosterPath,
     string? BackdropPath,
     DateTime ReleaseDate,
     string? TrailerUrl

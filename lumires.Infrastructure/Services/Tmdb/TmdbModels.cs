@@ -7,7 +7,7 @@ public sealed record TmdbMovieResponse(
     int Id,
     string Title,
     string? Overview,
-    string? PosterPath,
+    string PosterPath,
     string? BackdropPath,
     DateTime ReleaseDate,
     VideoResponse? Videos

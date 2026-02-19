@@ -9,7 +9,7 @@ using ZiggyCreatures.Caching.Fusion;
 namespace Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
-internal sealed record Request(int Id);
+internal sealed record Query(int Id);
 
 [UsedImplicitly]
 internal sealed record LocalizationResponse(
@@ -22,6 +22,9 @@ internal sealed record LocalizationResponse(
 internal sealed record Response(
     int Id,
     int Year,
+    string? TrailerUrl,
+    string PosterPath,
+    string? BackdropPath,
     LocalizationResponse? Localization
 );
 
@@ -29,8 +32,8 @@ internal sealed class Endpoint(
     IExternalMovieService externalMovieService,
     ICurrentUserService currentUserService,
     IFusionCache cache,
-    Queries queries)
-    : Endpoint<Request, Response>
+    DbQueries dbQueries)
+    : Endpoint<Query, Response>
 {
     public override void Configure()
     {
@@ -38,7 +41,7 @@ internal sealed class Endpoint(
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(Request req, CancellationToken ct)
+    public override async Task HandleAsync(Query req, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
         var cacheKey = CacheKeys.MovieKey(req.Id, currentUserService.LangCulture);
@@ -49,7 +52,7 @@ internal sealed class Endpoint(
             cacheKey,
             async _ =>
             {
-                var existingMovie = await queries.GetMovieByIdAsync(req.Id, lang, ct);
+                var existingMovie = await dbQueries.GetMovieByIdAsync(req.Id, lang, ct);
                 if (existingMovie is not null)
                     return existingMovie;
 
@@ -67,12 +70,17 @@ internal sealed class Endpoint(
 
                 LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
                 return new Response(
-                    importedMovie.ExternalId,
-                    importedMovie.ReleaseDate.Year,
-                    localizationResponse
+                    Id: importedMovie.ExternalId,
+                    Year: importedMovie.ReleaseDate.Year,
+                    TrailerUrl: importedMovie.TrailerUrl,
+                    PosterPath: importedMovie.PosterPath,
+                    BackdropPath: importedMovie.BackdropPath,
+                    Localization: localizationResponse
                 );
             },
-            options => options.SetDuration(CacheDuration.Medium), ct);
+            options =>
+                options.SetDuration(CacheDuration.Medium)
+                    .IsFailSafeEnabled = true, ct);
 
         if (movie is null)
         {

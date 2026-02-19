@@ -10,7 +10,7 @@ internal sealed class MovieLocalizationConfiguration : IEntityTypeConfiguration<
     {
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).ValueGeneratedNever();
-        builder.Property(m => m.Description).IsRequired().HasMaxLength(500);
+        builder.Property(m => m.Description).IsRequired().HasMaxLength(2000);
         builder.Property(m => m.Title).IsRequired().HasMaxLength(50);
         builder.Property(m => m.LanguageCode).IsRequired().HasMaxLength(10);
         builder.HasOne(m => m.Movie)

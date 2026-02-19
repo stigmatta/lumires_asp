@@ -14,8 +14,10 @@ internal static class LoggerExtensions
         var configuration = builder.Configuration;
 
         var logtailConfig = configuration
-            .GetSection(LogtailConfig.SectionName)
-            .Get<LogtailConfig>() ?? new LogtailConfig();
+                                .GetRequiredSection(LogtailConfig.SectionName)
+                                .Get<LogtailConfig>()
+                            ?? throw new InvalidOperationException("Logtail configuration is missing.");
+
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()

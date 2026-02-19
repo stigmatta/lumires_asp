@@ -21,22 +21,34 @@ var tmdbApiKey = builder.Configuration["TMDB:ApiKey"]
 var tmdbBearer = builder.Configuration["TMDB:BearerToken"]
                  ?? throw new InvalidOperationException("TMDB__BEARERTOKEN is missing in .env");
 
+// Watchmode
+
 var watchmodeBaseUrl = builder.Configuration["Watchmode:BaseUrl"]
                        ?? "https://api.watchmode.com/v1/";
 
 var watchmodeApiKey = builder.Configuration["Watchmode:ApiKey"]
                       ?? throw new InvalidOperationException("WATCHMODE__APIKEY is missing in .env");
 
+// Resend
+
 var resendApiKey = builder.Configuration["Resend:ApiKey"]
                    ?? throw new InvalidOperationException("RESEND__APIKEY is missing in .env");
 
+var emailFromEmail = builder.Configuration["EmailSender:FromEmail"] ?? "no-reply@yourdomain.com";
+var emailFromName = builder.Configuration["EmailSender:FromName"] ?? "Lumires App";
+
+//Cache
+
 var cacheMemoryDuration = builder.Configuration["CacheSettings:MemoryDurationMin"] ?? "5";
-var cacheDistributedDuration = builder.Configuration["CacheSettings:DistributedDurationMin"] ?? "20";
 var cacheFailSafeMaxDuration = builder.Configuration["CacheSettings:FailSafeMaxDurationHours"] ?? "2";
 var cacheFactoryTimeout = builder.Configuration["CacheSettings:FactoryTimeoutMs"] ?? "500";
 
-var emailFromEmail = builder.Configuration["EmailSender:FromEmail"] ?? "no-reply@yourdomain.com";
-var emailFromName = builder.Configuration["EmailSender:FromName"] ?? "Lumires App";
+//Logtail
+var logtailUrl = builder.Configuration["Logtail:BaseUrl"] ?? "https://s1694678.eu-nbg-2.betterstackdata.com";
+var logtailApiKey = builder.Configuration["Logtail:ApiKey"]
+    ?? throw new InvalidOperationException("Logtail__APIKEY is missing in .env");
+
+
 
 builder.AddProject<lumires_Composition>("composition")
     .WithReference(db)
@@ -53,7 +65,6 @@ builder.AddProject<lumires_Composition>("composition")
     .WithEnvironment("Watchmode__ApiKey", watchmodeApiKey)
     // Cache Settings
     .WithEnvironment("CacheSettings__MemoryDurationMin", cacheMemoryDuration)
-    .WithEnvironment("CacheSettings__DistributedDurationMin", cacheDistributedDuration)
     .WithEnvironment("CacheSettings__FailSafeMaxDurationHours", cacheFailSafeMaxDuration)
     .WithEnvironment("CacheSettings__FactoryTimeoutMs", cacheFactoryTimeout)
     // Email Sender
@@ -61,6 +72,9 @@ builder.AddProject<lumires_Composition>("composition")
     .WithEnvironment("EmailSender__FromName", emailFromName)
     // Resend
     .WithEnvironment("Resend__ApiKey", resendApiKey)
+    //Logtail
+    .WithEnvironment("Logtail__ApiKey", logtailApiKey)
+    .WithEnvironment("Logtail__BaseUrl", logtailUrl)
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

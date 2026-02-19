@@ -11,7 +11,8 @@ internal static class CacheExtensions
     {
         var fusionConfig = configuration
             .GetSection(FusionCacheConfig.Section)
-            .Get<FusionCacheConfig>() ?? new FusionCacheConfig();
+            .Get<FusionCacheConfig>() ??
+                           throw new InvalidOperationException("Fusion cache configuration is missing.");
 
         var redisConnectionString = configuration.GetConnectionString("cache");
 

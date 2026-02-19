@@ -58,7 +58,10 @@ internal sealed partial class MovieReferencedEventHandler(
         var movie = new Movie
         {
             ExternalId = command.ExternalId,
-            Year = defaultData.ReleaseDate.Year
+            Year = defaultData.ReleaseDate.Year,
+            PosterPath = defaultData.PosterPath,
+            BackdropPath = defaultData.BackdropPath,
+            TrailerUrl = defaultData.TrailerUrl
         };
 
         foreach (var (culture, data) in successfulResults)

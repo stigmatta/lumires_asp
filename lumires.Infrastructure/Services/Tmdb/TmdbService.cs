@@ -11,9 +11,9 @@ public sealed class TmdbService(ITmdbApi tmdbApi) : IExternalMovieService
     public async Task<Result<ExternalMovie>> GetMovieDetailsAsync(int movieId, string lang,
         CancellationToken ct = default)
     {
-        var response = await tmdbApi.GetMovieAsync(movieId, lang, ct);
+        var tmdbResponse = await tmdbApi.GetMovieAsync(movieId, lang, ct);
 
-        switch (response.StatusCode)
+        switch (tmdbResponse.StatusCode)
         {
             case HttpStatusCode.Unauthorized:
                 return Result.Unauthorized();
@@ -21,30 +21,30 @@ public sealed class TmdbService(ITmdbApi tmdbApi) : IExternalMovieService
                 return Result.NotFound();
         }
 
-        if (!response.IsSuccessStatusCode || response.Content == null) return Result.Error();
+        if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content == null) return Result.Error();
 
-        var result = MapToDomain(response.Content);
+        var externalMovie = MapToDomain(tmdbResponse.Content);
 
         const string defLang = LocalizationConstants.DefaultCulture;
 
-        if ((!string.IsNullOrWhiteSpace(result.Overview) && result.TrailerUrl != null) || lang == defLang)
-            return result;
+        if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == defLang)
+            return externalMovie;
 
         var fallbackResponse = await tmdbApi.GetMovieAsync(movieId, defLang, ct);
-        if (fallbackResponse.Content == null) return result;
+        if (fallbackResponse.Content == null) return externalMovie;
 
         var fallback = MapToDomain(fallbackResponse.Content);
 
-        return result with
+        return externalMovie with
         {
-            Overview = string.IsNullOrWhiteSpace(result.Overview) ? fallback.Overview : result.Overview,
-            TrailerUrl = result.TrailerUrl ?? fallback.TrailerUrl
+            Overview = string.IsNullOrWhiteSpace(externalMovie.Overview) ? fallback.Overview : externalMovie.Overview,
+            TrailerUrl = externalMovie.TrailerUrl ?? fallback.TrailerUrl
         };
     }
 
     private static ExternalMovie MapToDomain(TmdbMovieResponse tmdb)
     {
-        var trailerKey = tmdb.Videos?.Results?
+        var trailerKey = tmdb.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
 
         return new ExternalMovie(

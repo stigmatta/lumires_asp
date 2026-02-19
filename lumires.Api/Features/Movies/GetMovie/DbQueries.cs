@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
-internal sealed class Queries(IAppDbContext db) : IQuery
+internal sealed class DbQueries(IAppDbContext db) : IDbQuery
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
@@ -18,6 +18,9 @@ internal sealed class Queries(IAppDbContext db) : IQuery
             .Select(m => new Response(
                 m.ExternalId,
                 m.Year,
+                m.TrailerUrl,
+                m.PosterPath,
+                m.BackdropPath,
                 m.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                     .OrderByDescending(l => l.LanguageCode == lang)
