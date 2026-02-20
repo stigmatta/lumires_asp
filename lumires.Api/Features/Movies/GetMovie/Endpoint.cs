@@ -70,12 +70,12 @@ internal sealed class Endpoint(
 
                 LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
                 return new Response(
-                    Id: importedMovie.ExternalId,
-                    Year: importedMovie.ReleaseDate.Year,
-                    TrailerUrl: importedMovie.TrailerUrl,
-                    PosterPath: importedMovie.PosterPath,
-                    BackdropPath: importedMovie.BackdropPath,
-                    Localization: localizationResponse
+                    importedMovie.ExternalId,
+                    importedMovie.ReleaseDate.Year,
+                    importedMovie.TrailerUrl,
+                    importedMovie.PosterPath,
+                    importedMovie.BackdropPath,
+                    localizationResponse
                 );
             },
             options =>

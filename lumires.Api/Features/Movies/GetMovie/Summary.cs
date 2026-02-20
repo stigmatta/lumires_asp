@@ -21,11 +21,11 @@ internal sealed class Summary : Summary<Endpoint>
 
         ExampleRequest = new Query(550);
         Response(200, "Movie details retrieved successfully.", example: new Response(
-            Id:550,
-            Year:1999,
-            TrailerUrl:"dfeUzm6KF4g",
-            PosterPath: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
-            BackdropPath: "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg",
+            550,
+            1999,
+            "dfeUzm6KF4g",
+            "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
+            "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg",
             new LocalizationResponse("en", "Fight Club", "An insomniac office worker...")
         ));
         Response(404);

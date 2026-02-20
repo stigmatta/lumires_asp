@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Domain", "lumires.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Composition", "lumires.Composition\lumires.Composition.csproj", "{CB291EA8-A534-461F-AE1E-31FAB830B292}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lumires.Tests", "lumires.Tests\lumires.Tests.csproj", "{13EF8858-CB31-478D-BBEC-E659DFBACD86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,18 @@ Global
 		{CB291EA8-A534-461F-AE1E-31FAB830B292}.Release|x64.Build.0 = Release|Any CPU
 		{CB291EA8-A534-461F-AE1E-31FAB830B292}.Release|x86.ActiveCfg = Release|Any CPU
 		{CB291EA8-A534-461F-AE1E-31FAB830B292}.Release|x86.Build.0 = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|x64.Build.0 = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Debug|x86.Build.0 = Debug|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|x64.ActiveCfg = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|x64.Build.0 = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|x86.ActiveCfg = Release|Any CPU
+		{13EF8858-CB31-478D-BBEC-E659DFBACD86}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

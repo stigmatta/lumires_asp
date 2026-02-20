@@ -60,5 +60,11 @@
         <None Remove="appsettings*.json"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="lumires.Tests"/>
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+
+    </ItemGroup>
+
 
 </Project>

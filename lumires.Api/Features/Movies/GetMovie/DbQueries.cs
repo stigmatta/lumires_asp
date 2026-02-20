@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
-internal sealed class DbQueries(IAppDbContext db) : IDbQuery
+internal class DbQueries(IAppDbContext db) : IDbQuery
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
