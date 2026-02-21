@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MockQueryable.Moq;
 using Moq;
 using ZiggyCreatures.Caching.Fusion;
-using Endpoint = Api.Features.Movies.GetMovie.Endpoint;
 
 namespace lumires.Tests.Movies;
 

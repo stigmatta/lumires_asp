@@ -8,11 +8,15 @@ internal sealed class Summary : Summary<Endpoint>
 {
     public Summary()
     {
-        Summary = "Retrieve movie details by TMDB ID";
+        Summary = "GetMovie";
         Description = """
                       Returns movie model with localized details.
 
                       If the movie isn't in the local database, it fetches it from TMDB and triggers an import with all its localized versions.
+                      
+                      ### Route parameters
+                      
+                      - **Id** — TMDB movie identifier
 
                       ### Headers
 

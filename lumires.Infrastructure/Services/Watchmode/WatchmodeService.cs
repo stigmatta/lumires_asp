@@ -32,7 +32,7 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
 
     private async Task<int> GetWatchmodeIdAsync(int tmdbId, CancellationToken ct)
     {
-        var idMapKey = $"wm_id:{tmdbId}";
+        var idMapKey = CacheKeys.MovieSourceExternalId(tmdbId);
 
         return await cache.GetOrSetAsync(idMapKey, async token =>
             {

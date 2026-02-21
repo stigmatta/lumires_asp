@@ -37,69 +37,54 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/get/{id:int}");
+        Get("/movies/get/{Id:int}");
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(Query req, CancellationToken ct)
+    public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = CacheKeys.MovieKey(req.Id, currentUserService.LangCulture);
+        var cacheKey = CacheKeys.MovieKey(query.Id, currentUserService.LangCulture);
 
-        ResultStatus? failureStatus = null;
-
-        var movie = await cache.GetOrSetAsync<Response?>(
-            cacheKey,
-            async _ =>
-            {
-                var existingMovie = await dbQueries.GetMovieByIdAsync(req.Id, lang, ct);
-                if (existingMovie is not null)
-                    return existingMovie;
-
-                var externalMovie = await externalMovieService.GetMovieDetailsAsync(req.Id, lang, ct);
-
-                if (!externalMovie.IsSuccess)
-                {
-                    failureStatus = externalMovie.Status;
-                    return null;
-                }
-
-                var importedMovie = externalMovie.Value;
-                var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
-                await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
-
-                LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
-                return new Response(
-                    importedMovie.ExternalId,
-                    importedMovie.ReleaseDate.Year,
-                    importedMovie.TrailerUrl,
-                    importedMovie.PosterPath,
-                    importedMovie.BackdropPath,
-                    localizationResponse
-                );
-            },
-            options =>
-                options.SetDuration(CacheDuration.Medium)
-                    .IsFailSafeEnabled = true, ct);
-
+        var movie = await cache.GetOrDefaultAsync<Response>(cacheKey,  token: ct);
+        
         if (movie is null)
         {
-            await cache.RemoveAsync(cacheKey, token: ct);
+            var existingMovie = await dbQueries.GetMovieByIdAsync(query.Id, lang, ct);
+            if (existingMovie is not null)
+                Response = existingMovie;
 
-            switch (failureStatus)
+            var externalMovie = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, ct);
+
+            if (!externalMovie.IsSuccess)
             {
-                case ResultStatus.Unauthorized:
-                    await Send.UnauthorizedAsync(ct);
-                    return;
-                case ResultStatus.NotFound:
-                    await Send.NotFoundAsync(ct);
-                    return;
-                default:
-                    await Send.ErrorsAsync(500, ct);
-                    return;
+                await HttpContext.SendErrorAsync(externalMovie, ct);
+                return;
             }
+
+            var importedMovie = externalMovie.Value;
+            var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
+            await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
+
+            LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
+            Response =  new Response(
+                importedMovie.ExternalId,
+                importedMovie.ReleaseDate.Year,
+                importedMovie.TrailerUrl,
+                importedMovie.PosterPath,
+                importedMovie.BackdropPath,
+                localizationResponse
+            );
+            
+            await cache.SetAsync(
+                cacheKey,
+                Response,
+                options => options
+                    .SetDuration(CacheDuration.Medium)
+                    .SetFailSafe(true),
+                token: ct
+            );
         }
 
-        Response = movie;
     }
 }

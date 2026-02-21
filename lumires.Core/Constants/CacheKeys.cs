@@ -11,4 +11,11 @@ public static class CacheKeys
     {
         return $"sources:{id}:{region}";
     }
+
+    public static string MovieSourceExternalId(int id)
+    {
+        return $"wm_id:{id}";
+    }
+    
+    
 }
