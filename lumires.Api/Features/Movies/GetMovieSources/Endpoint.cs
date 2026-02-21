@@ -11,7 +11,7 @@ internal sealed record Query(int Id);
 [UsedImplicitly]
 internal sealed record Response(List<MovieSource> Sources);
 
-internal class Endpoint(IStreamingService streamingService)
+internal sealed class Endpoint(IStreamingService streamingService)
     : Endpoint<Query, Response>
 {
     public override void Configure()

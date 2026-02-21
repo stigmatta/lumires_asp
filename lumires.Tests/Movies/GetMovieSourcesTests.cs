@@ -13,7 +13,7 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace lumires.Tests.Movies;
 
-public class GetMovieSourcesTests
+internal sealed class GetMovieSourcesTests
 {
     private FusionCache _cache = null!;
     private Mock<IStreamingService> _streamingMock = null!;
@@ -58,37 +58,46 @@ public class GetMovieSourcesTests
     }
 
     [Test]
-    public async Task GetMovieSources_Should_Be_200_When_NotEmptyList()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task GetMovieSources_Should_Be_200_And_MapData(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
-        //Arrange
+        // Arrange
         var movieSource = new MovieSource(
-            1,
-            "Netflix",
-            "subscription",
-            new Uri("https://netflix.com"),
-            "HD",
+            id,
+            name,
+            type,
+            new Uri(url),
+            quality,
             0);
 
-        _streamingMock.Setup(s => s.GetSourcesAsync
-                (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result.Success(new List<MovieSource>
-                {
-                    movieSource
-                }
-            ));
+        var sourceList = new List<MovieSource> { movieSource };
 
-        var ep = Factory.Create<Endpoint>(
-            _streamingMock.Object);
+        _streamingMock
+            .Setup(s => s.GetSourcesAsync(It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+            .ReturnsAsync(Result.Success(sourceList));
 
-        //Act
-        await ep.HandleAsync(new Query(It.IsAny<int>()), CancellationToken.None);
+        var ep = Factory.Create<Endpoint>(_streamingMock.Object);
+
+        // Act
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
 
+        var firstResult = ep.Response.Sources.First();
+        firstResult.ProviderName.Should().Be(name);
+        firstResult.Type.Should().Be(type);
+        firstResult.Url.Should().Be(url);
+
         _streamingMock.Verify(
-            x => x.GetSourcesAsync
-                (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()),
+            x => x.GetSourcesAsync(id, It.IsAny<CancellationToken>(), It.IsAny<string>()),
             Times.Once);
     }
 
@@ -139,17 +148,25 @@ public class GetMovieSourcesTests
     }
 
     [Test]
-    public async Task GetMovieSources_Should_Return_Response_With_Sources()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task GetMovieSources_Should_Return_Response_With_Sources(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
         // Arrange
         var expectedSources = new List<MovieSource>
         {
             new(
-                1,
-                "Netflix",
-                "subscription",
-                new Uri("https://netflix.com"),
-                "HD",
+                id,
+                name,
+                type,
+                new Uri(url),
+                quality,
                 0)
         };
 
@@ -163,7 +180,7 @@ public class GetMovieSourcesTests
         var endpoint = Factory.Create<Endpoint>(_streamingMock.Object);
 
         // Act
-        await endpoint.HandleAsync(new Query(1), It.IsAny<CancellationToken>());
+        await endpoint.HandleAsync(new Query(id), It.IsAny<CancellationToken>());
 
         // Assert
         endpoint.Response.Should().NotBeNull();
@@ -175,23 +192,33 @@ public class GetMovieSourcesTests
 
 
     [Test]
-    public async Task GetMovieSources_Should_Cache_Successful_Result()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task GetMovieSources_Should_Cache_Successful_Result(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
         //Arrange
+        const int tmdbId = 1;
+
         var mockSearchResponse = new WatchmodeSearchResponse(
             new List<WatchmodeTitleResult>
             {
-                new(12345, "Test Movie", 1, "movie")
+                new(12345, "Test Movie", tmdbId, "movie")
             }
         );
 
         var mockSourcesResponse = new List<WatchmodeSourceResponse>
         {
             new(
-                "Netflix",
-                "sub",
-                new Uri("https://netflix.com"),
-                "4K",
+                name,
+                type,
+                new Uri(url),
+                quality,
                 null
             )
         };
@@ -221,8 +248,8 @@ public class GetMovieSourcesTests
         var service = new WatchmodeService(_watchmodeApi.Object, cache);
 
         //Act
-        await service.GetSourcesAsync(1, CancellationToken.None);
-        await service.GetSourcesAsync(1, CancellationToken.None);
+        await service.GetSourcesAsync(tmdbId, CancellationToken.None);
+        await service.GetSourcesAsync(tmdbId, CancellationToken.None);
 
         //Assert
         _watchmodeApi.Verify(x => x.SearchByTmdbIdAsync(
@@ -242,6 +269,7 @@ public class GetMovieSourcesTests
     public async Task GetMovie_Should_NotCache_When_NotFound()
     {
         // Arrange
+        const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
             .ReturnsAsync(Result<List<MovieSource>>.NotFound);
@@ -249,12 +277,12 @@ public class GetMovieSourcesTests
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
         // Act
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
 
         // Assert
         _streamingMock.Verify(
-            x => x.GetSourcesAsync(1, It.IsAny<CancellationToken>(), It.IsAny<string>()),
+            x => x.GetSourcesAsync(id, It.IsAny<CancellationToken>(), It.IsAny<string>()),
             Times.Exactly(2));
     }
 
@@ -262,6 +290,7 @@ public class GetMovieSourcesTests
     public async Task GetMovie_Should_NotCache_When_ExternalError()
     {
         // Arrange
+        const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
             .ReturnsAsync(Result<List<MovieSource>>.Error());
@@ -269,12 +298,12 @@ public class GetMovieSourcesTests
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
         // Act
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
 
         // Assert
         _streamingMock.Verify(
-            x => x.GetSourcesAsync(1, It.IsAny<CancellationToken>(), It.IsAny<string>()),
+            x => x.GetSourcesAsync(id, It.IsAny<CancellationToken>(), It.IsAny<string>()),
             Times.Exactly(2));
     }
 
@@ -282,6 +311,7 @@ public class GetMovieSourcesTests
     public async Task GetMovie_Should_NotCache_When_Unauthorized()
     {
         // Arrange
+        const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
             .ReturnsAsync(Result<List<MovieSource>>.Unauthorized());
@@ -289,12 +319,12 @@ public class GetMovieSourcesTests
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
         // Act
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
-        await ep.HandleAsync(new Query(1), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
 
         // Assert
         _streamingMock.Verify(
-            x => x.GetSourcesAsync(1, It.IsAny<CancellationToken>(), It.IsAny<string>()),
+            x => x.GetSourcesAsync(id, It.IsAny<CancellationToken>(), It.IsAny<string>()),
             Times.Exactly(2));
     }
 
@@ -302,6 +332,8 @@ public class GetMovieSourcesTests
     public async Task GetMovie_Should_NotCache_When_ResultZero()
     {
         //Arrange
+        const int id = 1;
+
         var mockSearchResponse = new WatchmodeSearchResponse(
             new List<WatchmodeTitleResult>()
         );
@@ -321,8 +353,8 @@ public class GetMovieSourcesTests
         var service = new WatchmodeService(_watchmodeApi.Object, cache);
 
         // Act
-        await service.GetSourcesAsync(1, CancellationToken.None);
-        await service.GetSourcesAsync(1, CancellationToken.None);
+        await service.GetSourcesAsync(id, CancellationToken.None);
+        await service.GetSourcesAsync(id, CancellationToken.None);
 
         //Assert
         _watchmodeApi.Verify(x => x.SearchByTmdbIdAsync(
@@ -339,23 +371,33 @@ public class GetMovieSourcesTests
     }
 
     [Test]
-    public async Task WatchmodeService_Should_Cache_Successful_Result()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task WatchmodeService_Should_Cache_Successful_Result(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
         //Arrange
+        const int tmdbId = 1;
+
         var mockSearchResponse = new WatchmodeSearchResponse(
             new List<WatchmodeTitleResult>
             {
-                new(12345, "Test Movie", 1, "movie")
+                new(12345, "Test Movie", tmdbId, "movie")
             }
         );
 
         var mockSourcesResponse = new List<WatchmodeSourceResponse>
         {
             new(
-                "Netflix",
-                "sub",
-                new Uri("https://netflix.com"),
-                "4K",
+                name,
+                type,
+                new Uri(url),
+                quality,
                 null
             )
         };
@@ -384,8 +426,8 @@ public class GetMovieSourcesTests
         var service = new WatchmodeService(_watchmodeApi.Object, cache);
 
         //Act
-        var result1 = await service.GetSourcesAsync(1, CancellationToken.None);
-        var result2 = await service.GetSourcesAsync(1, CancellationToken.None);
+        var result1 = await service.GetSourcesAsync(tmdbId, CancellationToken.None);
+        var result2 = await service.GetSourcesAsync(tmdbId, CancellationToken.None);
 
         //Assert
         result1.Should().BeEquivalentTo(result2);
@@ -405,7 +447,15 @@ public class GetMovieSourcesTests
 
 
     [Test]
-    public async Task GetSourcesAsync_Should_Use_Correct_Cache_Key_For_Sources()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task GetSourcesAsync_Should_Use_Correct_Cache_Key_For_Sources(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
         // Arrange
         const int tmdbId = 123;
@@ -422,10 +472,10 @@ public class GetMovieSourcesTests
         var mockSourcesResponse = new List<WatchmodeSourceResponse>
         {
             new(
-                "Netflix",
-                "sub",
-                new Uri("https://netflix.com"),
-                "4K",
+                name,
+                type,
+                new Uri(url),
+                quality,
                 null
             )
         };
@@ -461,7 +511,7 @@ public class GetMovieSourcesTests
         cachedResult.Should().NotBeNull();
         cachedResult.Should().HaveCount(1);
 
-        cachedResult[0].ProviderName.Should().Be("Netflix");
+        cachedResult[0].ProviderName.Should().Be(name);
         cachedResult[0].ExternalId.Should().Be(tmdbId);
     }
 
@@ -532,7 +582,15 @@ public class GetMovieSourcesTests
 
 
     [Test]
-    public async Task GetMovieSources_Should_Call_GetSourcesAsync_If_IdNotZero()
+    [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]
+    [Arguments(2, "Amazon Prime", "rent", "https://amazon.com", "4K")]
+    [Arguments(3, "Disney+", "subscription", "https://disney.com", "SD")]
+    public async Task GetMovieSources_Should_Call_GetSourcesAsync_If_IdNotZero(
+        int id,
+        string name,
+        string type,
+        string url,
+        string quality)
     {
         // Arrange
         const int tmdbId = 123;
@@ -548,15 +606,14 @@ public class GetMovieSourcesTests
         var mockSourcesResponse = new List<WatchmodeSourceResponse>
         {
             new(
-                "Netflix",
-                "sub",
-                new Uri("https://netflix.com"),
-                "4K",
+                name,
+                type,
+                new Uri(url),
+                quality,
                 null
             )
         };
 
-        // Setup for ANY tmdbId, not just 0
         _watchmodeApi
             .Setup(x => x.SearchByTmdbIdAsync(
                 It.IsAny<int>(),
@@ -585,7 +642,7 @@ public class GetMovieSourcesTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
-        result.Value[0].ProviderName.Should().Be("Netflix");
+        result.Value[0].ProviderName.Should().Be(name);
 
         _watchmodeApi.Verify(x => x.GetSourcesAsync(
                 watchmodeId,
