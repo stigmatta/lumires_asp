@@ -10,14 +10,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="8.8.0" />
-      <PackageReference Include="MockQueryable.Moq" Version="9.0.0" />
-      <PackageReference Include="Moq" Version="4.20.72" />
-      <PackageReference Include="TUnit" Version="1.16.4" />
+        <PackageReference Include="FluentAssertions" Version="8.8.0"/>
+        <PackageReference Include="MockQueryable.Moq" Version="9.0.0"/>
+        <PackageReference Include="Moq" Version="4.20.72"/>
+        <PackageReference Include="TUnit" Version="1.16.4"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\lumires.Api\lumires.Api.csproj" />
-      <ProjectReference Include="..\lumires.Core\lumires.Core.csproj" />
+        <ProjectReference Include="..\lumires.Api\lumires.Api.csproj"/>
+        <ProjectReference Include="..\lumires.Core\lumires.Core.csproj"/>
+        <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj"/>
     </ItemGroup>
 </Project>

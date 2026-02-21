@@ -46,8 +46,7 @@ var cacheFactoryTimeout = builder.Configuration["CacheSettings:FactoryTimeoutMs"
 //Logtail
 var logtailUrl = builder.Configuration["Logtail:BaseUrl"] ?? "https://s1694678.eu-nbg-2.betterstackdata.com";
 var logtailApiKey = builder.Configuration["Logtail:ApiKey"]
-    ?? throw new InvalidOperationException("Logtail__APIKEY is missing in .env");
-
+                    ?? throw new InvalidOperationException("Logtail__APIKEY is missing in .env");
 
 
 builder.AddProject<lumires_Composition>("composition")

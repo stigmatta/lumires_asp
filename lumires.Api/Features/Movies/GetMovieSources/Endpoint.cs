@@ -17,14 +17,20 @@ internal class Endpoint(IStreamingService streamingService)
     public override void Configure()
     {
         Get("/movies/{Id:int}/sources");
-        AllowAnonymous();
+        AllowAnonymous(); //TODO maybe make this endpoint subscription only to save limits ?
     }
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var sources = await streamingService.GetSourcesAsync(query.Id, ct);
 
-        if (sources.Count == 0)
+        if (!sources.IsSuccess)
+        {
+            await HttpContext.SendErrorAsync(sources, ct);
+            return;
+        }
+
+        if (sources.Value.Count == 0)
         {
             await Send.NotFoundAsync(ct);
             return;

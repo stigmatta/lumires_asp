@@ -24,21 +24,21 @@ internal sealed class Summary : Summary<Endpoint>
         ExampleRequest = new Query(550);
         Response(200, "Movie sources retrieved successfully.", example: new Response([
             new MovieSource(
-                ExternalId: 550,
-                ProviderName: "Netflix",
-                Type: "Subscription",
-                Url: new Uri("https://www.netflix.com/watch/550"),
-                Quality: "HD",
-                Price: 0
+                550,
+                "Netflix",
+                "Subscription",
+                new Uri("https://www.netflix.com/watch/550"),
+                "HD",
+                0
             ),
 
             new MovieSource(
-                ExternalId: 550,
-                ProviderName: "Amazon Prime",
-                Type: "Rental",
-                Url: new Uri("https://www.amazon.com/dp/B08XYZ"),
-                Quality: "HD",
-                Price: 3.99
+                550,
+                "Amazon Prime",
+                "Rental",
+                new Uri("https://www.amazon.com/dp/B08XYZ"),
+                "HD",
+                3.99
             )
         ]));
         Response(404, "No sources found for the specified movie.");

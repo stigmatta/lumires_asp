@@ -11,9 +11,8 @@ internal sealed class MovieConfiguration : IEntityTypeConfiguration<Movie>
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).ValueGeneratedNever();
         builder.HasIndex(m => m.ExternalId).IsUnique();
-        builder.Property(m=> m.PosterPath).HasMaxLength(50);
-        builder.Property(m=> m.BackdropPath).HasMaxLength(50);
-        builder.Property(m=> m.TrailerUrl).HasMaxLength(50);
-        
+        builder.Property(m => m.PosterPath).HasMaxLength(50);
+        builder.Property(m => m.BackdropPath).HasMaxLength(50);
+        builder.Property(m => m.TrailerUrl).HasMaxLength(50);
     }
 }

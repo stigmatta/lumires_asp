@@ -11,15 +11,12 @@ public static class ResultHttpMapper
         Result<TValue> result,
         CancellationToken ct)
     {
-        Debug.Assert(result is not null, 
+        Debug.Assert(result is not null,
             "Result is not null according to nullable reference types' annotations ");
-        
-        if (result.IsSuccess)
-        {
-            return;
-        }
 
-        Debug.Assert(httpContext is not null, 
+        if (result.IsSuccess) return;
+
+        Debug.Assert(httpContext is not null,
             "Result is not null according to nullable reference types' annotations ");
         switch (result.Status)
         {
@@ -34,12 +31,12 @@ public static class ResultHttpMapper
                 break;
             default:
                 await httpContext.Response.SendAsync(
-                    new ProblemDetails 
-                    { 
-                        Status = 500, 
+                    new ProblemDetails
+                    {
+                        Status = 500,
                         Detail = string.Join(", ", result.Errors)
-                    }, 
-                    500, 
+                    },
+                    500,
                     cancellation: ct);
                 break;
         }

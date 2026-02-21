@@ -13,9 +13,9 @@ internal sealed class Summary : Summary<Endpoint>
                       Returns movie model with localized details.
 
                       If the movie isn't in the local database, it fetches it from TMDB and triggers an import with all its localized versions.
-                      
+
                       ### Route parameters
-                      
+
                       - **Id** — TMDB movie identifier
 
                       ### Headers

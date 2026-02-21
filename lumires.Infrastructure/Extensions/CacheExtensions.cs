@@ -10,8 +10,8 @@ internal static class CacheExtensions
     public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
     {
         var fusionConfig = configuration
-            .GetSection(FusionCacheConfig.Section)
-            .Get<FusionCacheConfig>() ??
+                               .GetSection(FusionCacheConfig.Section)
+                               .Get<FusionCacheConfig>() ??
                            throw new InvalidOperationException("Fusion cache configuration is missing.");
 
         var redisConnectionString = configuration.GetConnectionString("cache");

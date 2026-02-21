@@ -175,7 +175,7 @@ public class GetMovieTests
             x => x.GetMovieDetailsAsync(1, "en", It.IsAny<CancellationToken>()),
             Times.Once);
     }
-    
+
 
     [Test]
     public async Task GetMovie_Should_CallExternalService_OnlyOnce_When_CalledTwice()
@@ -234,8 +234,8 @@ public class GetMovieTests
             x => x.GetMovieDetailsAsync(1, "en", It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     }
-    
-    
+
+
     [Test]
     public async Task GetMovie_Should_NotCache_When_Unauthorized()
     {
@@ -259,7 +259,7 @@ public class GetMovieTests
             x => x.GetMovieDetailsAsync(1, "en", It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     }
-    
+
     [Test]
     public async Task GetMovie_Should_NotCache_When_Service_Error()
     {
@@ -283,16 +283,16 @@ public class GetMovieTests
             x => x.GetMovieDetailsAsync(1, "en", It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     }
-    
-    
+
+
     [Test]
     public async Task GetMovie_Should_ReturnCachedResponse_On_SecondCall()
     {
         // Arrange
         var externalMovie = new ExternalMovie(
-            ExternalId: 1,
-            Title: "Test Movie",
-            Overview: "Test Overview",
+            1,
+            "Test Movie",
+            "Test Overview",
             ReleaseDate: new DateTime(2020, 1, 1),
             PosterPath: "/poster.jpg",
             BackdropPath: "/backdrop.jpg",
@@ -310,27 +310,27 @@ public class GetMovieTests
             _dbQueries);
 
         // Act
-        await ep.HandleAsync(new Query(Id: 1), CancellationToken.None);
+        await ep.HandleAsync(new Query(1), CancellationToken.None);
         var firstResponse = ep.Response;
 
-        await ep.HandleAsync(new Query(Id: 1), CancellationToken.None);
+        await ep.HandleAsync(new Query(1), CancellationToken.None);
         var secondResponse = ep.Response;
 
         // Assert
-        secondResponse.Should().BeEquivalentTo(firstResponse);  
-    
+        secondResponse.Should().BeEquivalentTo(firstResponse);
+
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(1, "en", It.IsAny<CancellationToken>()),
-            Times.Once);  
+            Times.Once);
     }
-    
+
     [Test]
     public async Task GetMovie_Should_CacheSeparately_Per_Language()
     {
         var externalMovie = new ExternalMovie(
-            ExternalId: 1,
-            Title: "Test Movie",
-            Overview: "Test Overview",
+            1,
+            "Test Movie",
+            "Test Overview",
             ReleaseDate: new DateTime(2020, 1, 1),
             PosterPath: "/poster.jpg",
             BackdropPath: "/backdrop.jpg",
@@ -355,7 +355,7 @@ public class GetMovieTests
 
         // Act 
         await ep1.HandleAsync(new Query(1), CancellationToken.None);
-        await ep1.HandleAsync(new Query(1), CancellationToken.None); 
+        await ep1.HandleAsync(new Query(1), CancellationToken.None);
 
         await ep2.HandleAsync(new Query(1), CancellationToken.None);
         await ep2.HandleAsync(new Query(1), CancellationToken.None);
@@ -388,7 +388,7 @@ public class GetMovieTests
             dbQueries);
 
         // Act
-        await ep.HandleAsync(new Query(Id: 1), CancellationToken.None);
+        await ep.HandleAsync(new Query(1), CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
@@ -396,8 +396,8 @@ public class GetMovieTests
             x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
-    
-    
+
+
     [Test]
     public async Task GetMovie_Should_CallExternalService_When_NotFoundInDb()
     {
@@ -413,17 +413,17 @@ public class GetMovieTests
             .Returns(movies.BuildMockDbSet().Object);
 
         var dbQueries = new DbQueries(dbContextMock.Object);
-        
+
         var externalMovie = new ExternalMovie(
-            ExternalId: 2,
-            Title: "External Movie",
-            Overview: "Overview",
+            2,
+            "External Movie",
+            "Overview",
             ReleaseDate: new DateTime(2021, 1, 1),
             PosterPath: "/poster2.jpg",
             BackdropPath: null,
             TrailerUrl: null
         );
-        
+
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
@@ -435,7 +435,7 @@ public class GetMovieTests
             dbQueries);
 
         // Act
-        await ep.HandleAsync(new Query(Id: 2), CancellationToken.None);
+        await ep.HandleAsync(new Query(2), CancellationToken.None);
 
         // Assert
         ep.Response.Id.Should().Be(2);
@@ -454,9 +454,9 @@ public class GetMovieTests
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(
                 new ExternalMovie(
-                    ExternalId: 1,
-                    Title: "Test Movie",
-                    Overview: "Test Overview",
+                    1,
+                    "Test Movie",
+                    "Test Overview",
                     ReleaseDate: new DateTime(2020, 1, 1),
                     PosterPath: "/poster.jpg",
                     BackdropPath: "/backdrop.jpg",
@@ -470,7 +470,7 @@ public class GetMovieTests
             {
                 s.AddSingleton(_externalMock.Object);
                 s.AddSingleton(_currentUserMock.Object);
-                s.AddSingleton<IFusionCache>(_cache); 
+                s.AddSingleton<IFusionCache>(_cache);
                 s.AddSingleton(_dbQueries);
                 s.AddSingleton<IEventHandler<MovieReferencedEvent>>(fakeHandler);
             });
@@ -489,14 +489,13 @@ public class GetMovieTests
     {
         public bool WasHandled { get; private set; }
         public int MovieId { get; private set; }
-    
+
         public Task HandleAsync(MovieReferencedEvent e, CancellationToken c)
         {
             WasHandled = true;
-            MovieId = e.ExternalId; 
-        
+            MovieId = e.ExternalId;
+
             return Task.CompletedTask;
         }
     }
-    
 }

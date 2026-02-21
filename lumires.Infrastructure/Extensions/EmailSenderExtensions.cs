@@ -13,8 +13,8 @@ internal static class EmailSenderExtensions
         IHostEnvironment env)
     {
         var emailConfig = configuration
-            .GetSection(EmailSenderConfig.Section)
-            .Get<EmailSenderConfig>() ??
+                              .GetSection(EmailSenderConfig.Section)
+                              .Get<EmailSenderConfig>() ??
                           throw new InvalidOperationException("Email sender configuration is missing.");
 
         var builder = services

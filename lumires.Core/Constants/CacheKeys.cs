@@ -16,6 +16,4 @@ public static class CacheKeys
     {
         return $"wm_id:{id}";
     }
-    
-    
 }

@@ -1,5 +1,4 @@
-﻿using Ardalis.Result;
-using Core.Abstractions.Services;
+﻿using Core.Abstractions.Services;
 using Core.Constants;
 using Core.Events.Movies;
 using FastEndpoints;
@@ -46,45 +45,49 @@ internal sealed class Endpoint(
         var lang = currentUserService.LangCulture;
         var cacheKey = CacheKeys.MovieKey(query.Id, currentUserService.LangCulture);
 
-        var movie = await cache.GetOrDefaultAsync<Response>(cacheKey,  token: ct);
-        
-        if (movie is null)
+        var movie = await cache.GetOrDefaultAsync<Response>(cacheKey, token: ct);
+        if (movie is not null)
         {
-            var existingMovie = await dbQueries.GetMovieByIdAsync(query.Id, lang, ct);
-            if (existingMovie is not null)
-                Response = existingMovie;
-
-            var externalMovie = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, ct);
-
-            if (!externalMovie.IsSuccess)
-            {
-                await HttpContext.SendErrorAsync(externalMovie, ct);
-                return;
-            }
-
-            var importedMovie = externalMovie.Value;
-            var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
-            await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
-
-            LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
-            Response =  new Response(
-                importedMovie.ExternalId,
-                importedMovie.ReleaseDate.Year,
-                importedMovie.TrailerUrl,
-                importedMovie.PosterPath,
-                importedMovie.BackdropPath,
-                localizationResponse
-            );
-            
-            await cache.SetAsync(
-                cacheKey,
-                Response,
-                options => options
-                    .SetDuration(CacheDuration.Medium)
-                    .SetFailSafe(true),
-                token: ct
-            );
+            Response = movie;
+            return;
         }
 
+        var existingMovie = await dbQueries.GetMovieByIdAsync(query.Id, lang, ct);
+        if (existingMovie is not null)
+        {
+            Response = existingMovie;
+            return;
+        }
+
+        var externalMovie = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, ct);
+
+        if (!externalMovie.IsSuccess)
+        {
+            await HttpContext.SendErrorAsync(externalMovie, ct);
+            return;
+        }
+
+        var importedMovie = externalMovie.Value;
+        var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
+        await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
+
+        LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
+        Response = new Response(
+            importedMovie.ExternalId,
+            importedMovie.ReleaseDate.Year,
+            importedMovie.TrailerUrl,
+            importedMovie.PosterPath,
+            importedMovie.BackdropPath,
+            localizationResponse
+        );
+
+        await cache.SetAsync(
+            cacheKey,
+            Response,
+            options => options
+                .SetDuration(CacheDuration.Medium)
+                .SetFailSafe(true),
+            ct
+        );
     }
 }
