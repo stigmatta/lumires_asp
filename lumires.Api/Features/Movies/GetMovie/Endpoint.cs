@@ -31,7 +31,7 @@ internal sealed class Endpoint(
     IExternalMovieService externalMovieService,
     ICurrentUserService currentUserService,
     IFusionCache cache,
-    DbQueries dbQueries)
+    DataAccess dataAccess)
     : Endpoint<Query, Response>
 {
     public override void Configure()
@@ -52,7 +52,7 @@ internal sealed class Endpoint(
             return;
         }
 
-        var existingMovie = await dbQueries.GetMovieByIdAsync(query.Id, lang, ct);
+        var existingMovie = await dataAccess.GetMovieByIdAsync(query.Id, lang, ct);
         if (existingMovie is not null)
         {
             Response = existingMovie;

@@ -18,7 +18,7 @@ internal sealed class GetMovieTests
 {
     private FusionCache _cache = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private DbQueries _dbQueries = null!;
+    private DataAccess _dataAccess = null!;
     private Mock<IExternalMovieService> _externalMock = null!;
 
     [Before(Test)]
@@ -38,7 +38,7 @@ internal sealed class GetMovieTests
             .Setup(x => x.Movies)
             .Returns(new List<Movie>().BuildMockDbSet().Object);
 
-        _dbQueries = new DbQueries(dbContextMock.Object);
+        _dataAccess = new DataAccess(dbContextMock.Object);
     }
 
     [After(Test)]
@@ -64,7 +64,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(tmdbId), CancellationToken.None);
@@ -107,7 +107,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -140,7 +140,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(It.IsAny<int>()), CancellationToken.None);
@@ -168,7 +168,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(It.IsAny<int>()), CancellationToken.None);
@@ -211,7 +211,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -237,7 +237,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -265,7 +265,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -292,7 +292,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -334,7 +334,7 @@ internal sealed class GetMovieTests
             _externalMock.Object,
             _currentUserMock.Object,
             _cache,
-            _dbQueries);
+            _dataAccess);
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
@@ -383,10 +383,10 @@ internal sealed class GetMovieTests
         uaUserMock.Setup(x => x.LangCulture).Returns("uk-UA");
 
         var ep1 = Factory.Create<Endpoint>(
-            _externalMock.Object, enUserMock.Object, _cache, _dbQueries);
+            _externalMock.Object, enUserMock.Object, _cache, _dataAccess);
 
         var ep2 = Factory.Create<Endpoint>(
-            _externalMock.Object, uaUserMock.Object, _cache, _dbQueries);
+            _externalMock.Object, uaUserMock.Object, _cache, _dataAccess);
 
         // Act 
         await ep1.HandleAsync(new Query(id), CancellationToken.None);
@@ -419,7 +419,7 @@ internal sealed class GetMovieTests
             .Setup(x => x.Movies)
             .Returns(movies.Object);
 
-        var dbQueries = new DbQueries(dbContextMock.Object);
+        var dbQueries = new DataAccess(dbContextMock.Object);
         var ep = Factory.Create<Endpoint>(
             _externalMock.Object, _currentUserMock.Object, _cache, dbQueries);
 
@@ -458,7 +458,7 @@ internal sealed class GetMovieTests
             .Setup(x => x.Movies)
             .Returns(movies.Object);
 
-        var dbQueries = new DbQueries(dbContextMock.Object);
+        var dbQueries = new DataAccess(dbContextMock.Object);
 
 
         var externalMovie = new ExternalMovie(
@@ -525,7 +525,7 @@ internal sealed class GetMovieTests
                 s.AddSingleton(_externalMock.Object);
                 s.AddSingleton(_currentUserMock.Object);
                 s.AddSingleton<IFusionCache>(_cache);
-                s.AddSingleton(_dbQueries);
+                s.AddSingleton(_dataAccess);
                 s.AddSingleton<IEventHandler<MovieReferencedEvent>>(fakeHandler);
             });
         });

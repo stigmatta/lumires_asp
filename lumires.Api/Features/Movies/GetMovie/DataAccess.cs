@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace lumires.Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
-internal class DbQueries(IAppDbContext db) : IDbQuery
+internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 

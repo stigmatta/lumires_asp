@@ -4,6 +4,7 @@ using FastEndpoints;
 using FluentAssertions;
 using Infrastructure;
 using lumires.Api;
+using lumires.Core.Abstractions.Data;
 using lumires.Domain;
 using NetArchTest.Rules;
 
@@ -220,6 +221,26 @@ internal sealed class ArchitecturalTests
         endpointsWithoutSummary.Should().BeEmpty(
             $"Every endpoint should have a Summary class. " +
             $"Missing: {string.Join(", ", endpointsWithoutSummary.Select(t => t.FullName))}");
+    }
+    
+    [Test]
+    [RequiresUnreferencedCode("Test code, trimming not applicable")]
+    public void Api_IAppDbContext_Should_Only_Be_Used_In_IDataAccess_Implementations()
+    {
+        var assembly = typeof(ApiRegistration).Assembly;
+        var dbContextTypeName = typeof(IAppDbContext).FullName;
+
+        var violations = assembly.GetTypes()
+            .Where(t => t is { IsAbstract: false, IsInterface: false } &&
+                        !t.IsAssignableTo(typeof(IDataAccess)) &&
+                        t.GetConstructors()
+                            .SelectMany(c => c.GetParameters())
+                            .Any(p => p.ParameterType.FullName == dbContextTypeName))
+            .ToList();
+
+        violations.Should().BeEmpty(
+            $"IAppDbContext should only be injected in IDataAccess implementations. " +
+            $"Failed types: {string.Join(", ", violations.Select(t => t.FullName))}");
     }
 
     [Test]

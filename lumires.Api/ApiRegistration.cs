@@ -105,7 +105,7 @@ public static class ApiRegistration
         var assembly = Assembly.GetExecutingAssembly();
 
         var queryTypes = assembly.GetTypes()
-            .Where(t => typeof(IDbQuery).IsAssignableFrom(t)
+            .Where(t => typeof(IDataAccess).IsAssignableFrom(t)
                         && t is { IsClass: true, IsAbstract: false });
 
         foreach (var type in queryTypes) services.AddScoped(type);
