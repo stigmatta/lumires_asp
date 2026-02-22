@@ -1,6 +1,6 @@
-﻿using Core.Messaging;
+﻿using lumires.Core.Messaging;
 
-namespace Core.Abstractions.Services;
+namespace lumires.Core.Abstractions.Services;
 
 public interface INotificationService
 {

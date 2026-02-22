@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Core.Models;
+namespace lumires.Core.Models;
 
 [UsedImplicitly]
 public record ExternalMovie(

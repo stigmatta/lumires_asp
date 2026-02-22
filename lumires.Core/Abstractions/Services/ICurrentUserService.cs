@@ -1,4 +1,4 @@
-﻿namespace Core.Abstractions.Services;
+﻿namespace lumires.Core.Abstractions.Services;
 
 public interface ICurrentUserService
 {

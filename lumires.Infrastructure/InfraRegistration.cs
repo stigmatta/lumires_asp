@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using Core.Abstractions.Data;
-using Core.Abstractions.Services;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
+using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;

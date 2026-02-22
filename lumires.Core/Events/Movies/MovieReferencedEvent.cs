@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 
-namespace Core.Events.Movies;
+namespace lumires.Core.Events.Movies;
 
 [UsedImplicitly]
 public sealed class MovieReferencedEvent : IEvent

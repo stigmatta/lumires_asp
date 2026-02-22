@@ -1,7 +1,7 @@
-﻿using Core.Abstractions.Services;
-using FluentEmail.Core.Interfaces;
+﻿using FluentEmail.Core.Interfaces;
 using Infrastructure.Options;
 using Infrastructure.Services;
+using lumires.Core.Abstractions.Services;
 using Resend;
 using Resend.FluentEmail;
 

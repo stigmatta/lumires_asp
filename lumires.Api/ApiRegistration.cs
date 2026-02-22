@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using Core.Abstractions.Data;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using lumires.Core.Abstractions.Data;
 using NSwag;
 using Scalar.AspNetCore;
 using ServiceDefaults;
 
-namespace Api;
+namespace lumires.Api;
 
 public static class ApiRegistration
 {

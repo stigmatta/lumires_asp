@@ -1,9 +1,9 @@
-﻿using Core.Abstractions.Data;
-using Core.Constants;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using lumires.Core.Abstractions.Data;
+using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Features.Movies.GetMovie;
+namespace lumires.Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
 internal class DbQueries(IAppDbContext db) : IDbQuery

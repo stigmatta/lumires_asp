@@ -1,7 +1,7 @@
-﻿using Domain.Enums;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using lumires.Domain.Enums;
 
-namespace Core.Messaging;
+namespace lumires.Core.Messaging;
 
 [UsedImplicitly]
 public record NotificationMessage(NotificationType Type, string SenderId, string? TargetId, DateTime CreatedAt);

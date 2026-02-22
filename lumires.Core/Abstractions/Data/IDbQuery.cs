@@ -1,4 +1,4 @@
-﻿namespace Core.Abstractions.Data;
+﻿namespace lumires.Core.Abstractions.Data;
 
 /// <summary>
 ///     Marker interface for query classes in vertical slices.

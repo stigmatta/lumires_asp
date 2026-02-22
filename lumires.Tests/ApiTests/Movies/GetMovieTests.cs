@@ -1,18 +1,18 @@
-﻿using Api.Features.Movies.GetMovie;
-using Ardalis.Result;
-using Core.Abstractions.Data;
-using Core.Abstractions.Services;
-using Core.Events.Movies;
-using Core.Models;
-using Domain.Entities;
+﻿using Ardalis.Result;
 using FastEndpoints;
 using FluentAssertions;
+using lumires.Api.Features.Movies.GetMovie;
+using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Events.Movies;
+using lumires.Core.Models;
+using lumires.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using MockQueryable.Moq;
 using Moq;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace lumires.Tests.Movies;
+namespace Tests.ApiTests.Movies;
 
 internal sealed class GetMovieTests
 {
@@ -532,7 +532,7 @@ internal sealed class GetMovieTests
 
         // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
-        await Task.Delay(100);
+        await fakeHandler.Completed.WaitAsync(TimeSpan.FromSeconds(2));
 
         // Assert
         fakeHandler.WasHandled.Should().BeTrue();
@@ -541,6 +541,9 @@ internal sealed class GetMovieTests
 
     private sealed class FakeMovieReferencedEventHandler : IEventHandler<MovieReferencedEvent>
     {
+        private readonly TaskCompletionSource _tcs = new();
+
+        public Task Completed => _tcs.Task;
         public bool WasHandled { get; private set; }
         public int MovieId { get; private set; }
 
@@ -548,6 +551,7 @@ internal sealed class GetMovieTests
         {
             WasHandled = true;
             MovieId = e.ExternalId;
+            _tcs.SetResult();
 
             return Task.CompletedTask;
         }

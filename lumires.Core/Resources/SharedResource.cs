@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Core.Resources;
+namespace lumires.Core.Resources;
 
 [UsedImplicitly]
 public class SharedResource;

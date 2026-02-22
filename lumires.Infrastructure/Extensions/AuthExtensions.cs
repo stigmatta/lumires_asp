@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
-using Core.Auth;
-using Core.Resources;
 using Infrastructure.Auth;
+using lumires.Core.Auth;
+using lumires.Core.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

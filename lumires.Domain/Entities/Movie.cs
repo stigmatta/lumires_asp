@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities;
+﻿namespace lumires.Domain.Entities;
 
 public sealed class Movie
 {

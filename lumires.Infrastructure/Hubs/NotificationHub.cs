@@ -1,4 +1,4 @@
-﻿using Core.Abstractions.Services;
+﻿using lumires.Core.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

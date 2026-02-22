@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Ardalis.Result;
-using Core.Abstractions.Services;
-using Core.Constants;
-using Core.Models;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
+using lumires.Core.Models;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Infrastructure.Services.Watchmode;

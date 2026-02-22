@@ -1,4 +1,4 @@
-﻿namespace Core.Auth;
+﻿namespace lumires.Core.Auth;
 
 public static class UserRoles
 {

@@ -1,9 +1,9 @@
-﻿using Core.Abstractions.Services;
-using Core.Models;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Models;
 
-namespace Api.Features.Movies.GetMovieSources;
+namespace lumires.Api.Features.Movies.GetMovieSources;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);

@@ -1,6 +1,6 @@
-﻿using Core.Models;
+﻿using lumires.Core.Models;
 
-namespace Core.Abstractions.Services;
+namespace lumires.Core.Abstractions.Services;
 
 public interface IEmailSenderService
 {

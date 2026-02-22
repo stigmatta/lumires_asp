@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using System.Security;
-using Core.Resources;
+using lumires.Core.Resources;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
-namespace Api;
+namespace lumires.Api;
 
 internal sealed partial class GlobalExceptionHandler(
     IStringLocalizer<SharedResource> localizer,

@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums;
+﻿namespace lumires.Domain.Enums;
 
 public enum NotificationType
 {

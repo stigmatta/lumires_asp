@@ -1,6 +1,6 @@
-﻿using Core.Abstractions.Services;
-using Core.Messaging;
-using Infrastructure.Hubs;
+﻿using Infrastructure.Hubs;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Messaging;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infrastructure.Services;

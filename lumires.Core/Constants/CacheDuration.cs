@@ -1,4 +1,4 @@
-﻿namespace Core.Constants;
+﻿namespace lumires.Core.Constants;
 
 public static class CacheDuration
 {

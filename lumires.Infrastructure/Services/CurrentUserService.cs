@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using Core.Abstractions.Services;
-using Core.Auth;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Auth;
 
 namespace Infrastructure.Services;
 

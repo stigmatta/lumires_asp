@@ -2,7 +2,7 @@
 using Ardalis.Result;
 using FastEndpoints;
 
-namespace Api;
+namespace lumires.Api;
 
 public static class ResultHttpMapper
 {

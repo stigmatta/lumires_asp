@@ -1,14 +1,14 @@
-﻿using Core.Abstractions.Data;
-using Core.Abstractions.Services;
-using Core.Constants;
-using Core.Events.Movies;
-using Domain.Entities;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
+using lumires.Core.Events.Movies;
+using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Api.Features.Movies.EventHandlers;
+namespace lumires.Api.Features.Movies.EventHandlers;
 
 [UsedImplicitly]
 internal sealed partial class MovieReferencedEventHandler(

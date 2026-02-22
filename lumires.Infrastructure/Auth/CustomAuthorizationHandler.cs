@@ -1,4 +1,4 @@
-﻿using Core.Auth;
+﻿using lumires.Core.Auth;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Infrastructure.Auth;

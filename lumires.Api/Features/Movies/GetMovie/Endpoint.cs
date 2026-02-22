@@ -1,11 +1,11 @@
-﻿using Core.Abstractions.Services;
-using Core.Constants;
-using Core.Events.Movies;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
+using lumires.Core.Events.Movies;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace Api.Features.Movies.GetMovie;
+namespace lumires.Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);

@@ -1,4 +1,4 @@
-﻿using Core.Messaging;
+﻿using lumires.Core.Messaging;
 
 namespace Infrastructure.Hubs;
 

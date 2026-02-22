@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using Core.Abstractions.Data;
-using Domain.Entities;
+using lumires.Core.Abstractions.Data;
+using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;

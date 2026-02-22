@@ -11,7 +11,6 @@
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <RootNamespace>Api</RootNamespace>
         <OutputType>Library</OutputType>
     </PropertyGroup>
 

@@ -2,7 +2,7 @@
 using FastEndpoints;
 using JetBrains.Annotations;
 
-namespace Api;
+namespace lumires.Api;
 
 [UsedImplicitly]
 internal sealed partial class BenchmarkProcessor(ILogger<BenchmarkProcessor> logger)

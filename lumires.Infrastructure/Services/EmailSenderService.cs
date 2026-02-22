@@ -1,6 +1,6 @@
-﻿using Core.Abstractions.Services;
-using Core.Models;
-using FluentEmail.Core;
+﻿using FluentEmail.Core;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Models;
 
 namespace Infrastructure.Services;
 

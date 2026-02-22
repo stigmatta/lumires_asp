@@ -1,7 +1,7 @@
-﻿using Domain.Entities;
+﻿using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core.Abstractions.Data;
+namespace lumires.Core.Abstractions.Data;
 
 public interface IAppDbContext : IDisposable, IAsyncDisposable
 {

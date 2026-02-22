@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
-using Core.Abstractions.Services;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
 using Infrastructure.Services.Watchmode;
+using lumires.Core.Abstractions.Services;
 using Microsoft.Extensions.Options;
 using Polly;
 using Refit;
