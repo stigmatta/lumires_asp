@@ -1,4 +1,5 @@
-﻿using lumires.Domain.Entities;
+﻿using lumires.Core.Constants;
+using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,14 +14,14 @@ internal sealed class UserNotificationConfiguration : IEntityTypeConfiguration<U
 
         builder.Property(x => x.Type)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(StringLimits.Name);
 
         builder.Property(x => x.SenderId)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(StringLimits.Name);
 
         builder.Property(x => x.TargetId)
-            .HasMaxLength(100);
+            .HasMaxLength(StringLimits.Name);
 
         builder.Property(x => x.CreatedAt)
             .IsRequired();

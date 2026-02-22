@@ -1,4 +1,5 @@
-﻿using lumires.Domain.Entities;
+﻿using lumires.Core.Constants;
+using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,9 +11,9 @@ internal sealed class MovieLocalizationConfiguration : IEntityTypeConfiguration<
     {
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).ValueGeneratedNever();
-        builder.Property(m => m.Description).IsRequired().HasMaxLength(2000);
-        builder.Property(m => m.Title).IsRequired().HasMaxLength(50);
-        builder.Property(m => m.LanguageCode).IsRequired().HasMaxLength(10);
+        builder.Property(m => m.Description).IsRequired().HasMaxLength(StringLimits.Description);
+        builder.Property(m => m.Title).IsRequired().HasMaxLength(StringLimits.Default);
+        builder.Property(m => m.LanguageCode).IsRequired().HasMaxLength(StringLimits.Code);
         builder.HasOne(m => m.Movie)
             .WithMany(m => m.Localizations)
             .HasForeignKey(m => m.MovieId)

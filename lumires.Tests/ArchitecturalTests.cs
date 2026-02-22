@@ -104,13 +104,7 @@ internal sealed class ArchitecturalTests
     {
         var result = Types.InAssembly(typeof(ApiRegistration).Assembly)
             .That()
-            .Inherit(typeof(EndpointWithoutRequest))
-            .Or()
-            .Inherit(typeof(EndpointWithoutRequest<>))
-            .Or()
-            .Inherit(typeof(Endpoint<>))
-            .Or()
-            .Inherit(typeof(Endpoint<,>))
+            .ImplementInterface(typeof(IEndpoint))
             .Should()
             .BeSealed()
             .GetResult();
