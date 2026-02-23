@@ -55,14 +55,14 @@ internal sealed partial class MovieReferencedEventHandler(
                 ? def
                 : successfulResults.Values.First();
 
-        var movie = new Movie
-        {
-            ExternalId = command.ExternalId,
-            Year = defaultData.ReleaseDate.Year,
-            PosterPath = defaultData.PosterPath,
-            BackdropPath = defaultData.BackdropPath,
-            TrailerUrl = defaultData.TrailerUrl
-        };
+        var movie = new Movie(
+            command.ExternalId,
+            defaultData.ReleaseDate.Year,
+            defaultData.PosterPath,
+            defaultData.BackdropPath,
+            defaultData.TrailerUrl
+        );
+        
 
         foreach (var (culture, data) in successfulResults)
         {
@@ -73,12 +73,8 @@ internal sealed partial class MovieReferencedEventHandler(
                 continue;
             }
 
-            movie.Localizations.Add(new MovieLocalization
-            {
-                LanguageCode = culture,
-                Title = data.Title,
-                Description = data.Overview
-            });
+            var newLocalization = new MovieLocalization(culture, data.Title, data.Overview);
+            movie.AddLocalization(newLocalization);
         }
 
         await using var scope = scopeFactory.CreateAsyncScope();
