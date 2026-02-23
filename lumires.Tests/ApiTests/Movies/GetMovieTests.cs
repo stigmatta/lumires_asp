@@ -411,7 +411,7 @@ internal sealed class GetMovieTests
         // Arrange 
         var movies = new List<Movie>
         {
-            new() { ExternalId = externalId, Year = year, PosterPath = posterPath }
+            new(externalId, year, posterPath)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
