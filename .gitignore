@@ -19,6 +19,7 @@ packages/
 
 appsettings*.json
 env.json
+.env
 env.local.json
 wwwroot/
 *.db

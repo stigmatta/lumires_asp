@@ -3,7 +3,10 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-var db = builder.AddConnectionString("db");
+var db = builder.AddPostgres("postgres")
+    .WithDataVolume("lumires-postgres-data")
+    .AddDatabase("db");
+
 
 var supabaseUrl = builder.AddParameter("supabase-url", true);
 var signalRUrl = builder.AddParameter("signalr-url");
