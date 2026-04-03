@@ -3,9 +3,11 @@ using Projects;
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-var db = builder.AddPostgres("postgres")
-    .WithDataVolume("lumires-postgres-data")
-    .AddDatabase("db");
+// var db = builder.AddPostgres("postgres")
+//     .WithDataVolume("lumires-postgres-data")
+//     .AddDatabase("db");
+
+var db = builder.AddConnectionString("db");
 
 
 

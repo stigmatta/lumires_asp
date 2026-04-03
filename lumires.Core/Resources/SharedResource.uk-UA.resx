@@ -24,8 +24,8 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="Hello" xml:space="preserve">
-        <value>Привіт</value>
+    <data name="Collection_ValidationError_TitleEmpty" xml:space="preserve">
+        <value>Назва колекції не може бути пустою</value>
     </data>
     <data name="Error_Title" xml:space="preserve">
         <value>Виникла помилка</value>
@@ -44,5 +44,17 @@
     </data>
     <data name="Error_EmailSendFailed" xml:space="preserve">
         <value>Не вдалося надіслати лист</value>
+    </data>
+    <data name="Collection_ValidationError_TitleTooShort" xml:space="preserve">
+        <value>Назва колекції закоротка ! (Мінімальна довжина - 5)</value>
+    </data>
+    <data name="Collection_ValidationError_TitleTooLong" xml:space="preserve">
+        <value>Назва колекції задовга ! (Максимальна довжина - 255)</value>
+    </data>
+    <data name="Collection_ValidationError_DescriptionTooLong" xml:space="preserve">
+        <value>Опис колекції занадто довгий</value>
+    </data>
+    <data name="Collection_ValidationError_InvalidMovieId" xml:space="preserve">
+        <value>Id фільму колекції некоректний</value>
     </data>
 </root>
