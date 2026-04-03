@@ -8,6 +8,9 @@ var db = builder.AddPostgres("postgres")
     .AddDatabase("db");
 
 
+
+// var redisUrl = builder.Configuration["ConnectionStrings:cache"]
+//                ?? throw new InvalidOperationException("REDIS connection string is missing.");
 var supabaseUrl = builder.AddParameter("supabase-url", true);
 var signalRUrl = builder.AddParameter("signalr-url");
 
@@ -51,11 +54,16 @@ var logtailUrl = builder.Configuration["Logtail:BaseUrl"] ?? "https://s1694678.e
 var logtailApiKey = builder.Configuration["Logtail:ApiKey"]
                     ?? throw new InvalidOperationException("Logtail__APIKEY is missing in .env");
 
+//Subabase
+var supabaseServiceKey = builder.Configuration["Supabase:ServiceKey"] 
+                         ?? throw new InvalidOperationException("SUPABASE__SERVICEKEY is missing in .env");
+
 
 builder.AddProject<lumires_Composition>("composition")
     .WithReference(db)
     // Supabase & SignalR
     .WithEnvironment("Supabase__Url", supabaseUrl)
+    .WithEnvironment("Supabase__ServiceKey", supabaseServiceKey)
     .WithEnvironment("SignalR__HubUrl", signalRUrl)
     // TMDB
     .WithEnvironment("TMDB__BaseUrl", tmdbBaseUrl)
@@ -66,6 +74,7 @@ builder.AddProject<lumires_Composition>("composition")
     .WithEnvironment("Watchmode__BaseUrl", watchmodeBaseUrl)
     .WithEnvironment("Watchmode__ApiKey", watchmodeApiKey)
     // Cache Settings
+    // .WithEnvironment("ConnectionStrings__cache", redisUrl)
     .WithEnvironment("CacheSettings__MemoryDurationMin", cacheMemoryDuration)
     .WithEnvironment("CacheSettings__FailSafeMaxDurationHours", cacheFailSafeMaxDuration)
     .WithEnvironment("CacheSettings__FactoryTimeoutMs", cacheFactoryTimeout)
@@ -77,6 +86,7 @@ builder.AddProject<lumires_Composition>("composition")
     //Logtail
     .WithEnvironment("Logtail__ApiKey", logtailApiKey)
     .WithEnvironment("Logtail__BaseUrl", logtailUrl)
+    
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
