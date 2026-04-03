@@ -36,7 +36,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/get/{Id:int}");
+        Get("/movies/{Id:int}");
         AllowAnonymous();
     }
 
