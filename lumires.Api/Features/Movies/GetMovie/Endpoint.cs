@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Events.Movies;
+using lumires.Domain.Exceptions;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace lumires.Api.Features.Movies.GetMovie;
@@ -43,53 +44,47 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = CacheKeys.MovieKey(query.Id, currentUserService.LangCulture);
+        var cacheKey = CacheKeys.MovieKey(query.Id, lang);
 
-        var movie = await cache.GetOrDefaultAsync<Response>(cacheKey, token: ct);
-        if (movie is not null)
+        try
         {
-            Response = movie;
-            return;
-        }
+            Response = await cache.GetOrSetAsync<Response>(
+                cacheKey,
+                async (_, token) =>
+                {
+                    var existingMovie = await dataAccess.GetMovieByIdAsync(query.Id, lang, token);
+                    if (existingMovie is not null)
+                        return existingMovie;
 
-        var existingMovie = await dataAccess.GetMovieByIdAsync(query.Id, lang, ct);
-        if (existingMovie is not null)
+                    var externalResult = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, token);
+                    if (!externalResult.IsSuccess)
+                        throw new ExternalMovieException(externalResult.Status, "External service failed while retrieving the movie"); 
+
+                    var importedMovie = externalResult.Value;
+                    var internalId = Guid.CreateVersion7();
+
+                    await PublishAsync(new MovieReferencedEvent
+                    {
+                        InternalId = internalId,
+                        ExternalId = importedMovie.ExternalId,
+                    }, Mode.WaitForAll, token);
+
+                    return new Response(
+                        internalId,
+                        importedMovie.ReleaseDate.Year,
+                        importedMovie.TrailerUrl,
+                        importedMovie.PosterPath,
+                        importedMovie.BackdropPath,
+                        new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview)
+                    );
+                },
+                options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
+                ct
+            );
+        }
+        catch (ExternalMovieException ex)
         {
-            Response = existingMovie;
-            return;
+            await HttpContext.SendErrorAsync(ex.Status, ct);
         }
-
-        var externalMovie = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, ct);
-
-        if (!externalMovie.IsSuccess)
-        {
-            await HttpContext.SendErrorAsync(externalMovie, ct);
-            return;
-        }
-
-        var importedMovie = externalMovie.Value;
-
-        var internalId = Guid.CreateVersion7();
-        var command = new MovieReferencedEvent { InternalId = internalId, ExternalId = importedMovie.ExternalId };
-        await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
-
-        LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
-        Response = new Response(
-            internalId,
-            importedMovie.ReleaseDate.Year,
-            importedMovie.TrailerUrl,
-            importedMovie.PosterPath,
-            importedMovie.BackdropPath,
-            localizationResponse
-        );
-
-        await cache.SetAsync(
-            cacheKey,
-            Response,
-            options => options
-                .SetDuration(CacheDuration.Medium)
-                .SetFailSafe(true),
-            ct
-        );
     }
 }
