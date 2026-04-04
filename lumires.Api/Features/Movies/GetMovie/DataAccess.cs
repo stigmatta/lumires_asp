@@ -16,7 +16,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .AsNoTracking()
             .Where(m => m.ExternalId == tmdbId)
             .Select(m => new Response(
-                m.ExternalId,
+                m.Id,
                 m.Year,
                 m.TrailerUrl,
                 m.PosterPath,

@@ -16,8 +16,14 @@ public sealed class Movie
     public IReadOnlyCollection<MovieLocalization> Localizations => _localizations.AsReadOnly();
 
     private Movie() { } 
+    
 
     public Movie(int externalId, int year, string posterPath, string? backdropPath = null, string? trailerUrl = null)
+        : this(Guid.CreateVersion7(), externalId, year, posterPath, backdropPath, trailerUrl)
+    {
+    }
+    
+    public Movie(Guid id, int externalId, int year, string posterPath, string? backdropPath = null, string? trailerUrl = null)
     {
         if (externalId <= 0)
             throw new MovieValidationException("ExternalId must be positive", nameof(externalId));
@@ -27,8 +33,8 @@ public sealed class Movie
 
         if (string.IsNullOrWhiteSpace(posterPath))
             throw new MovieValidationException("PosterPath is required", nameof(posterPath));
-
-        Id = Guid.CreateVersion7();
+        
+        Id = id;
         ExternalId = externalId;
         Year = year;
         PosterPath = posterPath;
