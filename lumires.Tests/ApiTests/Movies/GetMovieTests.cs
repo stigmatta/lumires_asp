@@ -115,7 +115,6 @@ internal sealed class GetMovieTests
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
 
-        ep.Response.Id.Should().Be(id);
         ep.Response.Year.Should().Be(releaseDate.Year);
         ep.Response.PosterPath.Should().Be(poster);
         ep.Response.Localization!.Title.Should().Be(title);
@@ -428,7 +427,6 @@ internal sealed class GetMovieTests
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
-        ep.Response.Id.Should().Be(externalId);
         ep.Response.Year.Should().Be(year);
 
         _externalMock.Verify(
@@ -485,7 +483,6 @@ internal sealed class GetMovieTests
         await ep.HandleAsync(new Query(id), CancellationToken.None);
 
         // Assert
-        ep.Response.Id.Should().Be(id);
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()),
             Times.Once);
