@@ -8,6 +8,9 @@
 //------------------------------------------------------------------------------
 
 namespace lumires.Core.Resources {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -35,7 +38,7 @@ namespace lumires.Core.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Contracts.Resources.SharedResource.uk-UA", typeof(SharedResource_uk_UA).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("lumires.Core.Resources.SharedResource.uk-UA", typeof(SharedResource_uk_UA).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -53,6 +56,51 @@ namespace lumires.Core.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Опис колекції занадто довгий.
+        /// </summary>
+        internal static string Collection_ValidationError_DescriptionTooLong {
+            get {
+                return ResourceManager.GetString("Collection_ValidationError_DescriptionTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id фільму колекції некоректний.
+        /// </summary>
+        internal static string Collection_ValidationError_InvalidMovieId {
+            get {
+                return ResourceManager.GetString("Collection_ValidationError_InvalidMovieId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назва колекції не може бути пустою.
+        /// </summary>
+        internal static string Collection_ValidationError_TitleEmpty {
+            get {
+                return ResourceManager.GetString("Collection_ValidationError_TitleEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назва колекції задовга ! (Максимальна довжина - 255).
+        /// </summary>
+        internal static string Collection_ValidationError_TitleTooLong {
+            get {
+                return ResourceManager.GetString("Collection_ValidationError_TitleTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назва колекції закоротка ! (Мінімальна довжина - 5).
+        /// </summary>
+        internal static string Collection_ValidationError_TitleTooShort {
+            get {
+                return ResourceManager.GetString("Collection_ValidationError_TitleTooShort", resourceCulture);
             }
         }
         
@@ -107,15 +155,6 @@ namespace lumires.Core.Resources {
         internal static string Error_Unauthorized {
             get {
                 return ResourceManager.GetString("Error_Unauthorized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Привіт.
-        /// </summary>
-        internal static string Hello {
-            get {
-                return ResourceManager.GetString("Hello", resourceCulture);
             }
         }
     }

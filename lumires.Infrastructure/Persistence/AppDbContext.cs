@@ -10,6 +10,9 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Movie> Movies => Set<Movie>();
     public DbSet<MovieLocalization> MovieLocalizations => Set<MovieLocalization>();
     public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
+    public DbSet<Collection> Collections => Set<Collection>();
+    public DbSet<CollectionMovie> CollectionMovies => Set<CollectionMovie>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

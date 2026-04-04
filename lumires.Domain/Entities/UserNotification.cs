@@ -11,8 +11,8 @@ public sealed class UserNotification
     public NotificationType Type { get; }
     public string SenderId { get; }
     public string? TargetId { get; }
-    public DateTime CreatedAt { get; }
-    public DateTime? ReadAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset? ReadAt { get; private set; }
 
     private UserNotification() { }
 
@@ -29,7 +29,7 @@ public sealed class UserNotification
         Type = type;
         SenderId = senderId;
         TargetId = targetId;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = DateTimeOffset.UtcNow;
     }
 
     public void MarkAsRead()
@@ -37,6 +37,6 @@ public sealed class UserNotification
         if (ReadAt.HasValue)
             throw new InvalidNotificationOperationException("Notification already read");
 
-        ReadAt = DateTime.UtcNow;
+        ReadAt = DateTimeOffset.UtcNow;
     }
 }
