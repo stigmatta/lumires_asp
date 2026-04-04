@@ -19,7 +19,7 @@ internal sealed record LocalizationResponse(
 
 [UsedImplicitly]
 internal sealed record Response(
-    int Id,
+    Guid Id,
     int Year,
     string? TrailerUrl,
     string PosterPath,
@@ -68,12 +68,14 @@ internal sealed class Endpoint(
         }
 
         var importedMovie = externalMovie.Value;
-        var command = new MovieReferencedEvent { ExternalId = importedMovie.ExternalId };
+
+        var internalId = Guid.CreateVersion7();
+        var command = new MovieReferencedEvent { InternalId = internalId, ExternalId = importedMovie.ExternalId };
         await PublishAsync(command, Mode.WaitForNone, CancellationToken.None);
 
         LocalizationResponse localizationResponse = new(lang, importedMovie.Title, importedMovie.Overview);
         Response = new Response(
-            importedMovie.ExternalId,
+            internalId,
             importedMovie.ReleaseDate.Year,
             importedMovie.TrailerUrl,
             importedMovie.PosterPath,
