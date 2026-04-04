@@ -6,4 +6,6 @@ namespace lumires.Core.Abstractions.Services;
 public interface IExternalMovieService
 {
     Task<Result<ExternalMovie>> GetMovieDetailsAsync(int movieId, string lang, CancellationToken ct = default);
+    Task<Result> SyncTrendingMoviesAsync(CancellationToken ct);
+    Task<Result> SyncPopularMoviesAsync(CancellationToken ct);
 }

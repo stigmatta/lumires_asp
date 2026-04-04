@@ -37,4 +37,13 @@ public sealed class MovieLocalization
         Movie = movie ?? throw new MovieLocalizationValidationException("Movie is required to be linked",nameof(movie));
         MovieId = movie.Id;
     }
+    
+    public void Update(string title, string? description)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new MovieLocalizationValidationException("Title is required", nameof(title));
+
+        Title = title;
+        Description = description;
+    }
 }

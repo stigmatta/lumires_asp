@@ -26,6 +26,8 @@
         <PackageReference Include="Resend.FluentEmail" Version="0.2.1"/>
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Span" Version="3.1.0"/>
+        <PackageReference Include="TickerQ" Version="9.2.5" />
+        <PackageReference Include="TickerQ.Dashboard" Version="9.2.5" />
         <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.5.0"/>
         <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.5.0"/>
     </ItemGroup>

@@ -5,6 +5,7 @@ using Infrastructure.Services;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using Microsoft.EntityFrameworkCore;
+using TickerQ.DependencyInjection;
 
 namespace Infrastructure;
 
@@ -50,6 +51,9 @@ public static class InfraRegistration
 
         // External APIs
         services.AddExternalApis(config);
+        
+        //Background worker
+        services.AddWorker();
 
         // Scoped
         services.AddHttpContextAccessor();
@@ -65,26 +69,38 @@ public static class InfraRegistration
     {
         app.MapCustomHubs(app.Configuration);
 
-        if (app.Environment.IsDevelopment()) app.Lifetime.ApplicationStarted.Register(OpenLogtailDashboard);
+        var host = app.Urls.FirstOrDefault();
+        app.Lifetime.ApplicationStarted.Register(() => OpenDashboards(app));
+        
+        app.UseTickerQ();
 
         return app;
     }
 
 
-    private static void OpenLogtailDashboard()
+    private static void OpenDashboards(WebApplication app)
     {
-        try
+        var address = app.Urls.FirstOrDefault(u => u.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+                      ?? app.Urls.FirstOrDefault(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase));
+
+        if (address is null) return;
+
+        var baseUrl = address.TrimEnd('/');
+
+        foreach (var url in new[]
+                 {
+                     $"{baseUrl}/tickerq/dashboard",
+                     "https://telemetry.betterstack.com/team/t498261/tail?s=1694678"
+                 })
         {
-            const string url = "https://telemetry.betterstack.com/team/t498261/tail?s=1694678";
-            Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = url,
-                UseShellExecute = true
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Failed to open Logtail URL: " + ex.Message);
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to open {url}: {ex.Message}");
+            }
         }
     }
 }
