@@ -33,13 +33,14 @@ internal sealed partial class MovieReferencedEventHandler(
             c => externalMovieService.GetMovieDetailsAsync(command.ExternalId, c.Name, ct)
         );
 
-        await Task.WhenAll(fetchTasks.Values);
+        var results = await Task.WhenAll(fetchTasks.Values);
 
         var successfulResults = fetchTasks
-            .Where(kvp => kvp.Value.Result.IsSuccess)
+            .Zip(results)
+            .Where(x => x.Second.IsSuccess)
             .ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.Result.Value
+                x => x.First.Key,
+                x => x.Second.Value
             );
 
         if (successfulResults.Count == 0)
@@ -82,19 +83,20 @@ internal sealed partial class MovieReferencedEventHandler(
         await using var db = scope.ServiceProvider
             .GetRequiredService<IAppDbContext>();
 
+        if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
+        {
+            LogMovieAlreadyExists(logger, command.ExternalId);
+            return;
+        }
+
         try
         {
             db.Movies.Add(movie);
             await db.SaveChangesAsync(ct);
         }
-        catch (DbUpdateException)
-        {
-            LogMovieAlreadyExists(logger, command.ExternalId);
-        }
         catch (Exception ex)
         {
             LogUnexpectedError(logger, ex, command.ExternalId);
-
             throw;
         }
     }

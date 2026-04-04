@@ -18,6 +18,7 @@ public static class ResultHttpMapper
 
         Debug.Assert(httpContext is not null,
             "Result is not null according to nullable reference types' annotations ");
+        
         switch (result.Status)
         {
             case ResultStatus.NotFound:
@@ -36,6 +37,34 @@ public static class ResultHttpMapper
                         Status = 500,
                         Detail = string.Join(", ", result.Errors)
                     },
+                    500,
+                    cancellation: ct);
+                break;
+        }
+    }
+    
+    public static async Task SendErrorAsync(
+        this HttpContext httpContext,
+        ResultStatus status,
+        CancellationToken ct)
+    {
+        Debug.Assert(httpContext is not null,
+            "Result is not null according to nullable reference types' annotations ");
+        
+        switch (status)
+        {
+            case ResultStatus.NotFound:
+                await httpContext.Response.SendNotFoundAsync(ct);
+                break;
+            case ResultStatus.Unauthorized:
+                await httpContext.Response.SendUnauthorizedAsync(ct);
+                break;
+            case ResultStatus.Forbidden:
+                await httpContext.Response.SendForbiddenAsync(ct);
+                break;
+            default:
+                await httpContext.Response.SendAsync(
+                    new ProblemDetails { Status = 500 },
                     500,
                     cancellation: ct);
                 break;

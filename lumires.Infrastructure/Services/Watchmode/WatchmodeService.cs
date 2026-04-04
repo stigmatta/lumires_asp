@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Ardalis.Result;
+using Infrastructure.Exceptions;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Models;
@@ -16,73 +17,91 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
     {
         var sourcesKey = CacheKeys.MovieSources(tmdbId, region);
 
-        var cachedSources = await cache
-            .GetOrDefaultAsync<List<MovieSource>>(sourcesKey, token: ct);
+        try
+        {
+            var sources = await cache.GetOrSetAsync<List<MovieSource>>(
+                sourcesKey,
+                async (_, token) =>
+                {
+                    var watchmodeIdResult = await GetWatchmodeIdAsync(tmdbId, token);
 
-        if (cachedSources is not null)
-            return Result.Success(cachedSources);
+                    if (!watchmodeIdResult.IsSuccess)
+                        throw new WatchmodeException(watchmodeIdResult.Status, "Watchmode API error");
 
-        var watchmodeIdResult = await GetWatchmodeIdAsync(tmdbId, ct);
+                    if (watchmodeIdResult.Value == 0)
+                        return [];
 
-        if (!watchmodeIdResult.IsSuccess)
-            return watchmodeIdResult.Map(_ => new List<MovieSource>());
+                    var externalSources = await watchmodeApi
+                        .GetSourcesAsync(watchmodeIdResult.Value, region, token);
 
-        if (watchmodeIdResult.Value == 0)
-            return Result.Success(new List<MovieSource>());
+                    if (!externalSources.IsSuccessful || externalSources.Content is null)
+                        return [];
 
-        var externalSources = await watchmodeApi
-            .GetSourcesAsync(watchmodeIdResult.Value, region, ct);
+                    return externalSources.Content
+                        .Select(dto => new MovieSource(
+                            tmdbId,
+                            dto.Name,
+                            dto.Type,
+                            dto.WebUrl,
+                            dto.Format,
+                            dto.Price))
+                        .ToList();
+                },
+                options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
+                ct
+            );
 
-        if (!externalSources.IsSuccessful || externalSources.Content is null)
-            return Result.Success(new List<MovieSource>());
-
-        var mappedSources = externalSources.Content
-            .Select(dto => new MovieSource(
-                tmdbId,
-                dto.Name,
-                dto.Type,
-                dto.WebUrl,
-                dto.Format,
-                dto.Price))
-            .ToList();
-
-        await cache.SetAsync(sourcesKey, mappedSources, options => options
-            .SetDuration(CacheDuration.Medium)
-            .SetFailSafe(true), ct);
-
-        return Result.Success(mappedSources);
+            return Result.Success(sources);
+        }
+        catch (WatchmodeException ex)
+        {
+            return ex.Status switch
+            {
+                ResultStatus.Unauthorized => Result.Unauthorized(),
+                ResultStatus.NotFound     => Result.NotFound(),
+                _                         => Result.Error("Watchmode API error")
+            };
+        }
     }
 
     private async Task<Result<int>> GetWatchmodeIdAsync(int tmdbId, CancellationToken ct)
     {
         var idMapKey = CacheKeys.MovieSourceExternalId(tmdbId);
 
-        var cachedId = await cache.GetOrDefaultAsync<int>(idMapKey, token: ct);
-
-        if (cachedId is not 0)
-            return Result.Success(cachedId);
-
-        var searchResponse = await watchmodeApi.SearchByTmdbIdAsync(tmdbId, ct);
-
-        if (searchResponse is { IsSuccessful: true, Content: not null })
+        try
         {
-            var watchmodeId = searchResponse.Content.TitleResults is { Count: > 0 }
-                ? searchResponse.Content.TitleResults[0].Id
-                : 0;
+            var watchmodeId = await cache.GetOrSetAsync<int?>(
+                idMapKey,
+                async (_, token) =>
+                {
+                    var searchResponse = await watchmodeApi.SearchByTmdbIdAsync(tmdbId, token);
 
-            if (watchmodeId != 0)
-                await cache.SetAsync(idMapKey, watchmodeId, options => options
-                    .SetDuration(CacheDuration.Medium)
-                    .SetFailSafe(true), ct);
+                    if (searchResponse is { IsSuccessful: true, Content: not null })
+                        return searchResponse.Content.TitleResults is { Count: > 0 }
+                            ? searchResponse.Content.TitleResults[0].Id
+                            : 0;
 
-            return Result.Success(watchmodeId);
+                    throw searchResponse.StatusCode switch
+                    {
+                        HttpStatusCode.Unauthorized => new WatchmodeException(ResultStatus.Unauthorized, "Unauthorized"),
+                        HttpStatusCode.NotFound     => new WatchmodeException(ResultStatus.NotFound, "Not found"),
+                        _                           => new WatchmodeException(ResultStatus.Error, "Watchmode API error")
+                    };
+                },
+                options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
+                ct
+            );
+
+            return Result.Success(watchmodeId ?? 0);
         }
-
-        return searchResponse.StatusCode switch
+        catch (WatchmodeException ex)
         {
-            HttpStatusCode.Unauthorized => Result.Unauthorized(),
-            HttpStatusCode.NotFound => Result.NotFound(),
-            _ => Result.Error("Watchmode API error")
-        };
+            return ex.Status switch
+            {
+                ResultStatus.Unauthorized => Result.Unauthorized(),
+                ResultStatus.NotFound     => Result.NotFound(),
+                _                         => Result.Error("Watchmode API error")
+            };
+        }
     }
 }
