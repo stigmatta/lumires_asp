@@ -216,7 +216,7 @@ internal sealed class ArchitecturalTests
             $"Every endpoint should have a Summary class. " +
             $"Missing: {string.Join(", ", endpointsWithoutSummary.Select(t => t.FullName))}");
     }
-    
+
     [Test]
     [RequiresUnreferencedCode("Test code, trimming not applicable")]
     public void Api_IAppDbContext_Should_Only_Be_Used_In_IDataAccess_Implementations()

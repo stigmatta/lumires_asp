@@ -3,20 +3,21 @@ using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Movies.GetThisWeekPopular;
+namespace lumires.Api.Features.Movies.GetThisWeekRecentReleases;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    internal async Task<Response?> GetThisWeekPopular(string lang, CancellationToken ct)
+    internal async Task<Response?> GetThisWeekRecentReleases(string lang, CancellationToken ct)
     {
         var items = await db.Movies
             .AsNoTracking()
-            .OrderByDescending(movie => movie.Popularity)
+            .Where(movie => movie.ReleaseDate >= DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-30)))
+            .OrderByDescending(movie => movie.ReleaseDate)
             .Take(10)
-            .Select(movie => new WeeklyPopularItem(
+            .Select(movie => new WeeklyRecentItem(
                 movie.Id,
                 movie.ExternalId,
                 movie.Localizations

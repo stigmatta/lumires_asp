@@ -9,10 +9,10 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users"); 
+        builder.ToTable("Users");
 
         builder.HasKey(x => x.Id);
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
 
@@ -33,6 +33,6 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(x => x.Collections)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

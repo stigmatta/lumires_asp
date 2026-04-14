@@ -17,8 +17,13 @@ public static class CacheKeys
         return $"wm_id:{id}";
     }
 
-    public static string ThisWeekTopRatedMovies(string lang)
+    public static string ThisWeekPopularMovies(string lang)
     {
-        return $"this_week_top_rated_movies:{lang}";
+        return $"this_week_popular_movies:{lang}";
+    }
+
+    public static string ThisWeekRecentMovies(string lang)
+    {
+        return $"this_week_recent_movies:{lang}";
     }
 }

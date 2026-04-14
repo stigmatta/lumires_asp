@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Infrastructure.Persistence;
 using lumires.Api;
-using Infrastructure.Persistence;  
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

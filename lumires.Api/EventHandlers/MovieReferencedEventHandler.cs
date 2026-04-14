@@ -66,7 +66,7 @@ internal sealed partial class MovieReferencedEventHandler(
             defaultData.BackdropPath,
             defaultData.TrailerUrl
         );
-        
+
 
         foreach (var (culture, data) in successfulResults)
         {

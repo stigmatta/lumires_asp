@@ -58,8 +58,8 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
             return ex.Status switch
             {
                 ResultStatus.Unauthorized => Result.Unauthorized(),
-                ResultStatus.NotFound     => Result.NotFound(),
-                _                         => Result.Error("Watchmode API error")
+                ResultStatus.NotFound => Result.NotFound(),
+                _ => Result.Error("Watchmode API error")
             };
         }
     }
@@ -83,9 +83,10 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
 
                     throw searchResponse.StatusCode switch
                     {
-                        HttpStatusCode.Unauthorized => new WatchmodeException(ResultStatus.Unauthorized, "Unauthorized"),
-                        HttpStatusCode.NotFound     => new WatchmodeException(ResultStatus.NotFound, "Not found"),
-                        _                           => new WatchmodeException(ResultStatus.Error, "Watchmode API error")
+                        HttpStatusCode.Unauthorized =>
+                            new WatchmodeException(ResultStatus.Unauthorized, "Unauthorized"),
+                        HttpStatusCode.NotFound => new WatchmodeException(ResultStatus.NotFound, "Not found"),
+                        _ => new WatchmodeException(ResultStatus.Error, "Watchmode API error")
                     };
                 },
                 options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
@@ -99,8 +100,8 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
             return ex.Status switch
             {
                 ResultStatus.Unauthorized => Result.Unauthorized(),
-                ResultStatus.NotFound     => Result.NotFound(),
-                _                         => Result.Error("Watchmode API error")
+                ResultStatus.NotFound => Result.NotFound(),
+                _ => Result.Error("Watchmode API error")
             };
         }
     }

@@ -6,10 +6,10 @@ namespace lumires.Api.Features.Collections.CreateCollection;
 
 [UsedImplicitly]
 internal sealed record Command(
-    string Title, 
-    string? Description, 
+    string Title,
+    string? Description,
     bool IsPrivate,
-    IReadOnlyCollection<Guid> MovieIds 
+    IReadOnlyCollection<Guid> MovieIds
 ) : ICommand<Response>;
 
 [UsedImplicitly]
@@ -32,13 +32,13 @@ internal sealed class Endpoint(
         var collectionId = await dataAccess.CreateCollectionAsync(command, currentUserId, ct);
 
         var response = new Response(
-            collectionId, 
-            command.Title, 
+            collectionId,
+            command.Title,
             DateTimeOffset.UtcNow
         );
         await Send.CreatedAtAsync<GetCollection.Endpoint>(
-            routeValues: new { id = collectionId },
-            responseBody: response,
+            new { id = collectionId },
+            response,
             cancellation: ct);
     }
 }

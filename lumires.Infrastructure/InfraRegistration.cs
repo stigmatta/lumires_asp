@@ -51,7 +51,7 @@ public static class InfraRegistration
 
         // External APIs
         services.AddExternalApis(config);
-        
+
         //Background worker
         services.AddWorker();
 
@@ -71,7 +71,7 @@ public static class InfraRegistration
 
         var host = app.Urls.FirstOrDefault();
         app.Lifetime.ApplicationStarted.Register(() => OpenDashboards(app));
-        
+
         app.UseTickerQ();
 
         return app;
@@ -92,7 +92,6 @@ public static class InfraRegistration
                      $"{baseUrl}/tickerq/dashboard",
                      "https://telemetry.betterstack.com/team/t498261/tail?s=1694678"
                  })
-        {
             try
             {
                 Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
@@ -101,6 +100,5 @@ public static class InfraRegistration
             {
                 Console.WriteLine($"Failed to open {url}: {ex.Message}");
             }
-        }
     }
 }

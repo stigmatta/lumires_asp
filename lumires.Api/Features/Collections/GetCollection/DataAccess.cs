@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using lumires.Api.Features.Movies.GetMovie;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;

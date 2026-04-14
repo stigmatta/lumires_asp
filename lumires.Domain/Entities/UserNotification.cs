@@ -1,20 +1,13 @@
 ﻿using lumires.Domain.Enums;
 using lumires.Domain.Exceptions;
 
-
 namespace lumires.Domain.Entities;
 
 public sealed class UserNotification
 {
-    public Guid Id { get; }
-    public Guid UserId { get; }
-    public NotificationType Type { get; }
-    public string SenderId { get; }
-    public string? TargetId { get; }
-    public DateTimeOffset CreatedAt { get; }
-    public DateTimeOffset? ReadAt { get; private set; }
-
-    private UserNotification() { }
+    private UserNotification()
+    {
+    }
 
     public UserNotification(Guid userId, NotificationType type, string senderId, string? targetId = null)
     {
@@ -31,6 +24,14 @@ public sealed class UserNotification
         TargetId = targetId;
         CreatedAt = DateTimeOffset.UtcNow;
     }
+
+    public Guid Id { get; }
+    public Guid UserId { get; }
+    public NotificationType Type { get; }
+    public string SenderId { get; }
+    public string? TargetId { get; }
+    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset? ReadAt { get; private set; }
 
     public void MarkAsRead()
     {

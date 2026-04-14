@@ -7,11 +7,8 @@ internal static class BackgroundWorkerExtensions
 {
     public static IServiceCollection AddWorker(this IServiceCollection services)
     {
-        services.AddTickerQ(options =>
-        {
-            options.AddDashboard(); 
-        });
-        
+        services.AddTickerQ(options => { options.AddDashboard(); });
+
         return services;
     }
 }

@@ -15,3 +15,13 @@ public record ExternalMovie(
     DateOnly ReleaseDate,
     string? TrailerUrl
 );
+
+[UsedImplicitly]
+public record ExternalMovieShort(
+    int ExternalId,
+    string Title,
+    string? BackdropPath,
+    float VoteAverage,
+    int VoteCount,
+    float Popularity
+);
