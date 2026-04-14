@@ -15,17 +15,16 @@ internal sealed class Validator : Validator<Command>
             .WithMessage(localizer["Collection_ValidationError_TitleEmpty"])
             .MinimumLength(StringLimits.MinLength)
             .WithMessage(localizer["Collection_ValidationError_TitleTooShort"])
-            .MaximumLength(StringLimits.Default) 
+            .MaximumLength(StringLimits.Default)
             .WithMessage(localizer["Collection_ValidationError_TitleTooLong"]);
 
         RuleFor(x => x.Description)
-            .MaximumLength(StringLimits.Description) 
+            .MaximumLength(StringLimits.Description)
             .WithMessage(localizer["Collection_ValidationError_DescriptionTooLong"])
             .When(x => x.Description is not null);
 
         RuleForEach(x => x.MovieIds)
             .NotEmpty()
             .WithMessage(localizer["Collection_ValidationError_InvalidMovieId"]);
-            
     }
 }

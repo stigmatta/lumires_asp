@@ -26,8 +26,9 @@ public sealed record VideoItem(string Key, string Site, string Type);
 public sealed record TmdbPagedResponse<T>
 {
     public int Page { get; init; }
-    [UsedImplicitly]
-    public List<T> Results { get; init; } = [];
+
+    [UsedImplicitly] public List<T> Results { get; init; } = [];
+
     public int TotalPages { get; init; }
     public int TotalResults { get; init; }
 }

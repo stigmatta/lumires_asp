@@ -26,7 +26,7 @@ internal sealed class Summary : Summary<Endpoint>
         ExampleRequest = new Query(550);
         Response(200, "Movie details retrieved successfully.", example: new Response(
             new Guid("28f619dc-f235-4232-b580-e71b6481109c"),
-            new DateOnly(1999, 9, 10 ),
+            new DateOnly(1999, 9, 10),
             "dfeUzm6KF4g",
             "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
             "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg",

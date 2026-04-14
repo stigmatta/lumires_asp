@@ -4,13 +4,13 @@ using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace lumires.Api.Features.Movies.GetThisWeekPopular;
+namespace lumires.Api.Features.Movies.GetThisWeekRecentReleases;
 
 [UsedImplicitly]
-internal sealed record WeeklyPopularItem(Guid Id, int ExternalId, string Title, int VoteCount, string? BackdropPath);
+internal sealed record WeeklyRecentItem(Guid Id, int ExternalId, string Title, int VoteCount, string? BackdropPath);
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyList<WeeklyPopularItem> Items);
+internal sealed record Response(IReadOnlyList<WeeklyRecentItem> Items);
 
 [UsedImplicitly]
 internal sealed record LocalizationResponse(
@@ -26,20 +26,20 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/popular-this-week");
+        Get("/movies/recent-this-week");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = CacheKeys.ThisWeekPopularMovies(lang);
+        var cacheKey = CacheKeys.ThisWeekRecentMovies(lang);
 
         Response = await cache.GetOrSetAsync<Response>(
             cacheKey,
             async (_, token) =>
             {
-                var result = await dataAccess.GetThisWeekPopular(lang, token);
+                var result = await dataAccess.GetThisWeekRecentReleases(lang, token);
                 return result ?? new Response([]);
             },
             options => options.SetDuration(CacheDuration.Long).SetFailSafe(true),

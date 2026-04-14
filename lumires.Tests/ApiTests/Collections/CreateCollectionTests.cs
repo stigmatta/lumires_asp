@@ -34,14 +34,14 @@ internal sealed class CreateCollectionTests
         dbContextMock
             .Setup(x => x.Collections)
             .Returns(new List<Collection>().BuildMockDbSet().Object);
-        
+
         dbContextMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         _dataAccess = new DataAccess(dbContextMock.Object);
     }
-    
+
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
     {
         var da = dataAccess ?? _dataAccess;
@@ -72,7 +72,7 @@ internal sealed class CreateCollectionTests
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(201);
     }
-    
+
     [Test]
     public async Task CreateCollection_Should_Throw_Error_When_ValidationError()
     {
@@ -87,7 +87,7 @@ internal sealed class CreateCollectionTests
         // Assert
         await act.Should().ThrowAsync<CollectionValidationException>();
     }
-    
+
     [Test]
     public async Task CreateCollection_Should_Return_Correct_Response()
     {
@@ -103,9 +103,8 @@ internal sealed class CreateCollectionTests
         ep.Response.Title.Should().Be(command.Title);
         ep.Response.CollectionId.Should().NotBe(Guid.Empty);
         ep.Response.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
-        
     }
-    
+
     [Test]
     public async Task CreateCollection_Should_Use_UserId_From_CurrentUserService()
     {
@@ -136,7 +135,7 @@ internal sealed class CreateCollectionTests
         savedCollection.Should().NotBeNull();
         savedCollection!.UserId.Should().Be(expectedUserId);
     }
- 
+
     [Test]
     public async Task CreateCollection_Should_Add_MovieIds_To_Collection()
     {
@@ -165,7 +164,7 @@ internal sealed class CreateCollectionTests
         savedCollection!.Movies.Should().HaveCount(2);
         savedCollection.Movies.Select(m => m.MovieId).Should().BeEquivalentTo(movieIds);
     }
-    
+
     [Test]
     public async Task CreateCollection_Should_Not_Throw_When_MovieIds_IsEmpty()
     {
@@ -180,5 +179,4 @@ internal sealed class CreateCollectionTests
         // Assert
         await act.Should().NotThrowAsync();
     }
-    
 }

@@ -6,22 +6,10 @@ public sealed class Movie
 {
     private readonly List<MovieLocalization> _localizations = [];
 
-    public Guid Id { get; }
-    public int ExternalId { get; }
-    public DateOnly ReleaseDate { get; private set; }
-    public string PosterPath { get; private set; } = null!;
-    public string? BackdropPath { get; private set; }
-    public string? TrailerUrl { get; private set; }
-    public float VoteAverage { get; private set;  }
-    public int VoteCount { get; private set; }
-    public float Popularity { get; private set; }
-
-
-    public IReadOnlyCollection<MovieLocalization> Localizations => _localizations.AsReadOnly();
-
     public Movie(int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
         int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
-        : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, backdropPath, trailerUrl)
+        : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity,
+            backdropPath, trailerUrl)
     {
     }
 
@@ -34,17 +22,14 @@ public sealed class Movie
         if (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31))
             throw new MovieValidationException("Invalid movie release date", nameof(releaseDate));
 
-        if (string.IsNullOrWhiteSpace(posterPath))
-            throw new MovieValidationException("PosterPath is required", nameof(posterPath));
-
         if (voteAverage is < 0 or > 10)
             throw new MovieValidationException("Invalid average vote rating", nameof(voteAverage));
 
         if (voteCount < 0)
-            throw new MovieValidationException("Invalid vote count", nameof(voteCount)); 
-        
+            throw new MovieValidationException("Invalid vote count", nameof(voteCount));
+
         if (popularity < 0)
-            throw new MovieValidationException("Invalid popularity", nameof(popularity)); 
+            throw new MovieValidationException("Invalid popularity", nameof(popularity));
 
         Id = id;
         ExternalId = externalId;
@@ -57,8 +42,21 @@ public sealed class Movie
         TrailerUrl = trailerUrl;
     }
 
+    public Guid Id { get; }
+    public int ExternalId { get; }
+    public DateOnly ReleaseDate { get; private set; }
+    public string? PosterPath { get; private set; }
+    public string? BackdropPath { get; private set; }
+    public string? TrailerUrl { get; private set; }
+    public float VoteAverage { get; private set; }
+    public int VoteCount { get; private set; }
+    public float Popularity { get; private set; }
+
+
+    public IReadOnlyCollection<MovieLocalization> Localizations => _localizations.AsReadOnly();
+
     /// <summary>
-    /// Adds a localization and sets the navigation & foreign key automatically.
+    ///     Adds a localization and sets the navigation & foreign key automatically.
     /// </summary>
     public void AddLocalization(MovieLocalization localization)
     {

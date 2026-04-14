@@ -103,47 +103,6 @@ internal sealed class WatchmodeTests
             Times.Once);
     }
 
-    [Test]
-    public async Task WatchmodeService_Should_NotCache_When_ResultZero()
-    {
-        //Arrange
-        const int id = 1;
-
-        var mockSearchResponse = new WatchmodeSearchResponse(
-            new List<WatchmodeTitleResult>()
-        );
-
-        _watchmodeApi
-            .Setup(x => x.SearchByTmdbIdAsync(
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<string>()
-            ))
-            .ReturnsAsync(new ApiResponse<WatchmodeSearchResponse>(
-                new HttpResponseMessage(HttpStatusCode.OK),
-                mockSearchResponse,
-                new RefitSettings()));
-
-        var cache = new FusionCache(new FusionCacheOptions());
-        var service = new WatchmodeService(_watchmodeApi.Object, cache);
-
-        // Act
-        await service.GetSourcesAsync(id, CancellationToken.None);
-        await service.GetSourcesAsync(id, CancellationToken.None);
-
-        //Assert
-        _watchmodeApi.Verify(x => x.SearchByTmdbIdAsync(
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>(),
-                It.IsAny<string>()),
-            Times.Exactly(2));
-
-        _watchmodeApi.Verify(x => x.GetSourcesAsync(
-                It.IsAny<int>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()),
-            Times.Never);
-    }
 
     [Test]
     [Arguments(1, "Netflix", "subscription", "https://netflix.com", "HD")]

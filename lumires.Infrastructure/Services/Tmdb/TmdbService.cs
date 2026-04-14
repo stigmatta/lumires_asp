@@ -11,6 +11,11 @@ namespace Infrastructure.Services.Tmdb;
 
 public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalMovieService
 {
+    private const string DefLang = LocalizationConstants.DefaultCulture;
+    private const string EnLang = "en-US";
+    private const string UaLang = "uk-UA";
+
+
     public async Task<Result<ExternalMovie>> GetMovieDetailsAsync(int movieId, string lang,
         CancellationToken ct = default)
     {
@@ -28,12 +33,11 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
         var externalMovie = MapToDomain(tmdbResponse.Content);
 
-        const string defLang = LocalizationConstants.DefaultCulture;
 
-        if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == defLang)
+        if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == DefLang)
             return externalMovie;
 
-        var fallbackResponse = await tmdbApi.GetMovieAsync(movieId, defLang, ct);
+        var fallbackResponse = await tmdbApi.GetMovieAsync(movieId, DefLang, ct);
         if (fallbackResponse.Content == null) return externalMovie;
 
         var fallback = MapToDomain(fallbackResponse.Content);
@@ -44,6 +48,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             TrailerUrl = externalMovie.TrailerUrl ?? fallback.TrailerUrl
         };
     }
+
 
     public async Task<Result> SyncTrendingMoviesAsync(CancellationToken ct)
     {
@@ -66,8 +71,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
             var tasks = batch.Select(async movie =>
             {
-                var enTask = tmdbApi.GetMovieAsync(movie.Id, "en-US", ct);
-                var ukTask = tmdbApi.GetMovieAsync(movie.Id, "uk-UA", ct);
+                var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
+                var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
                 await Task.WhenAll(enTask, ukTask);
                 return (en: await enTask, uk: await ukTask, movie.Id);
             });
@@ -86,7 +91,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
                     foreach (var loc in localizations)
                     {
-                        var source = loc.LanguageCode == "en" ? en.Content : uk.Content;
+                        var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
                         loc.Update(source!.Title, source.Overview);
                     }
                 }
@@ -98,8 +103,10 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
             await db.SaveChangesAsync(ct);
         }
+
         return Result.NoContent();
     }
+
     public async Task<Result> SyncPopularMoviesAsync(CancellationToken ct)
     {
         const int targetNewMovies = 40;
@@ -134,8 +141,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             {
                 var tasks = batch.Select(async movie =>
                 {
-                    var enTask = tmdbApi.GetMovieAsync(movie.Id, "en-US", ct);
-                    var ukTask = tmdbApi.GetMovieAsync(movie.Id, "uk-UA", ct);
+                    var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
+                    var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
                     await Task.WhenAll(enTask, ukTask);
                     return (en: await enTask, uk: await ukTask);
                 });
@@ -159,6 +166,81 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         return Result.NoContent();
     }
 
+    public async Task<Result> SyncRecentMoviesAsync(CancellationToken ct)
+    {
+        var today = DateTime.UtcNow;
+        const int fromDays = 30;
+        const string region = "US";
+
+        var tmdbResponse = await tmdbApi.GetRecentReleasesAsync(
+            today.ToString("yyyy-MM-dd"),
+            today.AddDays(-fromDays).ToString("yyyy-MM-dd"),
+            "release_date.desc",
+            "3|2",
+            region,
+            false,
+            30,
+            1,
+            ct);
+
+        if (tmdbResponse.StatusCode == HttpStatusCode.Unauthorized)
+            return Result.Unauthorized();
+
+        if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content is null)
+            return Result.Error("Failed to fetch recent releases from TMDB");
+
+        var results = tmdbResponse.Content.Results;
+
+        foreach (var batch in results.Chunk(10))
+        {
+            var tmdbIds = batch.Select(m => m.Id).ToList();
+
+            var existingIds = await db.Movies
+                .Where(m => tmdbIds.Contains(m.ExternalId))
+                .Select(m => m.ExternalId)
+                .ToHashSetAsync(ct);
+
+            var tasks = batch.Select(async movie =>
+            {
+                var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
+                var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
+
+                await Task.WhenAll(enTask, ukTask);
+
+                return (en: await enTask, uk: await ukTask, movie.Id);
+            });
+
+            var fetched = await Task.WhenAll(tasks);
+
+            foreach (var (en, uk, tmdbId) in fetched)
+            {
+                if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode)
+                    continue;
+
+                if (existingIds.Contains(tmdbId))
+                {
+                    var localizations = await db.MovieLocalizations
+                        .Where(l => l.Movie.ExternalId == tmdbId)
+                        .ToListAsync(ct);
+
+                    foreach (var loc in localizations)
+                    {
+                        var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
+                        loc.Update(source!.Title, source.Overview);
+                    }
+                }
+                else
+                {
+                    await db.Movies.AddAsync(ToMovie(en.Content!, uk.Content!), ct);
+                }
+            }
+
+            await db.SaveChangesAsync(ct);
+        }
+
+        return Result.NoContent();
+    }
+
     private static ExternalMovie MapToDomain(TmdbMovieResponse tmdb)
     {
         var trailerKey = tmdb.Videos?.Results
@@ -177,25 +259,25 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             trailerKey
         );
     }
-    
+
     private static Movie ToMovie(TmdbMovieResponse en, TmdbMovieResponse uk)
     {
         var trailerKey = en.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
 
         var movie = new Movie(
-            externalId: en.Id,
-            releaseDate: en.ReleaseDate,
-            posterPath: en.PosterPath,
-            voteAverage: en.VoteAverage,
-            voteCount: en.VoteCount,
-            popularity: en.Popularity,
-            backdropPath: en.BackdropPath,
-            trailerUrl: trailerKey
+            en.Id,
+            en.ReleaseDate,
+            en.PosterPath,
+            en.VoteAverage,
+            en.VoteCount,
+            en.Popularity,
+            en.BackdropPath,
+            trailerKey
         );
 
-        movie.AddLocalization(new MovieLocalization("en-US", en.Title, en.Overview));
-        movie.AddLocalization(new MovieLocalization("uk-UA", uk.Title, uk.Overview));
+        movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
+        movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
 
         return movie;
     }

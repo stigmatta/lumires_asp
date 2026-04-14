@@ -1,5 +1,3 @@
-using System;
-using Aspire.Hosting;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -10,7 +8,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 //     .AddDatabase("db");
 
 var db = builder.AddConnectionString("db");
-
 
 
 // var redisUrl = builder.Configuration["ConnectionStrings:cache"]
@@ -59,7 +56,7 @@ var logtailApiKey = builder.Configuration["Logtail:ApiKey"]
                     ?? throw new InvalidOperationException("Logtail__APIKEY is missing in .env");
 
 //Subabase
-var supabaseServiceKey = builder.Configuration["Supabase:ServiceKey"] 
+var supabaseServiceKey = builder.Configuration["Supabase:ServiceKey"]
                          ?? throw new InvalidOperationException("SUPABASE__SERVICEKEY is missing in .env");
 
 
@@ -90,7 +87,6 @@ builder.AddProject<lumires_Composition>("composition")
     //Logtail
     .WithEnvironment("Logtail__ApiKey", logtailApiKey)
     .WithEnvironment("Logtail__BaseUrl", logtailUrl)
-    
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

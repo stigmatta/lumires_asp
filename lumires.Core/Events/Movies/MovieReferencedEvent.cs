@@ -6,6 +6,6 @@ namespace lumires.Core.Events.Movies;
 [UsedImplicitly]
 public sealed class MovieReferencedEvent : IEvent
 {
-    public Guid InternalId { get; init; } 
+    public Guid InternalId { get; init; }
     public required int ExternalId { get; init; }
 }

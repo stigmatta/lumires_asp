@@ -58,7 +58,8 @@ internal sealed class Endpoint(
 
                     var externalResult = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, token);
                     if (!externalResult.IsSuccess)
-                        throw new ExternalMovieException(externalResult.Status, "External service failed while retrieving the movie"); 
+                        throw new ExternalMovieException(externalResult.Status,
+                            "External service failed while retrieving the movie");
 
                     var importedMovie = externalResult.Value;
                     var internalId = Guid.CreateVersion7();
@@ -66,7 +67,7 @@ internal sealed class Endpoint(
                     await PublishAsync(new MovieReferencedEvent
                     {
                         InternalId = internalId,
-                        ExternalId = importedMovie.ExternalId,
+                        ExternalId = importedMovie.ExternalId
                     }, Mode.WaitForAll, token);
 
                     return new Response(

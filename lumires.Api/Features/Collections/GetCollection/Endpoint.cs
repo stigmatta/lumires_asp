@@ -9,18 +9,18 @@ internal sealed record Query(Guid Id);
 
 [UsedImplicitly]
 internal sealed record Response(
-    Guid Id, 
-    string Title, 
-    string? Description, 
-    string AuthorName, 
+    Guid Id,
+    string Title,
+    string? Description,
+    string AuthorName,
     DateTimeOffset CreatedAt,
     IReadOnlyCollection<CollectionMovieItem> Movies);
 
 [UsedImplicitly]
 internal sealed record CollectionMovieItem(
-    Guid MovieId, 
-    string Title, 
-    string? PosterPath, 
+    Guid MovieId,
+    string Title,
+    string? PosterPath,
     int Order);
 
 internal sealed class Endpoint(
@@ -30,7 +30,7 @@ internal sealed class Endpoint(
     public override void Configure()
     {
         Get("collections/{id}");
-        AllowAnonymous(); 
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(Query query, CancellationToken ct)

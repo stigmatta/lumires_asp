@@ -22,14 +22,14 @@ internal sealed class Summary : Summary<Endpoint>
 
         Response(200, "Top rated movies retrieved successfully.", example: new Response(
         [
-            new TopRatedItem(
+            new WeeklyPopularItem(
                 new Guid("28f619dc-f235-4232-b580-e71b6481109c"),
                 550,
                 "Fight Club",
                 22500,
                 "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg"
             ),
-            new TopRatedItem(
+            new WeeklyPopularItem(
                 new Guid("91a3b2cd-e456-7890-c123-f45d6789012e"),
                 238,
                 "The Godfather",

@@ -93,13 +93,13 @@ internal sealed class GetMovieTests
         // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            ExternalId: id,
-            Title: title,
-            Overview: null,
-            PosterPath: poster,
-            VoteAverage: voteAverage,
-            VoteCount: voteCount,
-            Popularity: popularity,
+            id,
+            title,
+            null,
+            poster,
+            voteAverage,
+            voteCount,
+            popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -202,13 +202,13 @@ internal sealed class GetMovieTests
         // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            ExternalId: id,
-            Title: title,
-            Overview: null,
-            PosterPath: poster,
-            VoteAverage: voteAverage,
-            VoteCount: voteCount,
-            Popularity: popularity,
+            id,
+            title,
+            null,
+            poster,
+            voteAverage,
+            voteCount,
+            popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -316,29 +316,28 @@ internal sealed class GetMovieTests
     }
 
 
-    
     [Test]
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_ReturnCachedResponse_On_SecondCall(
-            int id,
-            string title,
-            string dateStr,
-            string poster,
-            float voteAverage,
-            int voteCount,
-            float popularity)
+        int id,
+        string title,
+        string dateStr,
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            ExternalId: id,
-            Title: title,
-            Overview: null,
-            PosterPath: poster,
-            VoteAverage: voteAverage,
-            VoteCount: voteCount,
-            Popularity: popularity,
+            id,
+            title,
+            null,
+            poster,
+            voteAverage,
+            voteCount,
+            popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -384,13 +383,13 @@ internal sealed class GetMovieTests
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            ExternalId: id,
-            Title: title,
-            Overview: null,
-            PosterPath: poster,
-            VoteAverage: voteAverage,
-            VoteCount: voteCount,
-            Popularity: popularity,
+            id,
+            title,
+            null,
+            poster,
+            voteAverage,
+            voteCount,
+            popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -424,7 +423,7 @@ internal sealed class GetMovieTests
             Times.Exactly(2));
     }
 
-    
+
     [Test]
     [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
     [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
@@ -438,7 +437,7 @@ internal sealed class GetMovieTests
     {
         // Arrange 
         var releaseDate = DateOnly.Parse(dateStr);
-        
+
         var movies = new List<Movie>
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
@@ -468,7 +467,7 @@ internal sealed class GetMovieTests
             Times.Never);
     }
 
-    
+
     [Test]
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
@@ -494,13 +493,13 @@ internal sealed class GetMovieTests
 
 
         var externalMovie = new ExternalMovie(
-            ExternalId: id,
-            Title: title,
-            Overview: null,
-            PosterPath: poster,
-            VoteAverage: voteAverage,
-            VoteCount: voteCount,
-            Popularity: popularity,
+            id,
+            title,
+            null,
+            poster,
+            voteAverage,
+            voteCount,
+            popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -545,13 +544,13 @@ internal sealed class GetMovieTests
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(
                 new ExternalMovie(
-                    ExternalId: id,
-                    Title: title,
-                    Overview: null,
-                    PosterPath: poster,
-                    VoteAverage: voteAverage,
-                    VoteCount: voteCount,
-                    Popularity: popularity,
+                    id,
+                    title,
+                    null,
+                    poster,
+                    voteAverage,
+                    voteCount,
+                    popularity,
                     ReleaseDate: releaseDate,
                     BackdropPath: null,
                     TrailerUrl: null

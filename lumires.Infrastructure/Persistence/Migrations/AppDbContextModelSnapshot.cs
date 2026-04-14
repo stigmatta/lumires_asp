@@ -97,7 +97,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("PosterPath")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 

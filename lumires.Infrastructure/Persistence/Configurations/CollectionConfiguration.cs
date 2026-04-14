@@ -16,10 +16,10 @@ internal sealed class CollectionConfiguration : IEntityTypeConfiguration<Collect
 
         builder.Property(x => x.Title)
             .IsRequired()
-            .HasMaxLength(StringLimits.Default); 
+            .HasMaxLength(StringLimits.Default);
 
         builder.Property(x => x.Description)
-            .HasMaxLength(StringLimits.Description) 
+            .HasMaxLength(StringLimits.Description)
             .IsRequired(false);
 
         builder.Property(x => x.IsPrivate)

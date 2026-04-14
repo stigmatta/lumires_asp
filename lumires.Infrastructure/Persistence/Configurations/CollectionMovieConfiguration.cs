@@ -27,8 +27,8 @@ internal sealed class CollectionMovieConfiguration : IEntityTypeConfiguration<Co
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Movie)
-            .WithMany() 
+            .WithMany()
             .HasForeignKey(x => x.MovieId)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
