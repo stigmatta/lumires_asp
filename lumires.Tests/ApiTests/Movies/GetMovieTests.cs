@@ -79,21 +79,27 @@ internal sealed class GetMovieTests
 
 
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_Be_200_And_MapDataCorrectly(
         int id,
         string title,
         string dateStr,
-        string poster)
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
+            ExternalId: id,
+            Title: title,
+            Overview: null,
+            PosterPath: poster,
+            VoteAverage: voteAverage,
+            VoteCount: voteCount,
+            Popularity: popularity,
             ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
@@ -115,7 +121,7 @@ internal sealed class GetMovieTests
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
 
-        ep.Response.Year.Should().Be(releaseDate.Year);
+        ep.Response.ReleaseDate.Should().Be(releaseDate);
         ep.Response.PosterPath.Should().Be(poster);
         ep.Response.Localization!.Title.Should().Be(title);
 
@@ -182,22 +188,28 @@ internal sealed class GetMovieTests
 
 
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CallExternalService_OnlyOnce_When_CalledTwice(
         int id,
         string title,
         string dateStr,
-        string poster)
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            ReleaseDate: releaseDate,
+            ExternalId: id,
+            Title: title,
+            Overview: null,
             PosterPath: poster,
+            VoteAverage: voteAverage,
+            VoteCount: voteCount,
+            Popularity: popularity,
+            ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
         );
@@ -304,23 +316,30 @@ internal sealed class GetMovieTests
     }
 
 
+    
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_ReturnCachedResponse_On_SecondCall(
-        int id,
-        string title,
-        string dateStr,
-        string poster)
+            int id,
+            string title,
+            string dateStr,
+            string poster,
+            float voteAverage,
+            int voteCount,
+            float popularity)
     {
         // Arrange
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            ReleaseDate: releaseDate,
+            ExternalId: id,
+            Title: title,
+            Overview: null,
             PosterPath: poster,
+            VoteAverage: voteAverage,
+            VoteCount: voteCount,
+            Popularity: popularity,
+            ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
         );
@@ -351,22 +370,28 @@ internal sealed class GetMovieTests
     }
 
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CacheSeparately_Per_Language(
         int id,
         string title,
         string dateStr,
-        string poster)
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         //Arrange
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
         var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            ReleaseDate: releaseDate,
+            ExternalId: id,
+            Title: title,
+            Overview: null,
             PosterPath: poster,
+            VoteAverage: voteAverage,
+            VoteCount: voteCount,
+            Popularity: popularity,
+            ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
         );
@@ -399,18 +424,24 @@ internal sealed class GetMovieTests
             Times.Exactly(2));
     }
 
+    
     [Test]
-    [Arguments(1, 2020, "/poster1.jpg")]
-    [Arguments(42, 1994, "/poster2.jpg")]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
+    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_NotCallExternalService_When_FoundInDb(
         int externalId,
-        int year,
-        string posterPath)
+        string dateStr,
+        string posterPath,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange 
+        var releaseDate = DateOnly.Parse(dateStr);
+        
         var movies = new List<Movie>
         {
-            new(externalId, year, posterPath)
+            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
@@ -427,7 +458,7 @@ internal sealed class GetMovieTests
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
-        ep.Response.Year.Should().Be(year);
+        ep.Response.ReleaseDate.Should().Be(releaseDate);
 
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(
@@ -437,18 +468,21 @@ internal sealed class GetMovieTests
             Times.Never);
     }
 
-
+    
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CallExternalService_When_NotFoundInDb(
         int id,
         string title,
         string dateStr,
-        string poster)
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange 
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
         var movies = new List<Movie>().BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
@@ -460,11 +494,14 @@ internal sealed class GetMovieTests
 
 
         var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            ReleaseDate: releaseDate,
+            ExternalId: id,
+            Title: title,
+            Overview: null,
             PosterPath: poster,
+            VoteAverage: voteAverage,
+            VoteCount: voteCount,
+            Popularity: popularity,
+            ReleaseDate: releaseDate,
             BackdropPath: null,
             TrailerUrl: null
         );
@@ -489,27 +526,33 @@ internal sealed class GetMovieTests
     }
 
     [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg")]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_Publish_MovieReferencedEvent(
         int id,
         string title,
         string dateStr,
-        string poster)
+        string poster,
+        float voteAverage,
+        int voteCount,
+        float popularity)
     {
         // Arrange
         var fakeHandler = new FakeMovieReferencedEventHandler();
-        var releaseDate = DateTime.Parse(dateStr);
+        var releaseDate = DateOnly.Parse(dateStr);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(
                 new ExternalMovie(
-                    id,
-                    title,
-                    null,
-                    ReleaseDate: releaseDate,
+                    ExternalId: id,
+                    Title: title,
+                    Overview: null,
                     PosterPath: poster,
+                    VoteAverage: voteAverage,
+                    VoteCount: voteCount,
+                    Popularity: popularity,
+                    ReleaseDate: releaseDate,
                     BackdropPath: null,
                     TrailerUrl: null
                 )

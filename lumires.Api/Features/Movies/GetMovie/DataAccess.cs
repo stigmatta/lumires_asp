@@ -17,7 +17,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Where(m => m.ExternalId == tmdbId)
             .Select(m => new Response(
                 m.Id,
-                m.Year,
+                m.ReleaseDate,
                 m.TrailerUrl,
                 m.PosterPath,
                 m.BackdropPath,

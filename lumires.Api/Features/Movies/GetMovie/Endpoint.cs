@@ -21,7 +21,7 @@ internal sealed record LocalizationResponse(
 [UsedImplicitly]
 internal sealed record Response(
     Guid Id,
-    int Year,
+    DateOnly ReleaseDate,
     string? TrailerUrl,
     string PosterPath,
     string? BackdropPath,
@@ -71,7 +71,7 @@ internal sealed class Endpoint(
 
                     return new Response(
                         internalId,
-                        importedMovie.ReleaseDate.Year,
+                        importedMovie.ReleaseDate,
                         importedMovie.TrailerUrl,
                         importedMovie.PosterPath,
                         importedMovie.BackdropPath,

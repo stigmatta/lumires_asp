@@ -169,6 +169,9 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             tmdb.Title,
             tmdb.Overview,
             tmdb.PosterPath,
+            tmdb.VoteAverage,
+            tmdb.VoteCount,
+            tmdb.Popularity,
             tmdb.BackdropPath,
             tmdb.ReleaseDate,
             trailerKey
@@ -182,14 +185,17 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
         var movie = new Movie(
             externalId: en.Id,
-            year: en.ReleaseDate.Year,
+            releaseDate: en.ReleaseDate,
             posterPath: en.PosterPath,
+            voteAverage: en.VoteAverage,
+            voteCount: en.VoteCount,
+            popularity: en.Popularity,
             backdropPath: en.BackdropPath,
             trailerUrl: trailerKey
         );
 
-        movie.AddLocalization(new MovieLocalization("en", en.Title, en.Overview));
-        movie.AddLocalization(new MovieLocalization("uk", uk.Title, uk.Overview));
+        movie.AddLocalization(new MovieLocalization("en-US", en.Title, en.Overview));
+        movie.AddLocalization(new MovieLocalization("uk-UA", uk.Title, uk.Overview));
 
         return movie;
     }

@@ -8,7 +8,10 @@ public record ExternalMovie(
     string Title,
     string? Overview,
     string PosterPath,
+    float VoteAverage,
+    int VoteCount,
+    float Popularity,
     string? BackdropPath,
-    DateTime ReleaseDate,
+    DateOnly ReleaseDate,
     string? TrailerUrl
 );

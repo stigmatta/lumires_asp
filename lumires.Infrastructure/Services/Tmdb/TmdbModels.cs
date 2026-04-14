@@ -8,8 +8,11 @@ public sealed record TmdbMovieResponse(
     string Title,
     string? Overview,
     string PosterPath,
+    float VoteAverage,
+    int VoteCount,
+    float Popularity,
     string? BackdropPath,
-    DateTime ReleaseDate,
+    DateOnly ReleaseDate,
     VideoResponse? Videos
 );
 

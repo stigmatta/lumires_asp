@@ -8,7 +8,7 @@ using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace lumires.Api.Features.Movies.EventHandlers;
+namespace lumires.Api.EventHandlers;
 
 [UsedImplicitly]
 internal sealed partial class MovieReferencedEventHandler(
@@ -58,8 +58,11 @@ internal sealed partial class MovieReferencedEventHandler(
 
         var movie = new Movie(
             command.ExternalId,
-            defaultData.ReleaseDate.Year,
+            defaultData.ReleaseDate,
             defaultData.PosterPath,
+            defaultData.VoteAverage,
+            defaultData.VoteCount,
+            defaultData.Popularity,
             defaultData.BackdropPath,
             defaultData.TrailerUrl
         );
@@ -96,7 +99,7 @@ internal sealed partial class MovieReferencedEventHandler(
         }
         catch (Exception ex)
         {
-            LogUnexpectedError(logger, ex, command.ExternalId);
+            LogUnexpectedError(logger, command.ExternalId, ex);
             throw;
         }
     }
@@ -105,25 +108,26 @@ internal sealed partial class MovieReferencedEventHandler(
         EventId = 1,
         Level = LogLevel.Warning,
         Message = "No supported cultures configured.")]
-    private static partial void LogNoSupportedCultures(ILogger logger);
+    static partial void LogNoSupportedCultures(ILogger<MovieReferencedEventHandler> logger);
+
 
     [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Warning,
         Message = "Failed to import movie {ExternalId}: no successful TMDB responses.")]
-    private static partial void LogFailedImport(ILogger logger, int externalId);
+    static partial void LogFailedImport(ILogger logger, int externalId);
 
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Warning,
         Message = "Movie already exists: {ExternalId}")]
-    private static partial void LogMovieAlreadyExists(ILogger logger, int externalId);
+    static partial void LogMovieAlreadyExists(ILogger logger, int externalId);
 
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Information,
         Message = "Skipping {Culture} for movie {ExternalId} because it matches English fallback")]
-    private static partial void LogSkippingDuplicateLocalization(
+    static partial void LogSkippingDuplicateLocalization(
         ILogger logger,
         string culture,
         int externalId);
@@ -132,5 +136,8 @@ internal sealed partial class MovieReferencedEventHandler(
         EventId = 5,
         Level = LogLevel.Error,
         Message = "Unexpected error while importing movie {ExternalId}")]
-    private static partial void LogUnexpectedError(ILogger logger, Exception ex, int externalId);
+    static partial void LogUnexpectedError(
+        ILogger logger,
+        int externalId,
+        Exception exception);
 }
