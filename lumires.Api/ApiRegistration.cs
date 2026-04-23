@@ -115,6 +115,9 @@ public static class ApiRegistration
 
     private static void OpenScalar(WebApplication app)
     {
+        if (!app.Environment.IsDevelopment() || IsRunningInContainer())
+            return;
+
         var address = app.Urls.FirstOrDefault(u => u.StartsWith("https", StringComparison.OrdinalIgnoreCase))
                       ?? app.Urls.FirstOrDefault(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase));
 
@@ -125,4 +128,7 @@ public static class ApiRegistration
                 UseShellExecute = true
             });
     }
+
+    private static bool IsRunningInContainer() =>
+        Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 }

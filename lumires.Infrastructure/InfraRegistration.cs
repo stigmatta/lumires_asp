@@ -69,8 +69,8 @@ public static class InfraRegistration
     {
         app.MapCustomHubs(app.Configuration);
 
-        var host = app.Urls.FirstOrDefault();
-        app.Lifetime.ApplicationStarted.Register(() => OpenDashboards(app));
+        if (app.Environment.IsDevelopment() && Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true")
+            app.Lifetime.ApplicationStarted.Register(() => OpenDashboards(app));
 
         app.UseTickerQ();
 

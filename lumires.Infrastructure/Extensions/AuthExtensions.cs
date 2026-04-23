@@ -153,7 +153,8 @@ internal static partial class AuthExtensions
             {
                 policy.WithOrigins(
                         "http://localhost:3000", //TODO CHANGE
-                        "http://localhost:5500"
+                        "http://localhost:5500",
+                        "http://localhost:8080"
                     )
                     .AllowAnyHeader()
                     .AllowAnyMethod()
