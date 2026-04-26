@@ -129,6 +129,8 @@ public static class ApiRegistration
             });
     }
 
-    private static bool IsRunningInContainer() =>
-        Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+    private static bool IsRunningInContainer()
+    {
+        return Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+    }
 }

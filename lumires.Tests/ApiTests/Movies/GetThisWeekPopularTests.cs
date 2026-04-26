@@ -51,7 +51,7 @@ internal sealed class GetThisWeekPopularTests
             .Returns(new List<Movie>().BuildMockDbSet().Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
-        
+
         var ep = Factory.Create<Endpoint>(
             _currentUserMock.Object,
             _cache,
@@ -63,7 +63,7 @@ internal sealed class GetThisWeekPopularTests
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
     }
-    
+
     [Test]
     [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
     [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
@@ -74,7 +74,7 @@ internal sealed class GetThisWeekPopularTests
         float voteAverage,
         int voteCount,
         float popularity)
-    
+
     {
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
@@ -83,14 +83,14 @@ internal sealed class GetThisWeekPopularTests
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
         }.BuildMockDbSet();
-        
+
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
             .Setup(x => x.Movies)
             .Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
-        
+
         var ep = Factory.Create<Endpoint>(
             _currentUserMock.Object,
             _cache,
@@ -104,8 +104,8 @@ internal sealed class GetThisWeekPopularTests
         ep.Response.Items[0].ExternalId.Should().Be(externalId);
         ep.Response.Items[0].VoteCount.Should().Be(voteCount);
     }
-    
-    
+
+
     [Test]
     [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
     [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
@@ -116,7 +116,7 @@ internal sealed class GetThisWeekPopularTests
         float voteAverage,
         int voteCount,
         float popularity)
-    
+
     {
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
@@ -125,14 +125,14 @@ internal sealed class GetThisWeekPopularTests
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
         }.BuildMockDbSet();
-        
+
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
             .Setup(x => x.Movies)
             .Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
-        
+
         var ep = Factory.Create<Endpoint>(
             _currentUserMock.Object,
             _cache,
@@ -167,7 +167,7 @@ internal sealed class GetThisWeekPopularTests
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
         }.BuildMockDbSet();
-        
+
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
             .Setup(x => x.Movies)
@@ -198,14 +198,14 @@ internal sealed class GetThisWeekPopularTests
 
         await ep2.HandleAsync(CancellationToken.None);
         var ep2SecondResponse = ep2.Response;
-        
+
         // Assert
         ep1FirstResponse.Items.Should().BeEquivalentTo(ep1SecondResponse.Items);
         ep2FirstResponse.Items.Should().BeEquivalentTo(ep2SecondResponse.Items);
 
-        dbContextMock.Verify(x => x.Movies, Times.Exactly(2)); 
+        dbContextMock.Verify(x => x.Movies, Times.Exactly(2));
     }
-    
+
     [Test]
     public async Task GetThisWeekPopular_Should_ReturnCachedData_WhenDataAccessFails_FailSafe()
     {
@@ -231,13 +231,13 @@ internal sealed class GetThisWeekPopularTests
         var ep = Factory.Create<Endpoint>(userMock.Object, _cache, dbQueries);
 
         // Act
-        await ep.HandleAsync(CancellationToken.None); 
-        await ep.HandleAsync(CancellationToken.None); 
+        await ep.HandleAsync(CancellationToken.None);
+        await ep.HandleAsync(CancellationToken.None);
 
         // Assert
-        ep.Response.Items.Should().HaveCount(1); 
+        ep.Response.Items.Should().HaveCount(1);
     }
-    
+
     [Test]
     public async Task GetThisWeekPopular_Should_ReadLangCulture_OnEveryRequest()
     {
@@ -259,7 +259,7 @@ internal sealed class GetThisWeekPopularTests
         // Assert
         userMock.Verify(x => x.LangCulture, Times.Exactly(3));
     }
-    
+
     [Test]
     public async Task GetThisWeekPopular_Should_ReturnEmptyResponse_WhenDataAccessReturnsNull()
     {
@@ -280,5 +280,4 @@ internal sealed class GetThisWeekPopularTests
         ep.Response.Should().NotBeNull();
         ep.Response.Items.Should().BeEmpty();
     }
-
 }
