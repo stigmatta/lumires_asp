@@ -1,5 +1,4 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
@@ -28,10 +27,10 @@ internal sealed class Endpoint(ICurrentUserService currentUserService, DataAcces
         var user = await dataAccess.UserOrNullAsync(userId, ct);
         if (user is null)
         {
-            await HttpContext.SendErrorAsync(ResultStatus.Forbidden, ct);
+            await Send.ForbiddenAsync(ct);
             return;
         }
 
-        Response = user;
+        await Send.OkAsync(user, ct);
     }
 }
