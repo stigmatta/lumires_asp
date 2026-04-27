@@ -90,6 +90,8 @@ internal static partial class AuthExtensions
                     },
                     OnAuthenticationFailed = async context =>
                     {
+                        if (context.Response.HasStarted) return;
+
                         var localizer = context.HttpContext.RequestServices
                             .GetRequiredService<IStringLocalizer<SharedResource>>();
 
@@ -105,7 +107,39 @@ internal static partial class AuthExtensions
                         };
 
                         var traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
-                        problemDetails.Extensions.Add("traceId", traceId);
+                        if (context.HttpContext.RequestServices
+                            .GetRequiredService<IHostEnvironment>()
+                            .IsDevelopment())
+                            problemDetails.Extensions.Add("traceId", traceId);
+
+                        await context.Response.WriteAsJsonAsync(problemDetails);
+                    },
+                    OnChallenge = async context =>
+                    {
+                        context.HandleResponse();
+
+                        if (context.Response.HasStarted) return;
+
+                        var localizer = context.HttpContext.RequestServices
+                            .GetRequiredService<IStringLocalizer<SharedResource>>();
+
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/problem+json";
+
+                        var problemDetails = new ProblemDetails
+                        {
+                            Status = StatusCodes.Status401Unauthorized,
+                            Title = localizer["Error_Title"],
+                            Detail = localizer["Error_Unauthorized"],
+                            Instance = context.HttpContext.Request.Path
+                        };
+
+                        var traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
+
+                        if (context.HttpContext.RequestServices
+                            .GetRequiredService<IHostEnvironment>()
+                            .IsDevelopment())
+                            problemDetails.Extensions.Add("traceId", traceId);
 
                         await context.Response.WriteAsJsonAsync(problemDetails);
                     },
@@ -126,7 +160,10 @@ internal static partial class AuthExtensions
                         };
 
                         var traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
-                        problemDetails.Extensions.Add("traceId", traceId);
+                        if (context.HttpContext.RequestServices
+                            .GetRequiredService<IHostEnvironment>()
+                            .IsDevelopment())
+                            problemDetails.Extensions.Add("traceId", traceId);
 
                         await context.Response.WriteAsJsonAsync(problemDetails);
                     }

@@ -3,9 +3,10 @@
 public interface ICurrentUserService
 {
     Guid UserId { get; }
+    string Username { get; }
     string UserRole { get; }
     string UserTier { get; }
-    string? Email { get; }
+    string Email { get; }
     bool IsEmailConfirmed { get; }
     bool IsAuthenticated { get; }
     string CurrentLanguage { get; }

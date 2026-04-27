@@ -69,11 +69,13 @@ public static class ApiRegistration
     public static WebApplication UseApi(this WebApplication app)
     {
         app.UseRequestLocalization();
-        app.UseExceptionHandler();
-
+        app.UseRouting();
         app.UseCors("Frontend");
+
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseExceptionHandler();
 
         app.UseFastEndpoints(config =>
         {

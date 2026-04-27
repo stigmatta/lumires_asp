@@ -17,6 +17,9 @@ internal sealed partial class GlobalExceptionHandler(
         Exception exception,
         CancellationToken ct)
     {
+        if (httpContext.Response.HasStarted)
+            return false;
+
         var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
 
         LogUnhandledException(logger, exception, traceId, exception.Message);
@@ -33,17 +36,15 @@ internal sealed partial class GlobalExceptionHandler(
             Status = (int)statusCode,
             Title = localizer["Error_Title"],
             Detail = localizer[messageKey],
-            Instance = httpContext.Request.Path
+            Instance = httpContext.Request.Path,
+            Extensions =
+            {
+                ["traceId"] = traceId
+            }
         };
 
-        problemDetails.Extensions.Add("traceId", traceId);
-
         httpContext.Response.StatusCode = (int)statusCode;
-
-        await httpContext.Response.WriteAsJsonAsync(
-                problemDetails,
-                ct)
-            .ConfigureAwait(false);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, ct);
 
         return true;
     }

@@ -37,7 +37,7 @@ internal sealed class GetCollectionTests
     {
         // Arrange
         var userId = Guid.CreateVersion7();
-        var user = new User(userId, "test_user");
+        var user = new User(userId, "test_user", "test_user@gmail.com");
 
         var collection = new Collection("Test Title", user.Id, "Test description");
 
@@ -72,7 +72,7 @@ internal sealed class GetCollectionTests
     {
         // Arrange
         var userId = Guid.CreateVersion7();
-        var user = new User(userId, "test_user");
+        var user = new User(userId, "test_user", "test_user@gmail.com");
 
         var collection = new Collection("Test Title", user.Id, "Test description");
 
@@ -105,7 +105,7 @@ internal sealed class GetCollectionTests
     {
         // Arrange
         var userId = Guid.CreateVersion7();
-        var user = new User(userId, "test_user");
+        var user = new User(userId, "test_user", "test_user@gmail.com");
 
         var collection = new Collection("Test Title", user.Id, "Test description");
 

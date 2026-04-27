@@ -10,6 +10,7 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
     private readonly ClaimsPrincipal? _user = httpContextAccessor.HttpContext?.User;
 
     public string UserRole => _user?.FindFirstValue("role") ?? UserRoles.User;
+
     public string UserTier => _user?.FindFirstValue("tier") ?? UserTiers.Free;
 
     public Guid UserId =>
@@ -17,7 +18,14 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
             ? id
             : Guid.Empty;
 
-    public string? Email => _user?.FindFirstValue(ClaimTypes.Email);
+
+    //Email always should be existing in the claims
+    public string Email => _user?.FindFirstValue(ClaimTypes.Email)!;
+
+    public string Username =>
+        _user?.FindFirstValue("display_name")
+        ?? Email.Split('@')[0]
+        ?? "unknown";
 
     public bool IsEmailConfirmed =>
         bool.TryParse(

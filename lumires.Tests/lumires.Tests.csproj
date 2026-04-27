@@ -29,8 +29,4 @@
         <ProjectReference Include="..\lumires.Core\lumires.Core.csproj"/>
         <ProjectReference Include="..\lumires.Infrastructure\lumires.Infrastructure.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ApiTests\Auth\" />
-    </ItemGroup>
 </Project>
