@@ -16,13 +16,10 @@ public sealed partial class User
         if (string.IsNullOrWhiteSpace(username))
             throw new UserValidationException("Username cannot be empty.");
 
-        if (username.Length is < 3 or > 30)
-            throw new UserValidationException("Username must be between 3 and 30 characters.");
-
-        if (!UsernameRegex().IsMatch(username))
+        if (!IsUsernameValid(username))
             throw new UserValidationException("Username contains invalid characters or starts incorrectly.");
 
-        if (!EmailRegex().IsMatch(email))
+        if (!IsEmailValid(email))
             throw new UserValidationException("Email is not valid");
 
         Id = id;
@@ -45,10 +42,13 @@ public sealed partial class User
         ArgumentException.ThrowIfNullOrWhiteSpace(avatarUrl);
         AvatarUrl = avatarUrl;
     }
+    
+    public static bool IsUsernameValid(string username) => UsernameRegex().IsMatch(username);
+    public static bool IsEmailValid(string email) => EmailRegex().IsMatch(email);
 
-    [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9._]*$")]
+    [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9._]{2,19}$")]
     private static partial Regex UsernameRegex();
 
-    [GeneratedRegex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")]
+    [GeneratedRegex(@"^[\w\.\-]+@([\w\-]+\.)+[\w]{2,}$")]
     private static partial Regex EmailRegex();
 }

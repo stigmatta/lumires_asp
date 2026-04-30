@@ -60,56 +60,83 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Опис колекції занадто довгий.
+        ///   Looks up a localized string similar to Опис колекції занадто великий.
         /// </summary>
-        internal static string Collection_ValidationError_DescriptionTooLong {
+        internal static string Collection_ValidationError_Description_TooLong {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_DescriptionTooLong", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Description_TooLong", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Id фільму колекції некоректний.
+        ///   Looks up a localized string similar to Id фільму з колекції некоректний !.
         /// </summary>
-        internal static string Collection_ValidationError_InvalidMovieId {
+        internal static string Collection_ValidationError_MovieId_Invalid {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_InvalidMovieId", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_MovieId_Invalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Назва колекції не може бути пустою.
         /// </summary>
-        internal static string Collection_ValidationError_TitleEmpty {
+        internal static string Collection_ValidationError_Title_Empty {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleEmpty", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_Empty", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Назва колекції задовга ! (Максимальна довжина - 255).
         /// </summary>
-        internal static string Collection_ValidationError_TitleTooLong {
+        internal static string Collection_ValidationError_Title_TooLong {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleTooLong", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_TooLong", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Назва колекції закоротка ! (Мінімальна довжина - 5).
         /// </summary>
-        internal static string Collection_ValidationError_TitleTooShort {
+        internal static string Collection_ValidationError_Title_TooShort {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleTooShort", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_TooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Електрона пошта некоректна.
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Email_Invalid {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Email_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назва акаунту не може бути пустою.
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Username_Empty {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Username_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Назва акаунту може складатися тільки з літер, цифр та нижнього підкреслення (3-20).
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Username_Invalid {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Username_Invalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Не вдалося надіслати лист.
         /// </summary>
-        internal static string Error_EmailSendFailed {
+        internal static string Error_Email_SendFailed {
             get {
-                return ResourceManager.GetString("Error_EmailSendFailed", resourceCulture);
+                return ResourceManager.GetString("Error_Email_SendFailed", resourceCulture);
             }
         }
         

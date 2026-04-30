@@ -62,54 +62,81 @@ namespace lumires.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Collection description is too long.
         /// </summary>
-        internal static string Collection_ValidationError_DescriptionTooLong {
+        internal static string Collection_ValidationError_Description_TooLong {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_DescriptionTooLong", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Description_TooLong", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Collection movie id is invalid.
         /// </summary>
-        internal static string Collection_ValidationError_InvalidMovieId {
+        internal static string Collection_ValidationError_MovieId_Invalid {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_InvalidMovieId", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_MovieId_Invalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Collection title cannot be empty.
         /// </summary>
-        internal static string Collection_ValidationError_TitleEmpty {
+        internal static string Collection_ValidationError_Title_Empty {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleEmpty", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_Empty", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Collection title is too long ! (Maximum length is 255).
         /// </summary>
-        internal static string Collection_ValidationError_TitleTooLong {
+        internal static string Collection_ValidationError_Title_TooLong {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleTooLong", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_TooLong", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Collection title is too short ! (Mininum length is 5).
         /// </summary>
-        internal static string Collection_ValidationError_TitleTooShort {
+        internal static string Collection_ValidationError_Title_TooShort {
             get {
-                return ResourceManager.GetString("Collection_ValidationError_TitleTooShort", resourceCulture);
+                return ResourceManager.GetString("Collection_ValidationError_Title_TooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email is not valid.
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Email_Invalid {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Email_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username cannot be empty.
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Username_Empty {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Username_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username can only contain letters, numbers, and underscores (3-20 characters).
+        /// </summary>
+        internal static string CreateProfile_ValidationError_Username_Invalid {
+            get {
+                return ResourceManager.GetString("CreateProfile_ValidationError_Username_Invalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to send email.
         /// </summary>
-        internal static string Error_EmailSendFailed {
+        internal static string Error_Email_SendFailed {
             get {
-                return ResourceManager.GetString("Error_EmailSendFailed", resourceCulture);
+                return ResourceManager.GetString("Error_Email_SendFailed", resourceCulture);
             }
         }
         

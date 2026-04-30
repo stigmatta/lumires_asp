@@ -12,19 +12,19 @@ internal sealed class Validator : Validator<Command>
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .WithMessage(localizer["Collection_ValidationError_TitleEmpty"])
+            .WithMessage(localizer["Collection_ValidationError_Title_Empty"])
             .MinimumLength(StringLimits.MinLength)
-            .WithMessage(localizer["Collection_ValidationError_TitleTooShort"])
+            .WithMessage(localizer["Collection_ValidationError_Title_TooShort"])
             .MaximumLength(StringLimits.Default)
-            .WithMessage(localizer["Collection_ValidationError_TitleTooLong"]);
+            .WithMessage(localizer["Collection_ValidationError_Title_TooLong"]);
 
         RuleFor(x => x.Description)
             .MaximumLength(StringLimits.Description)
-            .WithMessage(localizer["Collection_ValidationError_DescriptionTooLong"])
+            .WithMessage(localizer["Collection_ValidationError_Description_TooLong"])
             .When(x => x.Description is not null);
 
         RuleForEach(x => x.MovieIds)
             .NotEmpty()
-            .WithMessage(localizer["Collection_ValidationError_InvalidMovieId"]);
+            .WithMessage(localizer["Collection_ValidationError_MovieId_Invalid"]);
     }
 }

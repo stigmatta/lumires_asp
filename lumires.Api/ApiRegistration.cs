@@ -38,7 +38,7 @@ public static class ApiRegistration
                     Description = "Paste your JWT access token here"
                 });
             };
-
+            o.ExcludeNonFastEndpoints = true;
             o.ShortSchemaNames = true;
         });
 
