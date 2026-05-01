@@ -23,7 +23,7 @@ internal sealed record Response(
     Guid Id,
     DateOnly ReleaseDate,
     string? TrailerUrl,
-    string PosterPath,
+    string? PosterPath,
     string? BackdropPath,
     LocalizationResponse? Localization
 );
