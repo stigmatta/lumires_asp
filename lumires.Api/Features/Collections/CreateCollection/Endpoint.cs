@@ -10,7 +10,7 @@ internal sealed record Command(
     string? Description,
     bool IsPrivate,
     IReadOnlyCollection<Guid> MovieIds
-) : ICommand<Response>;
+);
 
 [UsedImplicitly]
 internal sealed record Response(Guid CollectionId, string Title, DateTimeOffset CreatedAt);

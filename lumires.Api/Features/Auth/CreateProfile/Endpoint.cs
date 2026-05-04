@@ -9,7 +9,7 @@ internal sealed record Command(
     Guid Id,
     string Username,
     string Email
-) : ICommand<Response>;
+);
 
 [UsedImplicitly]
 internal sealed record Response(
