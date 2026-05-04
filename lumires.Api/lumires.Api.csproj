@@ -66,6 +66,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Features\Auth\Commands\" />
+        <Folder Include="Features\Auth\Queries\" />
+        <Folder Include="Features\Collections\Commands\" />
+        <Folder Include="Features\Collections\Queries\" />
+        <Folder Include="Features\Movies\Queries\" />
         <Folder Include="obj\Debug\net9.0\"/>
     </ItemGroup>
 

@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Auth.CreateProfile;
+using lumires.Api.Features.Auth.Commands.CreateProfile;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Resources;

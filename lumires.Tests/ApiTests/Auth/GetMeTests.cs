@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Auth.GetMe;
+using lumires.Api.Features.Auth.Queries.GetMe;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
