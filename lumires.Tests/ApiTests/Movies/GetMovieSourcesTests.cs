@@ -1,7 +1,7 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Movies.Queries.GetMovieSources;
+using lumires.Api.Features.Movies.GetMovieSources;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Models;
