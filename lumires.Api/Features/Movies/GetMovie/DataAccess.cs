@@ -40,7 +40,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                             .FirstOrDefault() ?? string.Empty,
                         lang
                     ))
-                    .ToList())
+                .ToList())
             ))
             .SingleOrDefaultAsync(ct);
     }

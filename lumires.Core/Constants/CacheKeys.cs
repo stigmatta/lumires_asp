@@ -26,4 +26,9 @@ public static class CacheKeys
     {
         return $"this_week_recent_movies:{lang}";
     }
+
+    public static string GenresList(string lang)
+    {
+        return $"genres:{lang}";
+    }
 }
