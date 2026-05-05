@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - dev
+      - main
 
 env:
   DOTNET_VERSION: 8.0.x
