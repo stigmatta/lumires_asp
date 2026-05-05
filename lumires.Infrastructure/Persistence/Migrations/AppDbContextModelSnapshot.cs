@@ -22,6 +22,21 @@ namespace Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("MovieGenres", b =>
+                {
+                    b.Property<Guid>("GenresId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("GenresId", "MovieId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("MovieGenres");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -255,6 +270,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "ReadAt");
 
                     b.ToTable("UserNotifications");
+                });
+
+            modelBuilder.Entity("MovieGenres", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>

@@ -55,6 +55,23 @@ internal sealed partial class MovieReferencedEventHandler(
             successfulResults.TryGetValue(defaultLang, out var def)
                 ? def
                 : successfulResults.Values.First();
+        
+        await using var scope = scopeFactory.CreateAsyncScope();
+
+        await using var db = scope.ServiceProvider
+            .GetRequiredService<IAppDbContext>();
+        
+
+        if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
+        {
+            LogMovieAlreadyExists(logger, command.ExternalId);
+            return;
+        }
+
+        var genreExternalIds = defaultData.Genres.Items.Select(g => g.ExternalId).ToList();
+        var genres = await db.Genres
+            .Where(g => genreExternalIds.Contains(g.ExternalId))
+            .ToListAsync(ct);
 
         var movie = new Movie(
             command.ExternalId,
@@ -66,6 +83,7 @@ internal sealed partial class MovieReferencedEventHandler(
             defaultData.BackdropPath,
             defaultData.TrailerUrl
         );
+        movie.AddGenres(genres);
 
 
         foreach (var (culture, data) in successfulResults)
@@ -80,11 +98,7 @@ internal sealed partial class MovieReferencedEventHandler(
             var newLocalization = new MovieLocalization(culture, data.Title, data.Overview);
             movie.AddLocalization(newLocalization);
         }
-
-        await using var scope = scopeFactory.CreateAsyncScope();
-
-        await using var db = scope.ServiceProvider
-            .GetRequiredService<IAppDbContext>();
+        
 
         if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
         {

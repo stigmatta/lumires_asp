@@ -42,9 +42,16 @@ public sealed partial class User
         ArgumentException.ThrowIfNullOrWhiteSpace(avatarUrl);
         AvatarUrl = avatarUrl;
     }
-    
-    public static bool IsUsernameValid(string username) => UsernameRegex().IsMatch(username);
-    public static bool IsEmailValid(string email) => EmailRegex().IsMatch(email);
+
+    public static bool IsUsernameValid(string username)
+    {
+        return UsernameRegex().IsMatch(username);
+    }
+
+    public static bool IsEmailValid(string email)
+    {
+        return EmailRegex().IsMatch(email);
+    }
 
     [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9._]{2,19}$")]
     private static partial Regex UsernameRegex();

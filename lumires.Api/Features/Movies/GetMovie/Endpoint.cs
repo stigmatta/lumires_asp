@@ -19,13 +19,26 @@ internal sealed record LocalizationResponse(
 );
 
 [UsedImplicitly]
+internal sealed record GenreItemResponse(
+    int Id,
+    string Name,
+    string LanguageCode
+);
+
+[UsedImplicitly]
+internal sealed record GenresResponse(
+    IReadOnlyCollection<GenreItemResponse> Items
+);
+
+[UsedImplicitly]
 internal sealed record Response(
     Guid Id,
     DateOnly ReleaseDate,
     string? TrailerUrl,
     string? PosterPath,
     string? BackdropPath,
-    LocalizationResponse? Localization
+    LocalizationResponse? Localization,
+    GenresResponse Genres
 );
 
 internal sealed class Endpoint(
@@ -70,13 +83,18 @@ internal sealed class Endpoint(
                         ExternalId = importedMovie.ExternalId
                     }, Mode.WaitForAll, token);
 
+                    var genres = new GenresResponse(
+                        [.. importedMovie.Genres.Items.Select(g => new GenreItemResponse(g.ExternalId, g.Name, lang))]
+                    );
+
                     return new Response(
                         internalId,
                         importedMovie.ReleaseDate,
                         importedMovie.TrailerUrl,
                         importedMovie.PosterPath,
                         importedMovie.BackdropPath,
-                        new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview)
+                        new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview),
+                        genres
                     );
                 },
                 options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),

@@ -13,7 +13,19 @@ public record ExternalMovie(
     float Popularity,
     string? BackdropPath,
     DateOnly ReleaseDate,
-    string? TrailerUrl
+    string? TrailerUrl,
+    ExternalGenres Genres
+);
+
+[UsedImplicitly]
+public record ExternalGenreItem(
+    int ExternalId,
+    string Name
+);
+
+[UsedImplicitly]
+public record ExternalGenres(
+    IReadOnlyCollection<ExternalGenreItem> Items
 );
 
 [UsedImplicitly]

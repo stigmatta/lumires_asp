@@ -43,6 +43,30 @@ namespace Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MovieGenres",
+                columns: table => new
+                {
+                    GenresId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MovieId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovieGenres", x => new { x.GenresId, x.MovieId });
+                    table.ForeignKey(
+                        name: "FK_MovieGenres_Genres_GenresId",
+                        column: x => x.GenresId,
+                        principalTable: "Genres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MovieGenres_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_GenreLocalizations_GenreId",
                 table: "GenreLocalizations",
@@ -53,6 +77,11 @@ namespace Infrastructure.Persistence.Migrations
                 table: "Genres",
                 column: "ExternalId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieGenres_MovieId",
+                table: "MovieGenres",
+                column: "MovieId");
         }
 
         /// <inheritdoc />
@@ -60,6 +89,9 @@ namespace Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "GenreLocalizations");
+
+            migrationBuilder.DropTable(
+                name: "MovieGenres");
 
             migrationBuilder.DropTable(
                 name: "Genres");

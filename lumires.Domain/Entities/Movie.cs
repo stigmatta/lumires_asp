@@ -4,17 +4,20 @@ namespace lumires.Domain.Entities;
 
 public sealed class Movie
 {
+    private readonly List<Genre> _genres = [];
     private readonly List<MovieLocalization> _localizations = [];
+    
+    private Movie() { }
 
     public Movie(int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
+        int voteCount, float popularity,  string? backdropPath = null, string? trailerUrl = null)
         : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity,
             backdropPath, trailerUrl)
     {
     }
 
     public Movie(Guid id, int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
+        int voteCount, float popularity,  string? backdropPath = null, string? trailerUrl = null)
     {
         if (externalId <= 0)
             throw new MovieValidationException("ExternalId must be positive", nameof(externalId));
@@ -52,7 +55,7 @@ public sealed class Movie
     public int VoteCount { get; private set; }
     public float Popularity { get; private set; }
 
-
+    public IReadOnlyCollection<Genre> Genres => _genres.AsReadOnly();
     public IReadOnlyCollection<MovieLocalization> Localizations => _localizations.AsReadOnly();
 
     /// <summary>
@@ -67,5 +70,18 @@ public sealed class Movie
 
         localization.SetMovie(this);
         _localizations.Add(localization);
+    }
+
+    public void AddGenres(List<Genre> genres)
+    {
+        ArgumentNullException.ThrowIfNull(genres);
+
+        foreach (var genre in genres)
+        {
+            if (_genres.Any(g => g.Id == genre.Id))
+                throw new InvalidMovieOperationException($"Genre '{genre.Id}' already added to this movie");
+
+            _genres.Add(genre);
+        }
     }
 }

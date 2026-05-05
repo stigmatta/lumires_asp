@@ -4,7 +4,9 @@ namespace lumires.Domain.Entities;
 
 public sealed class GenreLocalization
 {
-    private GenreLocalization() { }
+    private GenreLocalization()
+    {
+    }
 
     public GenreLocalization(string languageCode, string name)
     {

@@ -6,7 +6,9 @@ public sealed class Genre
 {
     private readonly List<GenreLocalization> _localizations = [];
 
-    private Genre() { } 
+    private Genre()
+    {
+    }
 
     public Genre(int externalId)
     {
@@ -24,9 +26,10 @@ public sealed class Genre
     public void AddLocalization(string name, string languageCode)
     {
         if (_localizations.Any(l => l.LanguageCode == languageCode))
-            throw new GenreValidationException($"Localization for '{languageCode}' already exists", nameof(languageCode));
+            throw new GenreValidationException($"Localization for '{languageCode}' already exists",
+                nameof(languageCode));
 
-        var localization = new GenreLocalization(name, languageCode);
+        var localization = new GenreLocalization(languageCode, name);
         localization.SetGenre(this);
         _localizations.Add(localization);
     }

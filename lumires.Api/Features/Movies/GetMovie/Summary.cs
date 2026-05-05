@@ -30,7 +30,8 @@ internal sealed class Summary : Summary<Endpoint>
             "dfeUzm6KF4g",
             "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
             "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg",
-            new LocalizationResponse("en", "Fight Club", "An insomniac office worker...")
+            new LocalizationResponse("en", "Fight Club", "An insomniac office worker..."),
+            new GenresResponse([new GenreItemResponse(7, "Drama", "en-US")])
         ));
         Response(404);
         Response(500);

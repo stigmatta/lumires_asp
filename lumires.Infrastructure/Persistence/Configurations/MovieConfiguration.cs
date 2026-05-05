@@ -19,5 +19,9 @@ internal sealed class MovieConfiguration : IEntityTypeConfiguration<Movie>
         builder.Property(m => m.BackdropPath).HasMaxLength(StringLimits.Default);
 
         builder.Property(m => m.TrailerUrl).HasMaxLength(StringLimits.Default);
+
+        builder.HasMany(m => m.Genres)
+            .WithMany()
+            .UsingEntity("MovieGenres");
     }
 }

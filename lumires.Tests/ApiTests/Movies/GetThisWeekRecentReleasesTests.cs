@@ -14,7 +14,7 @@ internal sealed class GetThisWeekRecentReleasesTests
 {
     private FusionCache _cache = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
-
+    
     [Before(Test)]
     public void Setup()
     {
@@ -70,7 +70,8 @@ internal sealed class GetThisWeekRecentReleasesTests
         string posterPath,
         float voteAverage,
         int voteCount,
-        float popularity)
+        float popularity,
+        List<Genre> genres)
 
     {
         //Arrange

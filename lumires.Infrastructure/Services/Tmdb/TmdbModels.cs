@@ -13,7 +13,8 @@ public sealed record TmdbMovieResponse(
     float Popularity,
     string? BackdropPath,
     DateOnly ReleaseDate,
-    VideoResponse? Videos
+    VideoResponse? Videos,
+    IReadOnlyCollection<GenreResponse> Genres
 );
 
 [UsedImplicitly]
@@ -54,5 +55,6 @@ public sealed record GenreResponse
 [UsedImplicitly]
 public sealed record TmdbGenresResponse
 {
-    public List<GenreResponse> Genres { get; init; } = [];
+    public IReadOnlyCollection<GenreResponse> Genres { get; init; } = [];
 }
+

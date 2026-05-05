@@ -97,7 +97,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 }
                 else
                 {
-                    await db.Movies.AddAsync(ToMovie(en.Content!, uk.Content!), ct);
+                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
+                    await db.Movies.AddAsync(domainMovie, ct);
                 }
             }
 
@@ -113,29 +114,33 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         var newMoviesCount = 0;
         var page = 1;
 
-        while (newMoviesCount < targetNewMovies)
+        const int maxPages = 10; 
+
+        while (newMoviesCount < targetNewMovies && page <= maxPages)
         {
             var popularResponse = await tmdbApi.GetPopularMoviesAsync(page, ct);
 
-            if (popularResponse.StatusCode == HttpStatusCode.Unauthorized)
-                return Result.Unauthorized();
-
             if (!popularResponse.IsSuccessStatusCode || popularResponse.Content is null)
-                return Result.Error("Failed to fetch popular movies from TMDB");
-
-            if (page > popularResponse.Content.TotalPages)
                 break;
 
-            var tmdbIds = popularResponse.Content.Results.Select(m => m.Id).ToList();
+            var data = popularResponse.Content;
+
+            var tmdbIds = data.Results.Select(m => m.Id).ToList();
 
             var existingIds = await db.Movies
                 .Where(m => tmdbIds.Contains(m.ExternalId))
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var newMovies = popularResponse.Content.Results
+            var newMovies = data.Results
                 .Where(m => !existingIds.Contains(m.Id))
                 .ToList();
+
+            if (newMovies.Count == 0)
+            {
+                page++;
+                continue;
+            }
 
             foreach (var batch in newMovies.Chunk(10))
             {
@@ -151,14 +156,19 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
                 foreach (var (en, uk) in results)
                 {
-                    if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode) continue;
+                    if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode)
+                        continue;
 
-                    await db.Movies.AddAsync(ToMovie(en.Content!, uk.Content!), ct);
+                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
+                    await db.Movies.AddAsync(domainMovie, ct);
                     newMoviesCount++;
                 }
 
                 await db.SaveChangesAsync(ct);
             }
+
+            if (page >= data.TotalPages)
+                break;
 
             page++;
         }
@@ -277,7 +287,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 }
                 else
                 {
-                    await db.Movies.AddAsync(ToMovie(en.Content!, uk.Content!), ct);
+                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
+                    await db.Movies.AddAsync(domainMovie, ct);
                 }
             }
 
@@ -292,6 +303,10 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         var trailerKey = tmdb.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
 
+        var genres = new ExternalGenres(
+            tmdb.Genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
+        );
+
         return new ExternalMovie(
             tmdb.Id,
             tmdb.Title,
@@ -302,15 +317,22 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             tmdb.Popularity,
             tmdb.BackdropPath,
             tmdb.ReleaseDate,
-            trailerKey
+            trailerKey,
+            genres
         );
     }
 
-    private static Movie ToMovie(TmdbMovieResponse en, TmdbMovieResponse uk)
+    private async Task<Movie> ToMovieAsync(TmdbMovieResponse en, TmdbMovieResponse uk, CancellationToken ct)
     {
         var trailerKey = en.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
-
+        
+        var genreIds = en.Genres.Select(g => g.Id).ToList();
+        
+        var genres = await db.Genres
+            .Where(g => genreIds.Contains(g.ExternalId))
+            .ToListAsync(ct);
+        
         var movie = new Movie(
             en.Id,
             en.ReleaseDate,
@@ -322,6 +344,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             trailerKey
         );
 
+        movie.AddGenres(genres);
+        
         movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
         movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
 

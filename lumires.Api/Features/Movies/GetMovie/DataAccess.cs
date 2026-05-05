@@ -29,7 +29,18 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                         l.Title,
                         l.Description
                     ))
-                    .FirstOrDefault()
+                    .FirstOrDefault(),
+                new GenresResponse(m.Genres
+                    .Select(g => new GenreItemResponse(
+                        g.ExternalId,
+                        g.Localizations
+                            .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                            .OrderByDescending(l => l.LanguageCode == lang)
+                            .Select(l => l.Name)
+                            .FirstOrDefault() ?? string.Empty,
+                        lang
+                    ))
+                    .ToList())
             ))
             .SingleOrDefaultAsync(ct);
     }

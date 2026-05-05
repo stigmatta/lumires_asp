@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260505100926_Added_Genre_Entity")]
+    [Migration("20260505125705_Added_Genre_Entity")]
     partial class Added_Genre_Entity
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("MovieGenres", b =>
+                {
+                    b.Property<Guid>("GenresId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("GenresId", "MovieId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("MovieGenres");
+                });
 
             modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>
                 {
@@ -258,6 +273,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "ReadAt");
 
                     b.ToTable("UserNotifications");
+                });
+
+            modelBuilder.Entity("MovieGenres", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>

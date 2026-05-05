@@ -20,7 +20,7 @@ internal sealed class GetMovieTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IExternalMovieService> _externalMock = null!;
-
+    
     [Before(Test)]
     public void Setup()
     {
@@ -82,48 +82,29 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_Be_200_And_MapDataCorrectly(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            ReleaseDate: releaseDate,
-            BackdropPath: null,
-            TrailerUrl: null
-        );
+        var genres = Helpers.CreateExternalGenres();
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate, genres);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
 
         var ep = Factory.Create<Endpoint>(
-            _externalMock.Object,
-            _currentUserMock.Object,
-            _cache,
-            _dataAccess);
+            _externalMock.Object, _currentUserMock.Object, _cache, _dataAccess);
 
-        // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
 
-        // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
-
         ep.Response.ReleaseDate.Should().Be(releaseDate);
         ep.Response.PosterPath.Should().Be(poster);
         ep.Response.Localization!.Title.Should().Be(title);
+        ep.Response.Genres.Items.Should().HaveCount(2);
+        ep.Response.Genres.Items.Select(g => g.Name).Should().BeEquivalentTo("Action", "Drama");
 
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
@@ -191,44 +172,22 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CallExternalService_OnlyOnce_When_CalledTwice(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            ReleaseDate: releaseDate,
-            BackdropPath: null,
-            TrailerUrl: null
-        );
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
 
         var ep = Factory.Create<Endpoint>(
-            _externalMock.Object,
-            _currentUserMock.Object,
-            _cache,
-            _dataAccess);
+            _externalMock.Object, _currentUserMock.Object, _cache, _dataAccess);
 
-        // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
         await ep.HandleAsync(new Query(id), CancellationToken.None);
 
-        // Assert
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()),
             Times.Once);
@@ -320,49 +279,26 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_ReturnCachedResponse_On_SecondCall(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            ReleaseDate: releaseDate,
-            BackdropPath: null,
-            TrailerUrl: null
-        );
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
 
         var ep = Factory.Create<Endpoint>(
-            _externalMock.Object,
-            _currentUserMock.Object,
-            _cache,
-            _dataAccess);
+            _externalMock.Object, _currentUserMock.Object, _cache, _dataAccess);
 
-        // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
         var firstResponse = ep.Response;
 
         await ep.HandleAsync(new Query(id), CancellationToken.None);
         var secondResponse = ep.Response;
 
-        // Assert
         secondResponse.Should().BeEquivalentTo(firstResponse);
-
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()),
             Times.Once);
@@ -372,28 +308,11 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CacheSeparately_Per_Language(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            ReleaseDate: releaseDate,
-            BackdropPath: null,
-            TrailerUrl: null
-        );
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -405,16 +324,11 @@ internal sealed class GetMovieTests
         var uaUserMock = new Mock<ICurrentUserService>();
         uaUserMock.Setup(x => x.LangCulture).Returns("uk-UA");
 
-        var ep1 = Factory.Create<Endpoint>(
-            _externalMock.Object, enUserMock.Object, _cache, _dataAccess);
+        var ep1 = Factory.Create<Endpoint>(_externalMock.Object, enUserMock.Object, _cache, _dataAccess);
+        var ep2 = Factory.Create<Endpoint>(_externalMock.Object, uaUserMock.Object, _cache, _dataAccess);
 
-        var ep2 = Factory.Create<Endpoint>(
-            _externalMock.Object, uaUserMock.Object, _cache, _dataAccess);
-
-        // Act 
         await ep1.HandleAsync(new Query(id), CancellationToken.None);
         await ep1.HandleAsync(new Query(id), CancellationToken.None);
-
         await ep2.HandleAsync(new Query(id), CancellationToken.None);
         await ep2.HandleAsync(new Query(id), CancellationToken.None);
 
@@ -472,53 +386,27 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_CallExternalService_When_NotFoundInDb(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        // Arrange 
         var releaseDate = DateOnly.Parse(dateStr);
         var movies = new List<Movie>().BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
-        dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(movies.Object);
+        dbContextMock.Setup(x => x.Movies).Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
-
-
-        var externalMovie = new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            ReleaseDate: releaseDate,
-            BackdropPath: null,
-            TrailerUrl: null
-        );
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
 
         var ep = Factory.Create<Endpoint>(
-            _externalMock.Object,
-            _currentUserMock.Object,
-            _cache,
-            dbQueries);
+            _externalMock.Object, _currentUserMock.Object, _cache, dbQueries);
 
-        // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
 
-        // Assert
         _externalMock.Verify(
             x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()),
             Times.Once);
@@ -528,34 +416,16 @@ internal sealed class GetMovieTests
     [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
     [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20)]
     public async Task GetMovie_Should_Publish_MovieReferencedEvent(
-        int id,
-        string title,
-        string dateStr,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity)
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
     {
-        // Arrange
         var fakeHandler = new FakeMovieReferencedEventHandler();
         var releaseDate = DateOnly.Parse(dateStr);
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result<ExternalMovie>.Success(
-                new ExternalMovie(
-                    id,
-                    title,
-                    null,
-                    poster,
-                    voteAverage,
-                    voteCount,
-                    popularity,
-                    ReleaseDate: releaseDate,
-                    BackdropPath: null,
-                    TrailerUrl: null
-                )
-            ));
+            .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
 
         var ep = Factory.Create<Endpoint>(ctx =>
         {
@@ -569,13 +439,62 @@ internal sealed class GetMovieTests
             });
         });
 
-        // Act
         await ep.HandleAsync(new Query(id), CancellationToken.None);
         await fakeHandler.Completed.WaitAsync(TimeSpan.FromSeconds(2));
 
-        // Assert
         fakeHandler.WasHandled.Should().BeTrue();
         fakeHandler.MovieId.Should().Be(id);
+    }
+
+    [Test]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    public async Task GetMovie_Should_MapGenres_Correctly(
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
+    {
+        var releaseDate = DateOnly.Parse(dateStr);
+        var genres = new ExternalGenres([
+            new ExternalGenreItem(28, "Action"),
+            new ExternalGenreItem(18, "Drama"),
+            new ExternalGenreItem(53, "Thriller")
+        ]);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate, genres);
+
+        _externalMock
+            .Setup(x => x.GetMovieDetailsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
+
+        var ep = Factory.Create<Endpoint>(
+            _externalMock.Object, _currentUserMock.Object, _cache, _dataAccess);
+
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
+
+        ep.Response.Genres.Items.Should().HaveCount(3);
+        ep.Response.Genres.Items.Select(g => g.Name)
+            .Should().BeEquivalentTo("Action", "Drama", "Thriller");
+    }
+
+    [Test]
+    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20)]
+    public async Task GetMovie_Should_Return_EmptyGenres_When_NoGenres(
+        int id, string title, string dateStr, string poster,
+        float voteAverage, int voteCount, float popularity)
+    {
+        var releaseDate = DateOnly.Parse(dateStr);
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate,
+            new ExternalGenres([]));
+
+        _externalMock
+            .Setup(x => x.GetMovieDetailsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<ExternalMovie>.Success(externalMovie));
+
+        var ep = Factory.Create<Endpoint>(
+            _externalMock.Object, _currentUserMock.Object, _cache, _dataAccess);
+
+        await ep.HandleAsync(new Query(id), CancellationToken.None);
+
+        ep.Response.Genres.Items.Should().BeEmpty();
     }
 
     private sealed class FakeMovieReferencedEventHandler : IEventHandler<MovieReferencedEvent>
