@@ -27,4 +27,8 @@ public interface ITmdbApi
         [AliasAs("vote_count.gte")] int minVoteCount,
         [AliasAs("page")] int page,
         CancellationToken ct);
+
+    [Get("/genre/movie/list")]
+    Task<ApiResponse<TmdbGenresResponse>> GetGenresAsync(
+        [AliasAs("language")] string lang, CancellationToken ct);
 }

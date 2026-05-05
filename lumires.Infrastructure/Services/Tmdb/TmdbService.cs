@@ -166,6 +166,52 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         return Result.NoContent();
     }
 
+    public async Task<Result> SyncGenresAsync(CancellationToken ct)
+    {
+        var enTask = tmdbApi.GetGenresAsync(EnLang, ct);
+        var ukTask = tmdbApi.GetGenresAsync(UaLang, ct);
+
+        await Task.WhenAll(enTask, ukTask);
+
+        var enResponse = await enTask;
+        var ukResponse = await ukTask;
+
+        if (!enResponse.IsSuccessStatusCode || !ukResponse.IsSuccessStatusCode)
+            return Result.Error("Failed to fetch genres");
+
+        var merged = enResponse.Content!.Genres.Join(
+            ukResponse.Content!.Genres,
+            en => en.Id,
+            uk => uk.Id,
+            (en, uk) => (en.Id, EnName: en.Name, UkName: uk.Name)
+        );
+
+        var existingGenres = await db.Genres
+            .Include(g => g.Localizations)
+            .ToListAsync(ct);
+
+        foreach (var item in merged)
+        {
+            var existing = existingGenres.FirstOrDefault(g => g.ExternalId == item.Id);
+
+            if (existing is null)
+            {
+                var genre = new Genre(item.Id);
+                genre.AddLocalization(item.EnName, EnLang);
+                genre.AddLocalization(item.UkName, UaLang);
+                db.Genres.Add(genre);
+            }
+            else
+            {
+                existing.UpdateOrAddLocalization(item.EnName, EnLang);
+                existing.UpdateOrAddLocalization(item.UkName, UaLang);
+            }
+        }
+
+        await db.SaveChangesAsync(ct);
+        return Result.Success();
+    }
+
     public async Task<Result> SyncRecentMoviesAsync(CancellationToken ct)
     {
         var today = DateTime.UtcNow;

@@ -37,4 +37,15 @@ public class SyncMoviesJobs(IExternalMovieService movieSyncService, ILogger<Sync
 
         logger.LogInformation("Recent released movies sync completed at {Time}", DateTime.UtcNow);
     }
+    
+    [TickerFunction("SyncGenres")]
+    public async Task SyncGenres(
+        CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Starting genres  sync at {Time}", DateTime.UtcNow);
+
+        await movieSyncService.SyncGenresAsync(cancellationToken);
+
+        logger.LogInformation("Genres sync completed at {Time}", DateTime.UtcNow);
+    }
 }

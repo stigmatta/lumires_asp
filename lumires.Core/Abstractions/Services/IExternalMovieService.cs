@@ -9,4 +9,5 @@ public interface IExternalMovieService
     Task<Result> SyncRecentMoviesAsync(CancellationToken ct);
     Task<Result> SyncTrendingMoviesAsync(CancellationToken ct);
     Task<Result> SyncPopularMoviesAsync(CancellationToken ct);
+    Task<Result> SyncGenresAsync(CancellationToken ct);
 }

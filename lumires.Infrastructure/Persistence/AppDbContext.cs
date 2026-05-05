@@ -13,6 +13,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
     public DbSet<Collection> Collections => Set<Collection>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Genre> Genres => Set<Genre>();
+    public DbSet<GenreLocalization> GenreLocalizations => Set<GenreLocalization>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
