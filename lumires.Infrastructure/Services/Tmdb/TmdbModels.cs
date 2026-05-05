@@ -43,3 +43,16 @@ public sealed record TmdbMovieShortResponse
     public string? PosterPath { get; init; }
     public string? BackdropPath { get; init; }
 }
+
+[UsedImplicitly]
+public sealed record GenreResponse
+{
+    public int Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+}
+
+[UsedImplicitly]
+public sealed record TmdbGenresResponse
+{
+    public List<GenreResponse> Genres { get; init; } = [];
+}
