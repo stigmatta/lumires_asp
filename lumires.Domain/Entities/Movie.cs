@@ -72,7 +72,7 @@ public sealed class Movie
         _localizations.Add(localization);
     }
 
-    public void AddGenres(List<Genre> genres)
+    public void AddGenres(IEnumerable<Genre> genres)
     {
         ArgumentNullException.ThrowIfNull(genres);
 
@@ -83,5 +83,11 @@ public sealed class Movie
 
             _genres.Add(genre);
         }
+    }
+    
+    public void SyncGenres(IEnumerable<Genre> genres)
+    {
+        _genres.Clear();
+        foreach (var genre in genres) _genres.Add(genre);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using lumires.Core.Models;
+using Refit;
 
 namespace Infrastructure.Services.Tmdb;
 
@@ -9,15 +10,15 @@ public interface ITmdbApi
         CancellationToken ct);
 
     [Get("/trending/movie/week")]
-    Task<ApiResponse<TmdbPagedResponse<TmdbMovieShortResponse>>> GetTrendingMoviesAsync(CancellationToken ct);
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetTrendingMoviesAsync(CancellationToken ct);
 
     [Get("/movie/popular")]
-    Task<ApiResponse<TmdbPagedResponse<TmdbMovieShortResponse>>> GetPopularMoviesAsync(
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetPopularMoviesAsync(
         [AliasAs("sort_by")] int page,
         CancellationToken ct);
 
     [Get("/discover/movie")]
-    Task<ApiResponse<TmdbPagedResponse<TmdbMovieShortResponse>>> GetRecentReleasesAsync(
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetRecentReleasesAsync(
         [AliasAs("release_date.lte")] string releaseDateLte,
         [AliasAs("release_date.gte")] string releaseDateGte,
         [AliasAs("sort_by")] string sortBy,

@@ -15,7 +15,6 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
     private const string EnLang = "en-US";
     private const string UaLang = "uk-UA";
 
-
     public async Task<Result<ExternalMovie>> GetMovieDetailsAsync(int movieId, string lang,
         CancellationToken ct = default)
     {
@@ -33,7 +32,6 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
         var externalMovie = MapToDomain(tmdbResponse.Content);
 
-
         if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == DefLang)
             return externalMovie;
 
@@ -48,7 +46,6 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             TrailerUrl = externalMovie.TrailerUrl ?? fallback.TrailerUrl
         };
     }
-
 
     public async Task<Result> SyncTrendingMoviesAsync(CancellationToken ct)
     {
@@ -69,37 +66,29 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var tasks = batch.Select(async movie =>
+            var tasks = batch.Select(async m =>
             {
-                var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
-                var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
-                await Task.WhenAll(enTask, ukTask);
-                return (en: await enTask, uk: await ukTask, movie.Id);
+                if (existingIds.Contains(m.Id))
+                    return (tmdbId: m.Id, movie: (Movie?)null, isExisting: true);
+
+                var movie = await FetchAndBuildMovieAsync(m.Id, ct);
+                return (tmdbId: m.Id, movie, isExisting: false);
             });
 
             var results = await Task.WhenAll(tasks);
 
-            foreach (var (en, uk, tmdbId) in results)
+            var existingToUpdate = results
+                .Where(r => r.isExisting)
+                .Select(r => r.tmdbId)
+                .ToList();
+
+            if (existingToUpdate.Count > 0)
+                await UpdateLocalizationsAsync(existingToUpdate, ct);
+
+            foreach (var (_, movie, isExisting) in results)
             {
-                if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode) continue;
-
-                if (existingIds.Contains(tmdbId))
-                {
-                    var localizations = await db.MovieLocalizations
-                        .Where(l => l.Movie.ExternalId == tmdbId)
-                        .ToListAsync(ct);
-
-                    foreach (var loc in localizations)
-                    {
-                        var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
-                        loc.Update(source!.Title, source.Overview);
-                    }
-                }
-                else
-                {
-                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
-                    await db.Movies.AddAsync(domainMovie, ct);
-                }
+                if (!isExisting && movie is not null)
+                    await db.Movies.AddAsync(movie, ct);
             }
 
             await db.SaveChangesAsync(ct);
@@ -113,8 +102,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         const int targetNewMovies = 40;
         var newMoviesCount = 0;
         var page = 1;
-
-        const int maxPages = 10; 
+        const int maxPages = 10;
 
         while (newMoviesCount < targetNewMovies && page <= maxPages)
         {
@@ -124,7 +112,6 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 break;
 
             var data = popularResponse.Content;
-
             var tmdbIds = data.Results.Select(m => m.Id).ToList();
 
             var existingIds = await db.Movies
@@ -144,23 +131,12 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
             foreach (var batch in newMovies.Chunk(10))
             {
-                var tasks = batch.Select(async movie =>
-                {
-                    var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
-                    var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
-                    await Task.WhenAll(enTask, ukTask);
-                    return (en: await enTask, uk: await ukTask);
-                });
-
+                var tasks = batch.Select(m => FetchAndBuildMovieAsync(m.Id, ct));
                 var results = await Task.WhenAll(tasks);
 
-                foreach (var (en, uk) in results)
+                foreach (var movie in results.OfType<Movie>())
                 {
-                    if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode)
-                        continue;
-
-                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
-                    await db.Movies.AddAsync(domainMovie, ct);
+                    await db.Movies.AddAsync(movie, ct);
                     newMoviesCount++;
                 }
 
@@ -171,6 +147,69 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 break;
 
             page++;
+        }
+
+        return Result.NoContent();
+    }
+
+    public async Task<Result> SyncRecentMoviesAsync(CancellationToken ct)
+    {
+        var today = DateTime.UtcNow;
+        const int fromDays = 30;
+        const string region = "US";
+
+        var tmdbResponse = await tmdbApi.GetRecentReleasesAsync(
+            today.ToString("yyyy-MM-dd"),
+            today.AddDays(-fromDays).ToString("yyyy-MM-dd"),
+            "release_date.desc",
+            "3|2",
+            region,
+            false,
+            30,
+            1,
+            ct);
+
+        if (tmdbResponse.StatusCode == HttpStatusCode.Unauthorized)
+            return Result.Unauthorized();
+
+        if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content is null)
+            return Result.Error("Failed to fetch recent releases from TMDB");
+
+        foreach (var batch in tmdbResponse.Content.Results.Chunk(10))
+        {
+            var tmdbIds = batch.Select(m => m.Id).ToList();
+
+            var existingIds = await db.Movies
+                .Where(m => tmdbIds.Contains(m.ExternalId))
+                .Select(m => m.ExternalId)
+                .ToHashSetAsync(ct);
+
+            var tasks = batch.Select(async m =>
+            {
+                if (existingIds.Contains(m.Id))
+                    return (tmdbId: m.Id, movie: null, isExisting: true);
+
+                var movie = await FetchAndBuildMovieAsync(m.Id, ct);
+                return (tmdbId: m.Id, movie, isExisting: false);
+            });
+
+            var results = await Task.WhenAll(tasks);
+
+            var existingToUpdate = results
+                .Where(r => r.isExisting)
+                .Select(r => r.tmdbId)
+                .ToList();
+
+            if (existingToUpdate.Count > 0)
+                await UpdateLocalizationsAsync(existingToUpdate, ct);
+
+            foreach (var (_, movie, isExisting) in results)
+            {
+                if (!isExisting && movie is not null)
+                    await db.Movies.AddAsync(movie, ct);
+            }
+
+            await db.SaveChangesAsync(ct);
         }
 
         return Result.NoContent();
@@ -222,80 +261,62 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         return Result.Success();
     }
 
-    public async Task<Result> SyncRecentMoviesAsync(CancellationToken ct)
+    private async Task<Movie?> FetchAndBuildMovieAsync(int tmdbId, CancellationToken ct)
     {
-        var today = DateTime.UtcNow;
-        const int fromDays = 30;
-        const string region = "US";
+        var enTask = tmdbApi.GetMovieAsync(tmdbId, EnLang, ct);
+        var ukTask = tmdbApi.GetMovieAsync(tmdbId, UaLang, ct);
 
-        var tmdbResponse = await tmdbApi.GetRecentReleasesAsync(
-            today.ToString("yyyy-MM-dd"),
-            today.AddDays(-fromDays).ToString("yyyy-MM-dd"),
-            "release_date.desc",
-            "3|2",
-            region,
-            false,
-            30,
-            1,
-            ct);
+        await Task.WhenAll(enTask, ukTask);
 
-        if (tmdbResponse.StatusCode == HttpStatusCode.Unauthorized)
-            return Result.Unauthorized();
+        var en = await enTask;
+        var uk = await ukTask;
 
-        if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content is null)
-            return Result.Error("Failed to fetch recent releases from TMDB");
+        if (!en.IsSuccessStatusCode || en.Content is null) return null;
+        if (!uk.IsSuccessStatusCode || uk.Content is null) return null;
 
-        var results = tmdbResponse.Content.Results;
+        return await ToMovieAsync(en.Content, uk.Content, ct);
+    }
 
-        foreach (var batch in results.Chunk(10))
+    private async Task UpdateLocalizationsAsync(List<int> tmdbIds, CancellationToken ct)
+    {
+        var tasks = tmdbIds.Select(async id =>
         {
-            var tmdbIds = batch.Select(m => m.Id).ToList();
+            var enTask = tmdbApi.GetMovieAsync(id, EnLang, ct);
+            var ukTask = tmdbApi.GetMovieAsync(id, UaLang, ct);
+            await Task.WhenAll(enTask, ukTask);
+            return (id, en: await enTask, uk: await ukTask);
+        });
 
-            var existingIds = await db.Movies
-                .Where(m => tmdbIds.Contains(m.ExternalId))
-                .Select(m => m.ExternalId)
-                .ToHashSetAsync(ct);
+        var results = await Task.WhenAll(tasks);
 
-            var tasks = batch.Select(async movie =>
+        foreach (var (tmdbId, en, uk) in results)
+        {
+            if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode) continue;
+
+            var movie = await db.Movies
+                .Include(m => m.Genres)
+                .Include(m => m.Localizations)
+                .FirstOrDefaultAsync(m => m.ExternalId == tmdbId, ct);
+
+            if (movie is null) continue;
+
+            foreach (var loc in movie.Localizations)
             {
-                var enTask = tmdbApi.GetMovieAsync(movie.Id, EnLang, ct);
-                var ukTask = tmdbApi.GetMovieAsync(movie.Id, UaLang, ct);
-
-                await Task.WhenAll(enTask, ukTask);
-
-                return (en: await enTask, uk: await ukTask, movie.Id);
-            });
-
-            var fetched = await Task.WhenAll(tasks);
-
-            foreach (var (en, uk, tmdbId) in fetched)
-            {
-                if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode)
-                    continue;
-
-                if (existingIds.Contains(tmdbId))
-                {
-                    var localizations = await db.MovieLocalizations
-                        .Where(l => l.Movie.ExternalId == tmdbId)
-                        .ToListAsync(ct);
-
-                    foreach (var loc in localizations)
-                    {
-                        var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
-                        loc.Update(source!.Title, source.Overview);
-                    }
-                }
-                else
-                {
-                    var domainMovie = await ToMovieAsync(en.Content!, uk.Content!, ct);
-                    await db.Movies.AddAsync(domainMovie, ct);
-                }
+                var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
+                loc.Update(source!.Title, source.Overview);
             }
 
-            await db.SaveChangesAsync(ct);
-        }
+            if (en.Content!.Genres.Count > 0)
+            {
+                var genreIds = en.Content.Genres.Select(g => g.Id).ToList();
+                var genres = await db.Genres
+                    .Where(g => genreIds.Contains(g.ExternalId))
+                    .ToListAsync(ct);
 
-        return Result.NoContent();
+                if (genres.Count > 0)
+                    movie.SyncGenres(genres);
+            }
+        }
     }
 
     private static ExternalMovie MapToDomain(TmdbMovieResponse tmdb)
@@ -326,13 +347,13 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
     {
         var trailerKey = en.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
-        
+
         var genreIds = en.Genres.Select(g => g.Id).ToList();
-        
+
         var genres = await db.Genres
             .Where(g => genreIds.Contains(g.ExternalId))
             .ToListAsync(ct);
-        
+
         var movie = new Movie(
             en.Id,
             en.ReleaseDate,
@@ -345,7 +366,6 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         );
 
         movie.AddGenres(genres);
-        
         movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
         movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
 

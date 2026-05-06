@@ -9,18 +9,20 @@ public sealed partial class User
     {
     }
 
-    public User(Guid id, string username, string email)
+    public User(Guid id, string? username, string email)
     {
         if (id == Guid.Empty) throw new UserValidationException("UserId is invalid");
+        
+        if (!IsEmailValid(email))
+            throw new UserValidationException("Email is not valid");
 
         if (string.IsNullOrWhiteSpace(username))
-            throw new UserValidationException("Username cannot be empty.");
+        {
+            username = email.Split('@')[0];
+        }
 
         if (!IsUsernameValid(username))
             throw new UserValidationException("Username contains invalid characters or starts incorrectly.");
-
-        if (!IsEmailValid(email))
-            throw new UserValidationException("Email is not valid");
 
         Id = id;
         Username = username;
@@ -29,7 +31,7 @@ public sealed partial class User
     }
 
     public Guid Id { get; private set; }
-    public string? Username { get; private set; }
+    public string Username { get; private set; }
     public string Email { get; private set; }
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
