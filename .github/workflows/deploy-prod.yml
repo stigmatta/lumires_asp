@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - dev
+      - main
 
 env:
   DOTNET_VERSION: 8.0.x
@@ -38,3 +41,31 @@ jobs:
 
       - name: Publish
         run: dotnet publish ./lumires.Composition/lumires.Composition.csproj -c Release -o ./publish --no-build
+
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            -o /usr/local/bin/cloudflared
+          chmod +x /usr/local/bin/cloudflared
+
+      - name: Configure SSH via Cloudflare Access
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "$SSH_KEY" | base64 -d > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          cat >> ~/.ssh/config <<'EOF'
+          Host ssh.supabase.win
+            ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+          EOF
+
+      - name: Pull & restart on VM
+        env:
+          CF_Access_Client_Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_Access_Client_Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            'cd ~/lumires && docker compose pull && docker compose up -d && docker image prune -f'
