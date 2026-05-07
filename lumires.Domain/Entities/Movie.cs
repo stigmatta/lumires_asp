@@ -6,18 +6,20 @@ public sealed class Movie
 {
     private readonly List<Genre> _genres = [];
     private readonly List<MovieLocalization> _localizations = [];
-    
-    private Movie() { }
+
+    private Movie()
+    {
+    }
 
     public Movie(int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity,  string? backdropPath = null, string? trailerUrl = null)
+        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
         : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity,
             backdropPath, trailerUrl)
     {
     }
 
     public Movie(Guid id, int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity,  string? backdropPath = null, string? trailerUrl = null)
+        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
     {
         if (externalId <= 0)
             throw new MovieValidationException("ExternalId must be positive", nameof(externalId));
@@ -84,7 +86,7 @@ public sealed class Movie
             _genres.Add(genre);
         }
     }
-    
+
     public void SyncGenres(IEnumerable<Genre> genres)
     {
         _genres.Clear();

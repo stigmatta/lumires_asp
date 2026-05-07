@@ -14,6 +14,7 @@ internal sealed class UserNotificationConfiguration : IEntityTypeConfiguration<U
 
         builder.Property(x => x.Type)
             .IsRequired()
+            .HasConversion<string>()
             .HasMaxLength(StringLimits.Name);
 
         builder.Property(x => x.SenderId)

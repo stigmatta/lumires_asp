@@ -5,6 +5,11 @@ namespace lumires.Domain.Entities;
 
 public sealed partial class User
 {
+    private readonly List<Collection> _collections = [];
+    private readonly List<ReviewComment> _reviewComments = [];
+    private readonly List<Review> _reviews = [];
+
+
     private User()
     {
     }
@@ -12,14 +17,11 @@ public sealed partial class User
     public User(Guid id, string? username, string email)
     {
         if (id == Guid.Empty) throw new UserValidationException("UserId is invalid");
-        
+
         if (!IsEmailValid(email))
             throw new UserValidationException("Email is not valid");
 
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            username = email.Split('@')[0];
-        }
+        if (string.IsNullOrWhiteSpace(username)) username = email.Split('@')[0];
 
         if (!IsUsernameValid(username))
             throw new UserValidationException("Username contains invalid characters or starts incorrectly.");
@@ -36,7 +38,9 @@ public sealed partial class User
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
 
-    public ICollection<Collection> Collections { get; private set; } = new List<Collection>();
+    public IReadOnlyCollection<Collection> Collections => _collections.AsReadOnly();
+    public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
+    public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 
 
     public void SetAvatarUrl(string avatarUrl)

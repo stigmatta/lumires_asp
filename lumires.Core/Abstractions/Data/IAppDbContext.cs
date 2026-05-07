@@ -14,6 +14,8 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<User> Users { get; }
     DbSet<Genre> Genres { get; }
     DbSet<GenreLocalization> GenreLocalizations { get; }
+    DbSet<Review> Reviews { get; }
+    DbSet<ReviewComment> ReviewComments { get; }
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
