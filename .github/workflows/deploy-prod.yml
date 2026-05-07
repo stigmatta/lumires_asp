@@ -5,8 +5,7 @@ on:
     tags:
       - 'v*'
     branches:
-      - dev
-      - main
+      - master
 
 env:
   DOTNET_VERSION: 8.0.x
