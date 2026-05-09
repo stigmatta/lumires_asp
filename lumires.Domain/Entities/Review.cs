@@ -1,18 +1,17 @@
-﻿using lumires.Domain.Enums;
-
-namespace lumires.Domain.Entities;
+﻿namespace lumires.Domain.Entities;
 
 public sealed class Review
 {
-    private readonly List<ReviewComment> _reviewComments = [];
     private const int LongFormThreshold = 500;
- 
+    private readonly List<ReviewComment> _reviewComments = [];
+
 
     private Review()
     {
     }
 
-    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, bool isFirstWatch, bool isSpoilerFree)
+    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, bool isFirstWatch,
+        bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
         CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -23,7 +22,7 @@ public sealed class Review
 
         Title = title;
         Text = text ?? throw new ArgumentNullException(nameof(text));
-        
+
         if (rating is not null)
         {
             if (rating is < 0 or > 5)

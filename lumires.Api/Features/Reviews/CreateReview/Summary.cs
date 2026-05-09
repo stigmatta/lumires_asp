@@ -22,7 +22,7 @@ internal sealed class Summary : Summary<Endpoint>
 
                       - **Authorization Bearer** — Is required
                       """;
-        
+
         ExampleRequest = new Command(
             new Guid("7e432661-94e2-474d-b0de-ef2d83005791"),
             "My thoughts on Inception",

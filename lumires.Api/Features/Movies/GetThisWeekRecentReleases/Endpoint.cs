@@ -7,7 +7,14 @@ using ZiggyCreatures.Caching.Fusion;
 namespace lumires.Api.Features.Movies.GetThisWeekRecentReleases;
 
 [UsedImplicitly]
-internal sealed record WeeklyRecentItem(Guid Id, int ExternalId, string Title, int VoteCount, string Slug, string? TrailerUrl, string? BackdropPath);
+internal sealed record WeeklyRecentItem(
+    Guid Id,
+    int ExternalId,
+    string Title,
+    int VoteCount,
+    string Slug,
+    string? TrailerUrl,
+    string? BackdropPath);
 
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyList<WeeklyRecentItem> Items);

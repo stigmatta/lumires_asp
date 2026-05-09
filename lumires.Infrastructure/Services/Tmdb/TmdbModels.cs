@@ -46,4 +46,3 @@ public sealed record TmdbGenresResponse
 {
     public IReadOnlyCollection<GenreResponse> Genres { get; init; } = [];
 }
-

@@ -55,12 +55,12 @@ internal sealed partial class MovieReferencedEventHandler(
             successfulResults.TryGetValue(defaultLang, out var def)
                 ? def
                 : successfulResults.Values.First();
-        
+
         await using var scope = scopeFactory.CreateAsyncScope();
 
         await using var db = scope.ServiceProvider
             .GetRequiredService<IAppDbContext>();
-        
+
 
         if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
         {
@@ -100,7 +100,7 @@ internal sealed partial class MovieReferencedEventHandler(
             var newLocalization = new MovieLocalization(culture, data.Title, data.Overview);
             movie.AddLocalization(newLocalization);
         }
-        
+
 
         if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
         {

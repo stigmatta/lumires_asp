@@ -25,9 +25,8 @@ internal sealed class Validator : Validator<Command>
             .WithMessage(localizer["ValidationError_Description_TooLong"]);
 
         RuleFor(x => x.Rating)
-            .Must(x => x is >= 0 and <= 5)
-            .Must(x => (x % 0.5m) == 0)
+            .Must(x => x is >= 0m and <= 5m)
+            .Must(x => x % 0.5m == 0)
             .When(x => x.Rating is not null);
-
     }
 }

@@ -25,7 +25,7 @@ internal sealed class Endpoint(
     {
         Post("/movies/{Slug}/{MovieId}/reviews/");
     }
-    
+
     public override async Task HandleAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
@@ -36,7 +36,7 @@ internal sealed class Endpoint(
             await HttpContext.SendErrorAsync(result.Status, ct);
             return;
         }
-        
+
         var response = new Response(
             result.Value,
             command.Title,
@@ -48,6 +48,5 @@ internal sealed class Endpoint(
             new { id = response.Id },
             response,
             cancellation: ct);
-        
     }
 }

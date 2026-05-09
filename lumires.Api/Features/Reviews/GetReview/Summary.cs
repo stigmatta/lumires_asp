@@ -1,7 +1,7 @@
-﻿namespace lumires.Api.Features.Reviews.GetReview;
-
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+
+namespace lumires.Api.Features.Reviews.GetReview;
 
 [UsedImplicitly]
 internal sealed class Summary : Summary<Endpoint>
@@ -17,7 +17,7 @@ internal sealed class Summary : Summary<Endpoint>
                       If the movie was not found - returns 404 Not Found.
 
                       """;
-        
+
         ExampleRequest = new Query(
             new Guid("7e432661-94e2-474d-b0de-ef2d83005791")
         );

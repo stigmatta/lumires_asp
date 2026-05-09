@@ -10,6 +10,7 @@ namespace lumires.Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);
+
 [UsedImplicitly]
 internal sealed record LocalizationResponse(
     string LanguageCode,

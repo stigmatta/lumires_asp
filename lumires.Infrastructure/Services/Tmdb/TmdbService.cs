@@ -75,6 +75,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                     results.Add((m.Id, null, true));
                     continue;
                 }
+
                 var movie = await FetchAndBuildMovieAsync(m.Id, ct);
                 results.Add((m.Id, movie, false));
             }
@@ -88,17 +89,15 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 await UpdateLocalizationsAsync(existingToUpdate, ct);
 
             foreach (var (_, movie, isExisting) in results)
-            {
                 if (!isExisting && movie is not null)
                     await db.Movies.AddAsync(movie, ct);
-            }
 
             await db.SaveChangesAsync(ct);
         }
 
         return Result.NoContent();
     }
-    
+
     public async Task<Result> SyncPopularMoviesAsync(CancellationToken ct)
     {
         const int targetNewMovies = 40;
@@ -195,6 +194,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                     results.Add((m.Id, null, true));
                     continue;
                 }
+
                 var movie = await FetchAndBuildMovieAsync(m.Id, ct);
                 results.Add((m.Id, movie, false));
             }
@@ -208,10 +208,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 await UpdateLocalizationsAsync(existingToUpdate, ct);
 
             foreach (var (_, movie, isExisting) in results)
-            {
                 if (!isExisting && movie is not null)
                     await db.Movies.AddAsync(movie, ct);
-            }
 
             await db.SaveChangesAsync(ct);
         }
@@ -372,11 +370,11 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         movie.AddGenres(genres);
         movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
         movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
-        
+
         var slug = SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}");
-        
+
         movie.AddSlug(slug);
-        
+
         return movie;
     }
 }

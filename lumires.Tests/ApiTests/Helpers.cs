@@ -13,7 +13,7 @@ internal static class Helpers
             new ExternalGenreItem(18, "Drama")
         ]);
     }
-    
+
     internal static List<Genre> CreateGenres()
     {
         var genre = new Genre(28);
@@ -46,5 +46,4 @@ internal static class Helpers
             genres ?? CreateExternalGenres()
         );
     }
-
 }

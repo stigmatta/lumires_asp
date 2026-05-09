@@ -6,6 +6,7 @@ using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
 using MockQueryable.Moq;
 using Moq;
@@ -63,7 +64,6 @@ internal sealed class CreateReviewTests
             },
             _currentUserMock.Object,
             da);
-
     }
 
     [Test]
@@ -137,7 +137,7 @@ internal sealed class CreateReviewTests
         reviewsDbSetMock
             .Setup(x => x.AddAsync(It.IsAny<Review>(), It.IsAny<CancellationToken>()))
             .Callback<Review, CancellationToken>((r, _) => savedReview = r)
-            .ReturnsAsync((Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<Review>)null!);
+            .ReturnsAsync((EntityEntry<Review>)null!);
 
         var movie = SetupMovieExists();
         _dbContextMock.Setup(x => x.Reviews).Returns(reviewsDbSetMock.Object);

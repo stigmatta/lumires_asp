@@ -20,7 +20,7 @@ internal sealed class GetMovieTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IExternalMovieService> _externalMock = null!;
-    
+
     [Before(Test)]
     public void Setup()
     {
@@ -176,7 +176,8 @@ internal sealed class GetMovieTests
         float voteAverage, int voteCount, float popularity)
     {
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -283,7 +284,8 @@ internal sealed class GetMovieTests
         float voteAverage, int voteCount, float popularity)
     {
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -312,7 +314,8 @@ internal sealed class GetMovieTests
         float voteAverage, int voteCount, float popularity)
     {
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -396,7 +399,8 @@ internal sealed class GetMovieTests
         dbContextMock.Setup(x => x.Movies).Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(id, "en", It.IsAny<CancellationToken>()))
@@ -421,7 +425,8 @@ internal sealed class GetMovieTests
     {
         var fakeHandler = new FakeMovieReferencedEventHandler();
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
+        var externalMovie =
+            Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate);
 
         _externalMock
             .Setup(x => x.GetMovieDetailsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -482,7 +487,8 @@ internal sealed class GetMovieTests
         float voteAverage, int voteCount, float popularity)
     {
         var releaseDate = DateOnly.Parse(dateStr);
-        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity, releaseDate,
+        var externalMovie = Helpers.CreateExternalMovie(id, title, poster, voteAverage, voteCount, popularity,
+            releaseDate,
             new ExternalGenres([]));
 
         _externalMock

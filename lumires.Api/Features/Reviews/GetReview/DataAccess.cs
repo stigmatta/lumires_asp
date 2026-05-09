@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.Reviews.GetReview;
 
-
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
@@ -13,6 +12,6 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         return await db.Reviews
             .Where(x => x.Id == query.ReviewId)
             .Select(x => new Response(x.Id))
-            .FirstOrDefaultAsync(ct);  
+            .FirstOrDefaultAsync(ct);
     }
 }

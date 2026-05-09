@@ -30,6 +30,8 @@ public sealed class ReviewComment
 
     public Review Review { get; private set; }
     public Guid ReviewId { get; private set; }
+    public Guid? TargetedUserId { get; private set; }
+    public User? TargetedUser { get; private set; }
     public int LikesCount { get; private set; }
     public string Text { get; private set; }
 }
