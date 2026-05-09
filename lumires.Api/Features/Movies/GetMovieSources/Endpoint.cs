@@ -16,7 +16,7 @@ internal sealed class Endpoint(IStreamingService streamingService)
 {
     public override void Configure()
     {
-        Get("/movies/{Id:int}/sources");
+        Get("/movies/{Slug}/{Id:int}/sources");
         AllowAnonymous(); //TODO maybe make this endpoint subscription only to save limits ?
     }
 

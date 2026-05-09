@@ -60,51 +60,6 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Collection description is too long.
-        /// </summary>
-        internal static string Collection_ValidationError_Description_TooLong {
-            get {
-                return ResourceManager.GetString("Collection_ValidationError_Description_TooLong", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Collection movie id is invalid.
-        /// </summary>
-        internal static string Collection_ValidationError_MovieId_Invalid {
-            get {
-                return ResourceManager.GetString("Collection_ValidationError_MovieId_Invalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Collection title cannot be empty.
-        /// </summary>
-        internal static string Collection_ValidationError_Title_Empty {
-            get {
-                return ResourceManager.GetString("Collection_ValidationError_Title_Empty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Collection title is too long ! (Maximum length is 255).
-        /// </summary>
-        internal static string Collection_ValidationError_Title_TooLong {
-            get {
-                return ResourceManager.GetString("Collection_ValidationError_Title_TooLong", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Collection title is too short ! (Mininum length is 5).
-        /// </summary>
-        internal static string Collection_ValidationError_Title_TooShort {
-            get {
-                return ResourceManager.GetString("Collection_ValidationError_Title_TooShort", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Email is not valid.
         /// </summary>
         internal static string CreateProfile_ValidationError_Email_Invalid {
@@ -182,6 +137,51 @@ namespace lumires.Core.Resources {
         internal static string Error_Unauthorized {
             get {
                 return ResourceManager.GetString("Error_Unauthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description is too long.
+        /// </summary>
+        internal static string ValidationError_Description_TooLong {
+            get {
+                return ResourceManager.GetString("ValidationError_Description_TooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Movie reference is invalid.
+        /// </summary>
+        internal static string ValidationError_MovieId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_MovieId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title cannot be empty.
+        /// </summary>
+        internal static string ValidationError_Title_Empty {
+            get {
+                return ResourceManager.GetString("ValidationError_Title_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title is too long .
+        /// </summary>
+        internal static string ValidationError_Title_TooLong {
+            get {
+                return ResourceManager.GetString("ValidationError_Title_TooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title is too short.
+        /// </summary>
+        internal static string ValidationError_Title_TooShort {
+            get {
+                return ResourceManager.GetString("ValidationError_Title_TooShort", resourceCulture);
             }
         }
     }

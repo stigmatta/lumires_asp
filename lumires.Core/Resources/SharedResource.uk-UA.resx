@@ -39,21 +39,6 @@
     <data name="Error_Forbidden" xml:space="preserve">
         <value>У вас немає доступу до цього ресурсу</value>
     </data>
-    <data name="Collection_ValidationError_Description_TooLong" xml:space="preserve">
-        <value>Опис колекції занадто великий</value>
-    </data>
-    <data name="Collection_ValidationError_MovieId_Invalid" xml:space="preserve">
-        <value>Id фільму з колекції некоректний !</value>
-    </data>
-    <data name="Collection_ValidationError_Title_Empty" xml:space="preserve">
-        <value>Назва колекції не може бути пустою</value>
-    </data>
-    <data name="Collection_ValidationError_Title_TooLong" xml:space="preserve">
-        <value>Назва колекції задовга ! (Максимальна довжина - 255)</value>
-    </data>
-    <data name="Collection_ValidationError_Title_TooShort" xml:space="preserve">
-        <value>Назва колекції закоротка ! (Мінімальна довжина - 5)</value>
-    </data>
     <data name="Error_Email_SendFailed" xml:space="preserve">
         <value>Не вдалося надіслати лист</value>
     </data>
@@ -65,5 +50,20 @@
     </data>
     <data name="CreateProfile_ValidationError_Email_Invalid" xml:space="preserve">
         <value>Електрона пошта некоректна</value>
+    </data>
+    <data name="ValidationError_Description_TooLong" xml:space="preserve">
+        <value>Опис занадто великий</value>
+    </data>
+    <data name="ValidationError_Title_Empty" xml:space="preserve">
+        <value>Назва не може бути пустою</value>
+    </data>
+    <data name="ValidationError_Title_TooLong" xml:space="preserve">
+        <value>Назва колекції задовга</value>
+    </data>
+    <data name="ValidationError_Title_TooShort" xml:space="preserve">
+        <value>Назва закоротка</value>
+    </data>
+    <data name="ValidationError_MovieId_Invalid" xml:space="preserve">
+        <value>Звернення до фільму некоректне</value>
     </data>
 </root>

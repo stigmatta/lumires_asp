@@ -24,9 +24,6 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="Collection_ValidationError_Title_Empty" xml:space="preserve">
-        <value>Collection title cannot be empty</value>
-    </data>
     <data name="Error_Title" xml:space="preserve">
         <value>An error occurred</value>
     </data>
@@ -45,18 +42,6 @@
     <data name="Error_Email_SendFailed" xml:space="preserve">
         <value>Failed to send email</value>
     </data>
-    <data name="Collection_ValidationError_Title_TooShort" xml:space="preserve">
-        <value>Collection title is too short ! (Mininum length is 5)</value>
-    </data>
-    <data name="Collection_ValidationError_Title_TooLong" xml:space="preserve">
-        <value>Collection title is too long ! (Maximum length is 255)</value>
-    </data>
-    <data name="Collection_ValidationError_Description_TooLong" xml:space="preserve">
-        <value>Collection description is too long</value>
-    </data>
-    <data name="Collection_ValidationError_MovieId_Invalid" xml:space="preserve">
-        <value>Collection movie id is invalid</value>
-    </data>
     <data name="CreateProfile_ValidationError_Username_Empty" xml:space="preserve">
         <value>Username cannot be empty</value>
     </data>
@@ -65,5 +50,20 @@
     </data>
     <data name="CreateProfile_ValidationError_Email_Invalid" xml:space="preserve">
         <value>Email is not valid</value>
+    </data>
+    <data name="ValidationError_Description_TooLong" xml:space="preserve">
+        <value>Description is too long</value>
+    </data>
+    <data name="ValidationError_Title_Empty" xml:space="preserve">
+        <value>Title cannot be empty</value>
+    </data>
+    <data name="ValidationError_Title_TooLong" xml:space="preserve">
+        <value>Title is too long </value>
+    </data>
+    <data name="ValidationError_Title_TooShort" xml:space="preserve">
+        <value>Title is too short</value>
+    </data>
+    <data name="ValidationError_MovieId_Invalid" xml:space="preserve">
+        <value>Movie reference is invalid</value>
     </data>
 </root>

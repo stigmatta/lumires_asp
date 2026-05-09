@@ -49,6 +49,7 @@ public sealed class Movie
 
     public Guid Id { get; }
     public int ExternalId { get; }
+    public string Slug { get; private set; }
     public DateOnly ReleaseDate { get; private set; }
     public string? PosterPath { get; private set; }
     public string? BackdropPath { get; private set; }
@@ -72,6 +73,12 @@ public sealed class Movie
 
         localization.SetMovie(this);
         _localizations.Add(localization);
+    }
+
+    public void AddSlug(string slug)
+    {
+        ArgumentNullException.ThrowIfNull(slug);
+        Slug = slug;
     }
 
     public void AddGenres(IEnumerable<Genre> genres)

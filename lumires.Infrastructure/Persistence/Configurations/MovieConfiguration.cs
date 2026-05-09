@@ -20,6 +20,12 @@ internal sealed class MovieConfiguration : IEntityTypeConfiguration<Movie>
 
         builder.Property(m => m.TrailerUrl).HasMaxLength(StringLimits.Default);
 
+        builder.HasIndex(m => m.Slug);
+
+        builder.Property(m => m.Slug)
+            .IsRequired()
+            .HasMaxLength(StringLimits.Default);
+
         builder.HasMany(m => m.Genres)
             .WithMany()
             .UsingEntity("MovieGenres");

@@ -25,6 +25,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
                 movie.VoteCount,
+                movie.Slug,
+                movie.TrailerUrl,
                 movie.BackdropPath
             ))
             .ToListAsync(ct);

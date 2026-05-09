@@ -5,24 +5,21 @@ namespace lumires.Domain.Entities;
 public sealed class Review
 {
     private readonly List<ReviewComment> _reviewComments = [];
+    private const int LongFormThreshold = 500;
+ 
 
     private Review()
     {
     }
 
-    public Review(User reviewer, Movie movie, ReviewType type, string? title, string text, decimal? rating)
+    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, bool isFirstWatch, bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
         CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
         UpdatedAt = CreatedAt;
 
-        ReviewType = type;
-
-        Reviewer = reviewer ?? throw new ArgumentNullException(nameof(reviewer));
-        UserId = reviewer.Id;
-
-        Movie = movie ?? throw new ArgumentNullException(nameof(movie));
-        MovieId = movie.Id;
+        UserId = userId;
+        MovieId = movieId;
 
         Title = title;
         Text = text ?? throw new ArgumentNullException(nameof(text));
@@ -38,20 +35,25 @@ public sealed class Review
         }
 
         Rating = rating;
+        IsSpoilerFree = isSpoilerFree;
+        IsFirstWatch = isFirstWatch;
+        IsLongForm = text.Length >= LongFormThreshold;
     }
 
 
     public Guid Id { get; }
     public DateOnly CreatedAt { get; }
     public DateOnly UpdatedAt { get; }
-    public ReviewType ReviewType { get; }
-    public User Reviewer { get; private set; }
+    public User Reviewer { get; private set; } = null!;
     public Guid UserId { get; private set; }
-    public Movie Movie { get; private set; }
+    public Movie Movie { get; private set; } = null!;
     public Guid MovieId { get; private set; }
     public int LikesCount { get; private set; }
     public string? Title { get; private set; }
     public string Text { get; private set; }
     public decimal? Rating { get; private set; }
+    public bool IsSpoilerFree { get; private set; }
+    public bool IsLongForm { get; private set; }
+    public bool IsFirstWatch { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 }

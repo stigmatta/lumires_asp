@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Ardalis.Result;
+using lumires.Core;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
@@ -66,16 +67,17 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var tasks = batch.Select(async m =>
+            var results = new List<(int tmdbId, Movie? movie, bool isExisting)>();
+            foreach (var m in batch)
             {
                 if (existingIds.Contains(m.Id))
-                    return (tmdbId: m.Id, movie: (Movie?)null, isExisting: true);
-
+                {
+                    results.Add((m.Id, null, true));
+                    continue;
+                }
                 var movie = await FetchAndBuildMovieAsync(m.Id, ct);
-                return (tmdbId: m.Id, movie, isExisting: false);
-            });
-
-            var results = await Task.WhenAll(tasks);
+                results.Add((m.Id, movie, false));
+            }
 
             var existingToUpdate = results
                 .Where(r => r.isExisting)
@@ -96,7 +98,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
         return Result.NoContent();
     }
-
+    
     public async Task<Result> SyncPopularMoviesAsync(CancellationToken ct)
     {
         const int targetNewMovies = 40;
@@ -131,10 +133,11 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
 
             foreach (var batch in newMovies.Chunk(10))
             {
-                var tasks = batch.Select(m => FetchAndBuildMovieAsync(m.Id, ct));
-                var results = await Task.WhenAll(tasks);
+                var movies = new List<Movie?>();
+                foreach (var m in batch)
+                    movies.Add(await FetchAndBuildMovieAsync(m.Id, ct));
 
-                foreach (var movie in results.OfType<Movie>())
+                foreach (var movie in movies.OfType<Movie>())
                 {
                     await db.Movies.AddAsync(movie, ct);
                     newMoviesCount++;
@@ -184,16 +187,17 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var tasks = batch.Select(async m =>
+            var results = new List<(int tmdbId, Movie? movie, bool isExisting)>();
+            foreach (var m in batch)
             {
                 if (existingIds.Contains(m.Id))
-                    return (tmdbId: m.Id, movie: null, isExisting: true);
-
+                {
+                    results.Add((m.Id, null, true));
+                    continue;
+                }
                 var movie = await FetchAndBuildMovieAsync(m.Id, ct);
-                return (tmdbId: m.Id, movie, isExisting: false);
-            });
-
-            var results = await Task.WhenAll(tasks);
+                results.Add((m.Id, movie, false));
+            }
 
             var existingToUpdate = results
                 .Where(r => r.isExisting)
@@ -368,7 +372,11 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         movie.AddGenres(genres);
         movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
         movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
-
+        
+        var slug = SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}");
+        
+        movie.AddSlug(slug);
+        
         return movie;
     }
 }

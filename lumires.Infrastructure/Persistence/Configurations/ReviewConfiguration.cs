@@ -15,9 +15,6 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.UpdatedAt).IsRequired();
 
-        builder.Property(x => x.ReviewType)
-            .HasConversion<string>();
-
         builder.Property(x => x.Title).IsRequired(false)
             .HasMaxLength(StringLimits.Name);
 

@@ -27,6 +27,8 @@ internal sealed class Summary : Summary<Endpoint>
                 550,
                 "Fight Club",
                 22500,
+                "fight-club-1999",
+                "some-trailer-url",
                 "/5TiwfWEaPSwD20uwXjCTUqpQX70.jpg"
             ),
             new WeeklyPopularItem(
@@ -34,6 +36,8 @@ internal sealed class Summary : Summary<Endpoint>
                 238,
                 "The Godfather",
                 3252,
+                "the-godfather-1972",
+                "some-trailer-url",
                 "/rSPw7tgCH9c6NqIHkYPJ8MqK9s4.jpg"
             )
         ]));

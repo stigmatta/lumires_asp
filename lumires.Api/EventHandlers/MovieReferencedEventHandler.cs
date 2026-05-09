@@ -85,6 +85,8 @@ internal sealed partial class MovieReferencedEventHandler(
         );
         movie.AddGenres(genres);
 
+        var textToSlug = $"{defaultData.Title}-{defaultData.ReleaseDate.Year}";
+        movie.AddSlug(textToSlug);
 
         foreach (var (culture, data) in successfulResults)
         {

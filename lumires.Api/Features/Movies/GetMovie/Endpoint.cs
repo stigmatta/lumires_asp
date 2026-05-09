@@ -10,7 +10,6 @@ namespace lumires.Api.Features.Movies.GetMovie;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);
-
 [UsedImplicitly]
 internal sealed record LocalizationResponse(
     string LanguageCode,
@@ -50,7 +49,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/{Id:int}");
+        Get("/movies/{Slug}/{Id:int}");
         AllowAnonymous();
     }
 

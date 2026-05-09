@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_Review_And_ReviewComment_Entities : Migration
+    public partial class Added_Review_And_ReviewComment_Entity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,14 @@ namespace Infrastructure.Persistence.Migrations
                 oldType: "integer",
                 oldMaxLength: 100);
 
+            migrationBuilder.AddColumn<string>(
+                name: "Slug",
+                table: "Movies",
+                type: "character varying(255)",
+                maxLength: 255,
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
@@ -28,13 +36,15 @@ namespace Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     UpdatedAt = table.Column<DateOnly>(type: "date", nullable: false),
-                    ReviewType = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     MovieId = table.Column<Guid>(type: "uuid", nullable: false),
                     LikesCount = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Text = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    Rating = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true)
+                    Rating = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
+                    IsSpoilerFree = table.Column<bool>(type: "boolean", nullable: false),
+                    IsLongForm = table.Column<bool>(type: "boolean", nullable: false),
+                    IsFirstWatch = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,6 +93,11 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Movies_Slug",
+                table: "Movies",
+                column: "Slug");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ReviewComments_ReviewId",
                 table: "ReviewComments",
                 column: "ReviewId");
@@ -111,6 +126,14 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Movies_Slug",
+                table: "Movies");
+
+            migrationBuilder.DropColumn(
+                name: "Slug",
+                table: "Movies");
 
             migrationBuilder.AlterColumn<int>(
                 name: "Type",

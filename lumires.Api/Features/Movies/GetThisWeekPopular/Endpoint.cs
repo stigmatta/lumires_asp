@@ -7,7 +7,14 @@ using ZiggyCreatures.Caching.Fusion;
 namespace lumires.Api.Features.Movies.GetThisWeekPopular;
 
 [UsedImplicitly]
-internal sealed record WeeklyPopularItem(Guid Id, int ExternalId, string Title, int VoteCount, string? BackdropPath);
+internal sealed record WeeklyPopularItem(
+    Guid Id,
+    int ExternalId,
+    string Title,
+    int VoteCount,
+    string Slug,
+    string? TrailerUrl,
+    string? BackdropPath);
 
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyList<WeeklyPopularItem> Items);

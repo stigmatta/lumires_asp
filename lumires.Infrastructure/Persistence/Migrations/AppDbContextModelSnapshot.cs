@@ -159,6 +159,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("ReleaseDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<string>("TrailerUrl")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -173,6 +178,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ExternalId")
                         .IsUnique();
+
+                    b.HasIndex("Slug");
 
                     b.ToTable("Movies");
                 });
@@ -214,6 +221,15 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<bool>("IsFirstWatch")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsLongForm")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSpoilerFree")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
 
@@ -223,10 +239,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<decimal?>("Rating")
                         .HasPrecision(3, 1)
                         .HasColumnType("numeric(3,1)");
-
-                    b.Property<string>("ReviewType")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Text")
                         .IsRequired()
