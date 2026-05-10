@@ -2,6 +2,7 @@
 using FluentAssertions;
 using lumires.Api.Features.Reviews.GetReviewsByMovie;
 using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,19 +15,27 @@ internal sealed class GetReviewsTests
 {
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<ICurrentUserService> _currentUserMock = null!;
+
 
     [Before(Test)]
     public void Setup()
     {
         _dbContextMock = new Mock<IAppDbContext>();
+        
+        _currentUserMock = new Mock<ICurrentUserService>();
+        _currentUserMock
+            .Setup(x => x.UserId)
+            .Returns(Guid.NewGuid());
 
         var reviews = Helpers.CreateReviews().BuildMockDbSet();
 
         _dbContextMock
             .Setup(x => x.Reviews)
             .Returns(reviews.Object);
+        
 
-        _dataAccess = new DataAccess(_dbContextMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -206,6 +215,6 @@ internal sealed class GetReviewsTests
             .Setup(x => x.Reviews)
             .Returns(mock.Object);
 
-        _dataAccess = new DataAccess(_dbContextMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
     }
 }
