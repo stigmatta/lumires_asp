@@ -6,7 +6,32 @@ namespace lumires.Api.Features.Reviews.GetReview;
 [UsedImplicitly]
 internal sealed record Query(Guid ReviewId);
 
-internal sealed record Response(Guid Id);
+[UsedImplicitly]
+internal sealed record Response(
+    Guid Id,
+    Guid UserId,
+    string Username,
+    string? AvatarUrl,
+    int RepliesCount,
+    decimal? Rating,
+    string? Title,
+    string Text,
+    int LikesCount,
+    DateOnly CreatedAt,
+    bool IsLikedByMe,
+    IEnumerable<CommentItemResponse> Comments);
+
+[UsedImplicitly]
+internal sealed record CommentItemResponse(
+    Guid Id,
+    Guid UserId,
+    string Username,
+    string? AvatarUrl,
+    int LikesCount,
+    bool IsLikedByMe,
+    DateOnly CreatedAt,
+    Guid? TargetedUserId,
+    string? TargetedUserUsername);
 
 internal sealed class Endpoint(DataAccess db)
     : Endpoint<Query, Response>

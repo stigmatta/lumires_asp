@@ -159,6 +159,24 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Review reference is invalid.
+        /// </summary>
+        internal static string ValidationError_ReviewId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_ReviewId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should provide the text.
+        /// </summary>
+        internal static string ValidationError_Text_CannotBeNull {
+            get {
+                return ResourceManager.GetString("ValidationError_Text_CannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title cannot be empty.
         /// </summary>
         internal static string ValidationError_Title_Empty {
@@ -182,6 +200,15 @@ namespace lumires.Core.Resources {
         internal static string ValidationError_Title_TooShort {
             get {
                 return ResourceManager.GetString("ValidationError_Title_TooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User reference is invalid.
+        /// </summary>
+        internal static string ValidationError_UserId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_UserId_Invalid", resourceCulture);
             }
         }
     }

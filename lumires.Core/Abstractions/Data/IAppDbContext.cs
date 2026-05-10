@@ -17,6 +17,9 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<Review> Reviews { get; }
     DbSet<ReviewComment> ReviewComments { get; }
     DbSet<ReviewLike> ReviewLikes { get; }
+    DbSet<ReviewCommentLike> ReviewCommentLikes { get; }
+    DbSet<OutboxMessage> OutboxMessages { get; }
+    
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

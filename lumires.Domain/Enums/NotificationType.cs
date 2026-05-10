@@ -3,5 +3,7 @@
 public enum NotificationType
 {
     LikedReview,
-    Followed
+    Followed,
+    ReviewReplied,
+    LikedReviewComment
 }

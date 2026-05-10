@@ -66,4 +66,13 @@
     <data name="ValidationError_MovieId_Invalid" xml:space="preserve">
         <value>Звернення до фільму некоректне</value>
     </data>
+    <data name="ValidationError_ReviewId_Invalid" xml:space="preserve">
+        <value>Звернення до відгуку некоректне</value>
+    </data>
+    <data name="ValidationError_Text_CannotBeNull" xml:space="preserve">
+        <value>Ви повинні надати текст</value>
+    </data>
+    <data name="ValidationError_UserId_Invalid" xml:space="preserve">
+        <value>Звернення до користувача некоректне</value>
+    </data>
 </root>

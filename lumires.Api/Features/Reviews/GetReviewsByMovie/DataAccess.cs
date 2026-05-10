@@ -29,7 +29,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             .Select(r => new ReviewItemResponse(
                 r.Id,
                 r.UserId,
-                r.Reviewer.Username,    
+                r.Reviewer.Username,
                 r.Reviewer.AvatarUrl,
                 r.ReviewComments.Count,
                 r.Rating,

@@ -13,6 +13,8 @@ public class LikeReviewTests
 {
     private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
+    private Mock<INotificationService> _notificationMock = null!;
+    
     private DataAccess _dataAccess = null!;
 
     [Before(Test)]
@@ -20,8 +22,9 @@ public class LikeReviewTests
     {
         _dbContextMock = new Mock<IAppDbContext>();
         _currentUserMock = new Mock<ICurrentUserService>();
+        _notificationMock = new Mock<INotificationService>();
         _currentUserMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
-        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object, _notificationMock.Object);
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -34,7 +37,7 @@ public class LikeReviewTests
         var mock = reviews.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Reviews).Returns(mock.Object);
         _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object, _notificationMock.Object);
     }
 
     [Test]

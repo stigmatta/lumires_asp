@@ -159,6 +159,24 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Звернення до відгуку некоректне.
+        /// </summary>
+        internal static string ValidationError_ReviewId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_ReviewId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ви повинні надати текст.
+        /// </summary>
+        internal static string ValidationError_Text_CannotBeNull {
+            get {
+                return ResourceManager.GetString("ValidationError_Text_CannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Назва не може бути пустою.
         /// </summary>
         internal static string ValidationError_Title_Empty {
@@ -182,6 +200,15 @@ namespace lumires.Core.Resources {
         internal static string ValidationError_Title_TooShort {
             get {
                 return ResourceManager.GetString("ValidationError_Title_TooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Звернення до користувача некоректне.
+        /// </summary>
+        internal static string ValidationError_UserId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_UserId_Invalid", resourceCulture);
             }
         }
     }

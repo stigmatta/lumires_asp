@@ -35,7 +35,7 @@ public static class InfraRegistration
                        ?? throw new InvalidOperationException("db connection string not found"));
 
         // Auth
-        services.AddCustomAuth(config);
+        services.AddCustomAuth(config, builder.Environment);
 
         //Logging
         builder.AddCustomLogging();
@@ -43,8 +43,8 @@ public static class InfraRegistration
         // Caching
         services.AddCaching(config);
 
-        // SignalR
-        services.AddSignalR();
+        // Notifications
+        services.AddNotifications();
 
         // Email
         services.AddEmailSender(config, env);
@@ -58,7 +58,7 @@ public static class InfraRegistration
         // Scoped
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<INotificationService, OutboxService>();
 
 
         return builder;

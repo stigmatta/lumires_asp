@@ -1,16 +1,16 @@
-﻿namespace lumires.Domain.Entities;
+﻿using lumires.Domain.Base;
 
-public sealed class Review
+namespace lumires.Domain.Entities;
+
+public sealed class Review : LikeableEntity<ReviewLike>
 {
     private readonly List<ReviewComment> _reviewComments = [];
-    private readonly List<ReviewLike> _likes = [];
-
 
     private Review()
     {
     }
 
-    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, 
+    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating,
         bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
@@ -45,26 +45,19 @@ public sealed class Review
     public Guid UserId { get; private set; }
     public Movie Movie { get; private set; } = null!;
     public Guid MovieId { get; private set; }
-    public int LikesCount { get; private set; }
     public string? Title { get; private set; }
     public string Text { get; private set; }
     public decimal? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
-    public IReadOnlyCollection<ReviewLike> Likes => _likes.AsReadOnly();
 
-    public bool ToggleLike(Guid userId)
+    protected override Guid GetUserId(ReviewLike like)
     {
-        var existing = _likes.FirstOrDefault(l => l.UserId == userId);
-        if (existing is not null)
-        {
-            _likes.Remove(existing);
-            LikesCount--;
-            return false;
-        }
+        return like.UserId;
+    }
 
-        _likes.Add(new ReviewLike { ReviewId = Id, UserId = userId });
-        LikesCount++;
-        return true;
+    protected override ReviewLike CreateLike(Guid userId)
+    {
+        return new ReviewLike { ReviewId = Id, UserId = userId };
     }
 }

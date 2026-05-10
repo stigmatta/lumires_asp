@@ -18,6 +18,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<ReviewComment> ReviewComments => Set<ReviewComment>();
     public DbSet<ReviewLike> ReviewLikes => Set<ReviewLike>();
+    public DbSet<ReviewCommentLike> ReviewCommentLikes => Set<ReviewCommentLike>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

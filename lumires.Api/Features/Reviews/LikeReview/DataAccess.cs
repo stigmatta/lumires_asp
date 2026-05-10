@@ -2,12 +2,17 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Messaging;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.Reviews.LikeReview;
 
 [UsedImplicitly]
-internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserService) : IDataAccess
+internal class DataAccess(
+    IAppDbContext db,
+    ICurrentUserService currentUserService,
+    INotificationService notificationService) : IDataAccess
 {
     internal async Task<Result<Response>> ToggleLikeAsync(Guid reviewId, CancellationToken ct)
     {
@@ -17,8 +22,18 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
 
         if (review is null) return Result.NotFound();
 
-        var userId = currentUserService.UserId;
-        var isLiked = review.ToggleLike(userId);
+        var currentUserId = currentUserService.UserId;
+        var isLiked = review.ToggleLike(currentUserId);
+
+        if (isLiked)
+        {
+            var message = new NotificationMessage(NotificationType.LikedReview, currentUserId.ToString(),
+                review.Id.ToString(),
+                DateTime.UtcNow);
+
+            await notificationService.SendToUserAsync(review.UserId, message);
+        }
+
 
         await db.SaveChangesAsync(ct);
 

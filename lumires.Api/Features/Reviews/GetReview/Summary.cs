@@ -12,9 +12,9 @@ internal sealed class Summary : Summary<Endpoint>
         Description = """
                       Get a review for a specific movie.
 
-                      Returns the review DTO.
+                      Returns the review and replies to this review.
 
-                      If the movie was not found - returns 404 Not Found.
+                      If the review was not found - returns 404 Not Found.
 
                       """;
 

@@ -66,4 +66,13 @@
     <data name="ValidationError_MovieId_Invalid" xml:space="preserve">
         <value>Movie reference is invalid</value>
     </data>
+    <data name="ValidationError_ReviewId_Invalid" xml:space="preserve">
+        <value>Review reference is invalid</value>
+    </data>
+    <data name="ValidationError_Text_CannotBeNull" xml:space="preserve">
+        <value>You should provide the text</value>
+    </data>
+    <data name="ValidationError_UserId_Invalid" xml:space="preserve">
+        <value>User reference is invalid</value>
+    </data>
 </root>
