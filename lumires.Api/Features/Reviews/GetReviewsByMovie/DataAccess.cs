@@ -1,12 +1,13 @@
 ﻿using JetBrains.Annotations;
 using lumires.Api.Extensions;
 using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByMovie;
 
 [UsedImplicitly]
-internal class DataAccess(IAppDbContext db) : IDataAccess
+internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserService) : IDataAccess
 {
     internal async Task<List<ReviewItemResponse>> GetReviewsAsync(Query query, CancellationToken ct)
     {
@@ -21,6 +22,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .ApplySorting(sort)
             .ApplyPaging(query.Page, query.PageSize);
 
+        var userId = currentUserService.UserId;
+
+
         return await queryable
             .Select(r => new ReviewItemResponse(
                 r.Id,
@@ -32,7 +36,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 r.Title,
                 r.Text,
                 r.LikesCount,
-                r.CreatedAt
+                r.CreatedAt,
+                userId != Guid.Empty && r.Likes.Any(l => l.UserId == userId)
             ))
             .ToListAsync(ct);
     }

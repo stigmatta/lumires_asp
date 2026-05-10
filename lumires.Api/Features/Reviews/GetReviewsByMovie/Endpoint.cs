@@ -56,7 +56,8 @@ internal sealed record ReviewItemResponse(
     string? Title,
     string Text,
     int LikesCount,
-    DateOnly CreatedAt
+    DateOnly CreatedAt,
+    bool IsLikedByMe
 );
 
 internal sealed class Endpoint(DataAccess db)

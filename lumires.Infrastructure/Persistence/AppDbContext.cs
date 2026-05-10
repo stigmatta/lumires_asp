@@ -17,6 +17,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<GenreLocalization> GenreLocalizations => Set<GenreLocalization>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<ReviewComment> ReviewComments => Set<ReviewComment>();
+    public DbSet<ReviewLike> ReviewLikes => Set<ReviewLike>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

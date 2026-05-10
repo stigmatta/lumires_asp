@@ -3,6 +3,7 @@
 public sealed class Review
 {
     private readonly List<ReviewComment> _reviewComments = [];
+    private readonly List<ReviewLike> _likes = [];
 
 
     private Review()
@@ -50,4 +51,20 @@ public sealed class Review
     public decimal? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
+    public IReadOnlyCollection<ReviewLike> Likes => _likes.AsReadOnly();
+
+    public bool ToggleLike(Guid userId)
+    {
+        var existing = _likes.FirstOrDefault(l => l.UserId == userId);
+        if (existing is not null)
+        {
+            _likes.Remove(existing);
+            LikesCount--;
+            return false;
+        }
+
+        _likes.Add(new ReviewLike { ReviewId = Id, UserId = userId });
+        LikesCount++;
+        return true;
+    }
 }
