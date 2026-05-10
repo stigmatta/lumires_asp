@@ -1,14 +1,14 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 
-namespace lumires.Api.Features.Reviews.GetReviews;
+namespace lumires.Api.Features.Reviews.GetReviewsByMovie;
 
 [UsedImplicitly]
 internal sealed class Summary : Summary<Endpoint>
 {
     public Summary()
     {
-        Summary = "GetReviews";
+        Summary = "GetReviewsByMovie";
         Description = """
                       Get reviews for a specific movie sorted & filtered & paginated.
 

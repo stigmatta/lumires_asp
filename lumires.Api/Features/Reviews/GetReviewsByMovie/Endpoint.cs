@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using lumires.Core.Models;
 
-namespace lumires.Api.Features.Reviews.GetReviews;
+namespace lumires.Api.Features.Reviews.GetReviewsByMovie;
 
 internal enum FilterEnum
 {
@@ -21,6 +21,15 @@ internal enum SortEnum
     HighestRated
 }
 
+internal enum CategoryEnum
+{
+    All,
+    LongForm,
+    SpoilerFree,
+    FirstWatches,
+    FromFriends
+}
+
 [UsedImplicitly]
 internal sealed class Query
 {
@@ -28,6 +37,7 @@ internal sealed class Query
 
     public FilterEnum? Filter { get; init; } = FilterEnum.All;
 
+    public CategoryEnum? Category { get; init; } = CategoryEnum.All;
     public SortEnum? SortBy { get; init; } = SortEnum.MostRecent;
 
     public int Page { get; init; } = 1;
@@ -61,9 +71,14 @@ internal sealed class Endpoint(DataAccess db)
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var response = await db.GetReviewsAsync(query, ct);
-        var count = await db.GetReviewsCountAsync(ct);
+        var count = await db.GetReviewsCountAsync(query, ct);
 
-        var paged = new PagedResponse<ReviewItemResponse>(response, count, query.Page, query.PageSize);
+        var paged = new PagedResponse<ReviewItemResponse>(
+            response,
+            count,
+            query.Page,
+            query.PageSize
+        );
 
         await Send.OkAsync(paged, ct);
     }

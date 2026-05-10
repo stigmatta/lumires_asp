@@ -46,4 +46,27 @@ internal static class Helpers
             genres ?? CreateExternalGenres()
         );
     }
+
+
+    internal static List<Review> CreateReviews(int count = 5)
+    {
+        var movieId = Guid.NewGuid();
+
+        var list = new List<Review>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+
+            var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5m : 3.5m, true);
+
+            typeof(Review)
+                .GetProperty(nameof(Review.Reviewer))!
+                .SetValue(review, user);
+
+            list.Add(review);
+        }
+
+        return list;
+    }
 }

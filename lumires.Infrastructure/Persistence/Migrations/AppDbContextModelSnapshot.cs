@@ -221,12 +221,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsFirstWatch")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLongForm")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsSpoilerFree")
                         .HasColumnType("boolean");
 

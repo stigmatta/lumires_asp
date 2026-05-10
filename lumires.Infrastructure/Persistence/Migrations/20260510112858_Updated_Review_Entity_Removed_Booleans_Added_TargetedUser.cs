@@ -6,11 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Updated_ReviewComment_With_TargetedUser_Field : Migration
+    public partial class Updated_Review_Entity_Removed_Booleans_Added_TargetedUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "IsFirstWatch",
+                table: "Reviews");
+
+            migrationBuilder.DropColumn(
+                name: "IsLongForm",
+                table: "Reviews");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "TargetedUserId",
                 table: "ReviewComments",
@@ -44,6 +52,20 @@ namespace Infrastructure.Persistence.Migrations
             migrationBuilder.DropColumn(
                 name: "TargetedUserId",
                 table: "ReviewComments");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsFirstWatch",
+                table: "Reviews",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsLongForm",
+                table: "Reviews",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
         }
     }
 }

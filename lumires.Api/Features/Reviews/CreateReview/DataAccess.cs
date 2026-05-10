@@ -14,7 +14,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var movieExists = await db.Movies.AnyAsync(m => m.Id == command.MovieId, ct);
         if (!movieExists) return Result.NotFound();
 
-        var review = new Review(userId, command.MovieId, command.Title, command.Text, command.Rating, true,
+        var review = new Review(userId, command.MovieId, command.Title, command.Text, command.Rating,
             command.IsSpoilerFree); //TODO When MovieLogs table will be created - change isFirstWatch
 
         await db.Reviews.AddAsync(review, ct);

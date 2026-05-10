@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260509195701_Updated_ReviewComment_With_TargetedUser_Field")]
-    partial class Updated_ReviewComment_With_TargetedUser_Field
+    [Migration("20260510112858_Updated_Review_Entity_Removed_Booleans_Added_TargetedUser")]
+    partial class Updated_Review_Entity_Removed_Booleans_Added_TargetedUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,12 +223,6 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
-
-                    b.Property<bool>("IsFirstWatch")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLongForm")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsSpoilerFree")
                         .HasColumnType("boolean");

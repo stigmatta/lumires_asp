@@ -1,10 +1,12 @@
 ﻿using System.Linq.Expressions;
 using lumires.Domain.Entities;
 
-namespace lumires.Api.Features.Reviews.GetReviews;
+namespace lumires.Api.Features.Reviews.GetReviewsByMovie;
 
 internal static class Specifications
 {
+    private const int LongThreshold = 500;
+
     public static Expression<Func<Review, bool>> BuildFilter(Query req)
     {
         return req.Filter switch
@@ -13,6 +15,18 @@ internal static class Specifications
             FilterEnum.FourStars => r => r.Rating >= 4m && r.Rating < 5m,
             FilterEnum.ThreeStars => r => r.Rating >= 3m && r.Rating < 4m,
             FilterEnum.UnderThree => r => r.Rating < 3m,
+            _ => r => true
+        };
+    }
+
+    public static Expression<Func<Review, bool>> BuildCategory(Query req)
+    {
+        return req.Category switch // TODO with movie log
+        {
+            CategoryEnum.FirstWatches => r => r.Id != Guid.Empty, //TODO later
+            CategoryEnum.LongForm => r => r.Text.Length >= LongThreshold,
+            CategoryEnum.SpoilerFree => r => r.IsSpoilerFree == true,
+            CategoryEnum.FromFriends => r => r.Id != Guid.Empty, //TODO later
             _ => r => true
         };
     }

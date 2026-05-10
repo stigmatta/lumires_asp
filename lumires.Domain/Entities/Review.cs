@@ -2,7 +2,6 @@
 
 public sealed class Review
 {
-    private const int LongFormThreshold = 500;
     private readonly List<ReviewComment> _reviewComments = [];
 
 
@@ -10,7 +9,7 @@ public sealed class Review
     {
     }
 
-    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, bool isFirstWatch,
+    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating, 
         bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
@@ -35,8 +34,6 @@ public sealed class Review
 
         Rating = rating;
         IsSpoilerFree = isSpoilerFree;
-        IsFirstWatch = isFirstWatch;
-        IsLongForm = text.Length >= LongFormThreshold;
     }
 
 
@@ -52,7 +49,5 @@ public sealed class Review
     public string Text { get; private set; }
     public decimal? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
-    public bool IsLongForm { get; private set; }
-    public bool IsFirstWatch { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 }
