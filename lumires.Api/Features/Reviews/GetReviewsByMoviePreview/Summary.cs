@@ -9,7 +9,13 @@ internal sealed class Summary : Summary<Endpoint>
     public Summary()
     {
         Summary = "GetReviewsByMoviePreview";
-        Description = "Returns top 4 reviews for a specific movie.";
+        Description =
+            Description = """
+                          Get top 4 popular reviews for a specific movie with the most liked reply to each.
+                          If movie doesnt exist - returns empty collection.
+
+                          """;
         Response(200, "Reviews preview successfully retrieved");
+        Response(404);
     }
 }
