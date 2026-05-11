@@ -119,7 +119,7 @@ internal sealed class GetReviewsPreviewTests
 
         _resolverMock
             .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false); // 👈 важно
+            .ReturnsAsync(false); 
 
         var ep = CreateEndpoint();
 
