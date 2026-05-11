@@ -15,8 +15,9 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         var category = Specifications.BuildCategory(query);
         var sort = Specifications.BuildSort(query);
 
+
         var queryable = db.Reviews
-            .Where(r => r.MovieId == query.MovieId)
+            .Where(r => r.Movie.ExternalId == query.MovieId)
             .ApplyFilter(filter)
             .ApplyFilter(category)
             .ApplySorting(sort)
@@ -48,9 +49,14 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         var category = Specifications.BuildCategory(query);
 
         return await db.Reviews
-            .Where(r => r.MovieId == query.MovieId)
+            .Where(r => r.Movie.ExternalId == query.MovieId)
             .ApplyFilter(filter)
             .ApplyFilter(category)
             .CountAsync(ct);
+    }
+
+    internal async Task<bool> MovieExistsAsync(int externalId, CancellationToken ct)
+    {
+        return await db.Movies.AnyAsync(m => m.ExternalId == externalId, ct);
     }
 }

@@ -24,7 +24,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 c.Movies
                     .OrderBy(m => m.Order)
                     .Select(m => new CollectionMovieItem(
-                        m.MovieId,
+                        m.Movie.ExternalId,
                         m.Movie.Localizations
                             .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                             .OrderByDescending(l => l.LanguageCode == lang)

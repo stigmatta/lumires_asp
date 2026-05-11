@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_Outbox_And_ReviewComment_Entities : Migration
+    public partial class Added_OutboxMessage_And_ReviewComment_Entities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_ReviewComments_Users_TargetedUserId",
+                table: "ReviewComments");
+
             migrationBuilder.CreateTable(
                 name: "OutboxMessages",
                 columns: table => new
@@ -60,16 +64,35 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_ReviewCommentLikes_UserId",
                 table: "ReviewCommentLikes",
                 column: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ReviewComments_Users_TargetedUserId",
+                table: "ReviewComments",
+                column: "TargetedUserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_ReviewComments_Users_TargetedUserId",
+                table: "ReviewComments");
+
             migrationBuilder.DropTable(
                 name: "OutboxMessages");
 
             migrationBuilder.DropTable(
                 name: "ReviewCommentLikes");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ReviewComments_Users_TargetedUserId",
+                table: "ReviewComments",
+                column: "TargetedUserId",
+                principalTable: "Users",
+                principalColumn: "Id");
         }
     }
 }

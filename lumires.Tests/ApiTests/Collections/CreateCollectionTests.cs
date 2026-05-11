@@ -3,11 +3,14 @@ using FluentAssertions;
 using lumires.Api.Features.Collections.CreateCollection;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Events.Movies;
+using lumires.Core.Resources;
 using lumires.Domain.Entities;
 using lumires.Domain.Exceptions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using MockQueryable.Moq;
 using Moq;
 
@@ -17,10 +20,17 @@ internal sealed class CreateCollectionTests
 {
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IStringLocalizer<SharedResource>> _localizerMock = null!;
+
 
     [Before(Test)]
     public void Setup()
     {
+        _localizerMock = new Mock<IStringLocalizer<SharedResource>>();
+        _localizerMock
+            .Setup(x => x[It.IsAny<string>()])
+            .Returns((string key) => new LocalizedString(key, key));
+        
         _currentUserMock = new Mock<ICurrentUserService>();
         _currentUserMock
             .Setup(x => x.UserId)
@@ -39,7 +49,7 @@ internal sealed class CreateCollectionTests
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
-        _dataAccess = new DataAccess(dbContextMock.Object);
+        _dataAccess = new DataAccess(dbContextMock.Object, _localizerMock.Object);
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -52,6 +62,7 @@ internal sealed class CreateCollectionTests
                 services.AddSingleton(_currentUserMock.Object);
                 services.AddSingleton(da);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
+                services.AddSingleton(Mock.Of<IEventHandler<MovieReferencedEvent>>());
                 services.AddRouting();
                 ctx.RequestServices = services.BuildServiceProvider();
             },
@@ -123,7 +134,7 @@ internal sealed class CreateCollectionTests
         dbContextMock.Setup(x => x.Collections).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
-        var dataAccess = new DataAccess(dbContextMock.Object);
+        var dataAccess = new DataAccess(dbContextMock.Object, _localizerMock.Object);
         var ep = CreateEndpoint(dataAccess);
 
         // Act
@@ -140,7 +151,7 @@ internal sealed class CreateCollectionTests
     public async Task CreateCollection_Should_Add_MovieIds_To_Collection()
     {
         // Arrange
-        var movieIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+        var movieIds = new List<int> { 550, 551 };
 
         Collection? savedCollection = null;
         var dbContextMock = new Mock<IAppDbContext>();
@@ -148,10 +159,21 @@ internal sealed class CreateCollectionTests
         collectionsDbSetMock
             .Setup(x => x.Add(It.IsAny<Collection>()))
             .Callback<Collection>(c => savedCollection = c);
+        dbContextMock.Setup(x => x.Movies)
+            .Returns(new List<Movie>
+            {
+                new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f),
+                new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f)
+            }.BuildMockDbSet().Object);
         dbContextMock.Setup(x => x.Collections).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
-        var dataAccess = new DataAccess(dbContextMock.Object);
+        var expectedMovieIds = dbContextMock.Object.Movies
+            .Where(m => movieIds.Contains(m.ExternalId))
+            .Select(m => m.Id)
+            .ToList();
+        
+        var dataAccess = new DataAccess(dbContextMock.Object, _localizerMock.Object);
         var ep = CreateEndpoint(dataAccess);
 
         // Act
@@ -160,9 +182,8 @@ internal sealed class CreateCollectionTests
             CancellationToken.None);
 
         // Assert
-        savedCollection.Should().NotBeNull();
         savedCollection!.Movies.Should().HaveCount(2);
-        savedCollection.Movies.Select(m => m.MovieId).Should().BeEquivalentTo(movieIds);
+        savedCollection.Movies.Select(m => m.MovieId).Should().BeEquivalentTo(expectedMovieIds);
     }
 
     [Test]

@@ -11,10 +11,14 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     internal async Task<Result<Guid>> CreateReviewAsync(Command command, Guid userId, CancellationToken ct)
     {
-        var movieExists = await db.Movies.AnyAsync(m => m.Id == command.MovieId, ct);
-        if (!movieExists) return Result.NotFound();
+        var movieId = await db.Movies
+            .Where(m => m.ExternalId == command.MovieId)
+            .Select(m => m.Id)
+            .FirstOrDefaultAsync(ct);
 
-        var review = new Review(userId, command.MovieId, command.Title, command.Text, command.Rating,
+        if (movieId == Guid.Empty) return Result.NotFound();
+
+        var review = new Review(userId, movieId, command.Title, command.Text, command.Rating,
             command.IsSpoilerFree); //TODO When MovieLogs table will be created - change isFirstWatch
 
         await db.Reviews.AddAsync(review, ct);

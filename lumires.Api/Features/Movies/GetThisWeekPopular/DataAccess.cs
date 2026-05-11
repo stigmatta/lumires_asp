@@ -17,7 +17,6 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .OrderByDescending(movie => movie.Popularity)
             .Take(10)
             .Select(movie => new WeeklyPopularItem(
-                movie.Id,
                 movie.ExternalId,
                 movie.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)

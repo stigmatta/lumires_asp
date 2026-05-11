@@ -75,4 +75,7 @@
     <data name="ValidationError_UserId_Invalid" xml:space="preserve">
         <value>User reference is invalid</value>
     </data>
+    <data name="ValidationError_SomeMovies_WereNotFound" xml:space="preserve">
+        <value>Some movies were not found</value>
+    </data>
 </root>

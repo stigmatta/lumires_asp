@@ -22,7 +22,6 @@ internal sealed class Summary : Summary<Endpoint>
         Response(200, "Recently released movies retrieved successfully.", example: new Response(
         [
             new WeeklyRecentItem(
-                new Guid("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
                 1022789,
                 "Inside Out 2",
                 8420,
@@ -31,7 +30,6 @@ internal sealed class Summary : Summary<Endpoint>
                 "/xg27NrXi7VXCGUr7MG75UqLl5Vg.jpg"
             ),
             new WeeklyRecentItem(
-                new Guid("7cb12d34-a891-4567-d234-e56f7890123a"),
                 748783,
                 "The Garfield Movie",
                 3105,

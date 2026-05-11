@@ -76,7 +76,7 @@ internal sealed class CreateReviewTests
 
         // Act
         await ep.HandleAsync(
-            new Command(movie.Id, "Great film", "Really enjoyed it", 4.5m, true),
+            new Command(movie.ExternalId, "Great film", "Really enjoyed it", 4.5m, true),
             CancellationToken.None);
 
         // Assert
@@ -90,7 +90,7 @@ internal sealed class CreateReviewTests
         var movie = SetupMovieExists();
 
         var ep = CreateEndpoint(_dataAccess);
-        var command = new Command(movie.Id, "Great film", "Really enjoyed it", 4.5m, true);
+        var command = new Command(movie.ExternalId, "Great film", "Really enjoyed it", 4.5m, true);
 
         // Act
         await ep.HandleAsync(command, CancellationToken.None);
@@ -116,7 +116,7 @@ internal sealed class CreateReviewTests
 
         // Act
         await ep.HandleAsync(
-            new Command(Guid.NewGuid(), "Title", "Text", 4.0m, false),
+            new Command(1, "Title", "Text", 4.0m, false),
             CancellationToken.None);
 
         // Assert
@@ -147,7 +147,7 @@ internal sealed class CreateReviewTests
 
         // Act
         await ep.HandleAsync(
-            new Command(movie.Id, "Title", "Text", 4.0m, false),
+            new Command(movie.ExternalId, "Title", "Text", 4.0m, false),
             CancellationToken.None);
 
         // Assert
@@ -165,7 +165,7 @@ internal sealed class CreateReviewTests
 
         // Act
         await ep.HandleAsync(
-            new Command(movie.Id, null, "Just some thoughts", 3.0m, false),
+            new Command(movie.ExternalId, null, "Just some thoughts", 3.0m, false),
             CancellationToken.None);
 
         // Assert
@@ -183,7 +183,7 @@ internal sealed class CreateReviewTests
 
         // Act
         await ep.HandleAsync(
-            new Command(movie.Id, "Title", "Text", null, true),
+            new Command(movie.ExternalId, "Title", "Text", null, true),
             CancellationToken.None);
 
         // Assert

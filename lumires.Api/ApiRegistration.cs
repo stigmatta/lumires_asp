@@ -2,6 +2,7 @@
 using System.Reflection;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
 using NSwag;
 using Scalar.AspNetCore;
@@ -62,6 +63,7 @@ public static class ApiRegistration
                         Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
             };
         });
+        builder.Services.AddScoped<IMovieResolver, MovieResolver>();
 
         return builder;
     }

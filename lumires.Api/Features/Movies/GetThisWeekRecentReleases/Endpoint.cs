@@ -8,7 +8,6 @@ namespace lumires.Api.Features.Movies.GetThisWeekRecentReleases;
 
 [UsedImplicitly]
 internal sealed record WeeklyRecentItem(
-    Guid Id,
     int ExternalId,
     string Title,
     int VoteCount,
@@ -33,7 +32,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/recent-this-week");
+        Get("/movies/recent/weekly");
         AllowAnonymous();
     }
 

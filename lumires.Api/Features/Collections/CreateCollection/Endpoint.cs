@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
@@ -9,7 +10,7 @@ internal sealed record Command(
     string Title,
     string? Description,
     bool IsPrivate,
-    IReadOnlyCollection<Guid> MovieIds
+    IReadOnlyCollection<int> MovieIds
 );
 
 [UsedImplicitly]
@@ -29,15 +30,29 @@ internal sealed class Endpoint(
     {
         var currentUserId = currentUserService.UserId;
 
-        var collectionId = await dataAccess.CreateCollectionAsync(command, currentUserId, ct);
+        var result = await dataAccess.CreateCollectionAsync(command, currentUserId, ct);
 
+        if (!result.IsSuccess)
+        {
+            if (result.Status == ResultStatus.Invalid)
+            {
+                foreach (var error in result.ValidationErrors)
+                    AddError(error.ErrorMessage);
+        
+                await Send.ErrorsAsync(400, ct);
+                return;
+            }
+
+            await HttpContext.SendErrorAsync(result.Status, ct);
+            return;
+        }
         var response = new Response(
-            collectionId,
+            result.Value,
             command.Title,
             DateTimeOffset.UtcNow
         );
         await Send.CreatedAtAsync<GetCollection.Endpoint>(
-            new { id = collectionId },
+            new { id = result.Value },
             response,
             cancellation: ct);
     }

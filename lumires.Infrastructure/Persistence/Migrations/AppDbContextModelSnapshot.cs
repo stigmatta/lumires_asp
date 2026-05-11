@@ -523,7 +523,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasOne("lumires.Domain.Entities.User", "TargetedUser")
                         .WithMany()
-                        .HasForeignKey("TargetedUserId");
+                        .HasForeignKey("TargetedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("lumires.Domain.Entities.User", "Commentator")
                         .WithMany("ReviewComments")

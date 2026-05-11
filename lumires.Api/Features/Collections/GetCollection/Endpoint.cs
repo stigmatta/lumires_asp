@@ -18,7 +18,7 @@ internal sealed record Response(
 
 [UsedImplicitly]
 internal sealed record CollectionMovieItem(
-    Guid MovieId,
+    int MovieId,
     string Title,
     string? PosterPath,
     int Order);

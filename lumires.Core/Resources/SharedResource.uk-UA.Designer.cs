@@ -168,6 +168,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Деякі фільми не було знайдено.
+        /// </summary>
+        internal static string ValidationError_SomeMovies_WereNotFound {
+            get {
+                return ResourceManager.GetString("ValidationError_SomeMovies_WereNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ви повинні надати текст.
         /// </summary>
         internal static string ValidationError_Text_CannotBeNull {

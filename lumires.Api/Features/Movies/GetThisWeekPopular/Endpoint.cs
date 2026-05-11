@@ -8,7 +8,6 @@ namespace lumires.Api.Features.Movies.GetThisWeekPopular;
 
 [UsedImplicitly]
 internal sealed record WeeklyPopularItem(
-    Guid Id,
     int ExternalId,
     string Title,
     int VoteCount,
@@ -33,7 +32,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/movies/popular-this-week");
+        Get("/movies/popular/weekly");
         AllowAnonymous();
     }
 

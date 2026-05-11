@@ -1,5 +1,7 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Services;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Events.Movies;
@@ -32,7 +34,7 @@ internal sealed record GenresResponse(
 
 [UsedImplicitly]
 internal sealed record Response(
-    Guid Id,
+    int Id,
     DateOnly ReleaseDate,
     string? TrailerUrl,
     string? PosterPath,
@@ -42,8 +44,8 @@ internal sealed record Response(
 );
 
 internal sealed class Endpoint(
-    IExternalMovieService externalMovieService,
     ICurrentUserService currentUserService,
+    IMovieResolver movieResolver,
     IFusionCache cache,
     DataAccess dataAccess)
     : Endpoint<Query, Response>
@@ -65,37 +67,10 @@ internal sealed class Endpoint(
                 cacheKey,
                 async (_, token) =>
                 {
-                    var existingMovie = await dataAccess.GetMovieByIdAsync(query.Id, lang, token);
-                    if (existingMovie is not null)
-                        return existingMovie;
+                    await movieResolver.EnsureMovieExistsAsync(query.Id, token);
 
-                    var externalResult = await externalMovieService.GetMovieDetailsAsync(query.Id, lang, token);
-                    if (!externalResult.IsSuccess)
-                        throw new ExternalMovieException(externalResult.Status,
-                            "External service failed while retrieving the movie");
-
-                    var importedMovie = externalResult.Value;
-                    var internalId = Guid.CreateVersion7();
-
-                    await PublishAsync(new MovieReferencedEvent
-                    {
-                        InternalId = internalId,
-                        ExternalId = importedMovie.ExternalId
-                    }, Mode.WaitForAll, token);
-
-                    var genres = new GenresResponse(
-                        [.. importedMovie.Genres.Items.Select(g => new GenreItemResponse(g.ExternalId, g.Name, lang))]
-                    );
-
-                    return new Response(
-                        internalId,
-                        importedMovie.ReleaseDate,
-                        importedMovie.TrailerUrl,
-                        importedMovie.PosterPath,
-                        importedMovie.BackdropPath,
-                        new LocalizationResponse(lang, importedMovie.Title, importedMovie.Overview),
-                        genres
-                    );
+                    return await dataAccess.GetMovieByIdAsync(query.Id, lang, token)
+                           ?? throw new ExternalMovieException(ResultStatus.NotFound, "Movie not found");
                 },
                 options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
                 ct

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260510173506_Added_Outbox_And_ReviewComment_Entities")]
-    partial class Added_Outbox_And_ReviewComment_Entities
+    [Migration("20260511130949_Added_OutboxMessage_And_ReviewComment_Entities")]
+    partial class Added_OutboxMessage_And_ReviewComment_Entities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -526,7 +526,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasOne("lumires.Domain.Entities.User", "TargetedUser")
                         .WithMany()
-                        .HasForeignKey("TargetedUserId");
+                        .HasForeignKey("TargetedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("lumires.Domain.Entities.User", "Commentator")
                         .WithMany("ReviewComments")

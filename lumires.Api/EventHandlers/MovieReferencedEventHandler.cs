@@ -7,6 +7,7 @@ using lumires.Core.Events.Movies;
 using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Npgsql;
 
 namespace lumires.Api.EventHandlers;
 
@@ -74,6 +75,7 @@ internal sealed partial class MovieReferencedEventHandler(
             .ToListAsync(ct);
 
         var movie = new Movie(
+            command.InternalId != Guid.Empty ? command.InternalId : Guid.CreateVersion7(),
             command.ExternalId,
             defaultData.ReleaseDate,
             defaultData.PosterPath,
@@ -102,16 +104,24 @@ internal sealed partial class MovieReferencedEventHandler(
         }
 
 
-        if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
-        {
-            LogMovieAlreadyExists(logger, command.ExternalId);
-            return;
-        }
-
         try
         {
             db.Movies.Add(movie);
             await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex)
+        {
+            var pgEx = ex.InnerException as PostgresException 
+                       ?? ex.InnerException?.InnerException as PostgresException;
+    
+            if (pgEx?.SqlState == "23505")
+            {
+                LogMovieAlreadyExists(logger, command.ExternalId);
+                return;
+            }
+    
+            LogUnexpectedError(logger, command.ExternalId, ex);
+            throw;
         }
         catch (Exception ex)
         {

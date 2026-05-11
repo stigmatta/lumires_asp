@@ -31,11 +31,10 @@ internal sealed class Summary : Summary<Endpoint>
             "A list of movies I love.",
             "morrigun01",
             DateTimeOffset.UtcNow,
-            new List<CollectionMovieItem>
-            {
-                new(Guid.NewGuid(), "Fight Club", "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", 1),
-                new(Guid.NewGuid(), "Inception", "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", 2)
-            }
+            [
+                new CollectionMovieItem(550, "Fight Club", "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", 1),
+                new CollectionMovieItem(551, "Inception", "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", 2)
+            ]
         ));
         Response(404);
         Response(500);

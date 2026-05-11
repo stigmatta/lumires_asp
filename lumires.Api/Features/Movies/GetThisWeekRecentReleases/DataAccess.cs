@@ -18,7 +18,6 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .OrderByDescending(movie => movie.ReleaseDate)
             .Take(10)
             .Select(movie => new WeeklyRecentItem(
-                movie.Id,
                 movie.ExternalId,
                 movie.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)

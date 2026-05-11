@@ -25,7 +25,7 @@ internal sealed class Validator : Validator<Command>
 
         RuleForEach(x => x.MovieIds)
             .NotEmpty()
-            .Must(x => x != Guid.Empty)
+            .Must(x => x != 0)
             .WithMessage(localizer["ValidationError_MovieId_Invalid"]);
     }
 }

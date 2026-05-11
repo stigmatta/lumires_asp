@@ -11,7 +11,7 @@ internal sealed class Validator : Validator<Command>
     public Validator(IStringLocalizer<SharedResource> localizer)
     {
         RuleFor(x => x.MovieId)
-            .Must(x => x != Guid.Empty)
+            .Must(x => x != 0)
             .WithMessage(localizer["ValidationError_MovieId_Invalid"]);
         RuleFor(x => x.Title)
             .MinimumLength(StringLimits.MinLength)

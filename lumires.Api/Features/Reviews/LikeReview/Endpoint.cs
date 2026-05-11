@@ -14,7 +14,7 @@ internal sealed class Endpoint(DataAccess db)
 {
     public override void Configure()
     {
-        Post("/movies/{slug}/{movieId}/reviews/{reviewId}/like");
+        Post("/movies/{slug}/{movieId:int}/reviews/{reviewId}/like");
         Throttle(5, 2);
     }
 

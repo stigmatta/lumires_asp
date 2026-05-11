@@ -18,7 +18,7 @@ internal sealed class Summary : Summary<Endpoint>
 
         ExampleRequest = new Query
         {
-            MovieId = new Guid("019cd3eb-ea03-7c41-a0a8-769f4ea68d67"),
+            MovieId = 550,
             Filter = FilterEnum.All,
             SortBy = SortEnum.MostRecent,
             Page = 1,

@@ -24,7 +24,7 @@ internal sealed class Summary : Summary<Endpoint>
                       """;
 
         ExampleRequest = new Command(
-            new Guid("7e432661-94e2-474d-b0de-ef2d83005791"),
+            550,
             "My thoughts on Inception",
             "A mind-bending masterpiece that challenges the boundaries of reality.",
             5m,
