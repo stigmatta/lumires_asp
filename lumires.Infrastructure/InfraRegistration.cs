@@ -35,7 +35,7 @@ public static class InfraRegistration
                        ?? throw new InvalidOperationException("db connection string not found"));
 
         // Auth
-        services.AddCustomAuth(config, builder.Environment);
+        services.AddCustomAuth(config);
 
         //Logging
         builder.AddCustomLogging();
