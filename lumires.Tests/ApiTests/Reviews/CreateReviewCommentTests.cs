@@ -1,5 +1,4 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using FluentAssertions;
 using lumires.Api.Features.Reviews.CreateReviewComment;
 using lumires.Core.Abstractions.Data;
@@ -15,10 +14,10 @@ namespace Tests.ApiTests.Reviews;
 
 internal sealed class CreateReviewCommentTests
 {
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<INotificationService> _notificationMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<INotificationService> _notificationMock = null!;
 
     [Before(Test)]
     public void Setup()

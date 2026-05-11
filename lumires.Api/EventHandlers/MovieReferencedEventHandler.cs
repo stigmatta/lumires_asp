@@ -2,12 +2,9 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Constants;
 using lumires.Core.Events.Movies;
 using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Npgsql;
 
 namespace lumires.Api.EventHandlers;
 
@@ -15,132 +12,81 @@ namespace lumires.Api.EventHandlers;
 internal sealed partial class MovieReferencedEventHandler(
     IServiceScopeFactory scopeFactory,
     IExternalMovieService externalMovieService,
-    ILogger<MovieReferencedEventHandler> logger,
-    IOptions<RequestLocalizationOptions> locOptions)
+    ILogger<MovieReferencedEventHandler> logger)
     : IEventHandler<MovieReferencedEvent>
 {
     public async Task HandleAsync(MovieReferencedEvent command, CancellationToken ct)
     {
-        var cultures = locOptions.Value.SupportedCultures;
+        var result = await externalMovieService
+            .GetMovieDetailsAsync(command.ExternalId, command.Language, ct);
 
-        if (cultures is null || cultures.Count == 0)
-        {
-            LogNoSupportedCultures(logger);
-            return;
-        }
-
-        var fetchTasks = cultures.ToDictionary(
-            c => c.Name,
-            c => externalMovieService.GetMovieDetailsAsync(command.ExternalId, c.Name, ct)
-        );
-
-        var results = await Task.WhenAll(fetchTasks.Values);
-
-        var successfulResults = fetchTasks
-            .Zip(results)
-            .Where(x => x.Second.IsSuccess)
-            .ToDictionary(
-                x => x.First.Key,
-                x => x.Second.Value
-            );
-
-        if (successfulResults.Count == 0)
+        if (!result.IsSuccess)
         {
             LogFailedImport(logger, command.ExternalId);
             return;
         }
 
-        const string defaultLang = LocalizationConstants.DefaultCulture;
-
-        var defaultData =
-            successfulResults.TryGetValue(defaultLang, out var def)
-                ? def
-                : successfulResults.Values.First();
+        var data = result.Value;
 
         await using var scope = scopeFactory.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+        var personResolver = scope.ServiceProvider.GetRequiredService<IPersonResolver>();
 
-        await using var db = scope.ServiceProvider
-            .GetRequiredService<IAppDbContext>();
+        var genreExternalIds = data.Genres.Items.Select(g => g.ExternalId).ToList();
 
-
-        if (await db.Movies.AnyAsync(x => x.ExternalId == command.ExternalId, ct))
-        {
-            LogMovieAlreadyExists(logger, command.ExternalId);
-            return;
-        }
-
-        var genreExternalIds = defaultData.Genres.Items.Select(g => g.ExternalId).ToList();
         var genres = await db.Genres
             .Where(g => genreExternalIds.Contains(g.ExternalId))
             .ToListAsync(ct);
 
+        var personDict = await personResolver.ResolveAsync(
+            data.TopCast.Select(c => (c.Id, c.Name))
+                .Concat(data.Directors.Select(d => (d.Id, d.Name))),
+            ct);
+
         var movie = new Movie(
-            command.InternalId != Guid.Empty ? command.InternalId : Guid.CreateVersion7(),
+            Guid.CreateVersion7(),
             command.ExternalId,
-            defaultData.ReleaseDate,
-            defaultData.PosterPath,
-            defaultData.VoteAverage,
-            defaultData.VoteCount,
-            defaultData.Popularity,
-            defaultData.BackdropPath,
-            defaultData.TrailerUrl
+            data.ReleaseDate,
+            data.PosterPath,
+            data.VoteAverage,
+            data.VoteCount,
+            data.Popularity,
+            data.Runtime,
+            data.ProductionCompany,
+            data.BackdropPath,
+            data.TrailerUrl
         );
+
         movie.AddGenres(genres);
+        movie.AddSlug($"{data.Title}-{data.ReleaseDate.Year}");
 
-        var textToSlug = $"{defaultData.Title}-{defaultData.ReleaseDate.Year}";
-        movie.AddSlug(textToSlug);
+        foreach (var c in data.TopCast.Where(c => personDict.ContainsKey(c.Id)))
+            movie.AddCast(new MovieCast(personDict[c.Id].Id, c.Character, c.Order));
 
-        foreach (var (culture, data) in successfulResults)
-        {
-            if (culture != defaultLang &&
-                string.Equals(data.Overview, defaultData.Overview, StringComparison.Ordinal))
-            {
-                LogSkippingDuplicateLocalization(logger, culture, command.ExternalId);
-                continue;
-            }
+        foreach (var d in data.Directors.Where(d => personDict.ContainsKey(d.Id)))
+            movie.AddDirector(new MovieDirector(personDict[d.Id].Id));
 
-            var newLocalization = new MovieLocalization(culture, data.Title, data.Overview);
-            movie.AddLocalization(newLocalization);
-        }
+        movie.AddLocalization(new MovieLocalization(
+            command.Language,
+            data.Title,
+            data.Overview));
 
+        db.Movies.Add(movie);
 
         try
         {
-            db.Movies.Add(movie);
             await db.SaveChangesAsync(ct);
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateException)
         {
-            var pgEx = ex.InnerException as PostgresException 
-                       ?? ex.InnerException?.InnerException as PostgresException;
-    
-            if (pgEx?.SqlState == "23505")
-            {
-                LogMovieAlreadyExists(logger, command.ExternalId);
-                return;
-            }
-    
-            LogUnexpectedError(logger, command.ExternalId, ex);
-            throw;
-        }
-        catch (Exception ex)
-        {
-            LogUnexpectedError(logger, command.ExternalId, ex);
-            throw;
+            LogMovieAlreadyExists(logger, command.ExternalId);
         }
     }
 
     [LoggerMessage(
-        EventId = 1,
-        Level = LogLevel.Warning,
-        Message = "No supported cultures configured.")]
-    static partial void LogNoSupportedCultures(ILogger<MovieReferencedEventHandler> logger);
-
-
-    [LoggerMessage(
         EventId = 2,
         Level = LogLevel.Warning,
-        Message = "Failed to import movie {ExternalId}: no successful TMDB responses.")]
+        Message = "Failed to import movie {ExternalId}")]
     static partial void LogFailedImport(ILogger logger, int externalId);
 
     [LoggerMessage(
@@ -148,22 +94,4 @@ internal sealed partial class MovieReferencedEventHandler(
         Level = LogLevel.Warning,
         Message = "Movie already exists: {ExternalId}")]
     static partial void LogMovieAlreadyExists(ILogger logger, int externalId);
-
-    [LoggerMessage(
-        EventId = 4,
-        Level = LogLevel.Information,
-        Message = "Skipping {Culture} for movie {ExternalId} because it matches English fallback")]
-    static partial void LogSkippingDuplicateLocalization(
-        ILogger logger,
-        string culture,
-        int externalId);
-
-    [LoggerMessage(
-        EventId = 5,
-        Level = LogLevel.Error,
-        Message = "Unexpected error while importing movie {ExternalId}")]
-    static partial void LogUnexpectedError(
-        ILogger logger,
-        int externalId,
-        Exception exception);
 }

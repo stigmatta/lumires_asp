@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Services;
+using lumires.Core.Abstractions.Services;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByMoviePreview;
 
@@ -27,7 +27,7 @@ internal sealed record ReviewCommentPreview(
     string? AvatarUrl,
     string Text);
 
-internal sealed class Endpoint(DataAccess db, IMovieResolver movieResolver)
+internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService, IMovieResolver movieResolver)
     : Endpoint<Query, Response>
 {
     public override void Configure()
@@ -38,7 +38,8 @@ internal sealed class Endpoint(DataAccess db, IMovieResolver movieResolver)
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        var wasExisting = await movieResolver.EnsureMovieExistsAsync(query.MovieId, ct);
+        var lang = currentUserService.LangCulture;
+        var wasExisting = await movieResolver.EnsureMovieExistsAsync(query.MovieId, lang, ct);
 
         var movieExists = await db.MovieExistsAsync(query.MovieId, ct);
         if (!movieExists)

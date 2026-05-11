@@ -1,9 +1,8 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using JetBrains.Annotations;
 using lumires.Api.Features.Reviews.GetReviewsByMoviePreview;
-using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +13,7 @@ namespace Tests.ApiTests.Reviews;
 
 internal sealed class GetReviewsPreviewTests
 {
+    private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<IMovieResolver> _resolverMock = null!;
@@ -22,10 +22,11 @@ internal sealed class GetReviewsPreviewTests
     public void Setup()
     {
         _dbContextMock = new Mock<IAppDbContext>();
+        _currentUserMock = new Mock<ICurrentUserService>();
 
         _resolverMock = new Mock<IMovieResolver>();
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _dbContextMock
@@ -53,6 +54,7 @@ internal sealed class GetReviewsPreviewTests
                 ctx.RequestServices = services.BuildServiceProvider();
             },
             da,
+            _currentUserMock.Object,
             _resolverMock.Object);
     }
 
@@ -64,7 +66,7 @@ internal sealed class GetReviewsPreviewTests
     public async Task Should_Return_200_With_Data()
     {
         // Arrange
-        var reviews = Helpers.CreateReviewsWithComments(3);
+        var reviews = Helpers.CreateReviewsWithComments();
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -114,12 +116,12 @@ internal sealed class GetReviewsPreviewTests
     public async Task Should_Return_Empty_When_Movie_Just_Imported()
     {
         // Arrange
-        var reviews = Helpers.CreateReviewsWithComments(3);
+        var reviews = Helpers.CreateReviewsWithComments();
         SetupReviews(reviews);
 
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false); 
+            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         var ep = CreateEndpoint();
 
@@ -210,7 +212,7 @@ internal sealed class GetReviewsPreviewTests
         _dbContextMock.Setup(x => x.Movies)
             .Returns(new List<Movie>
             {
-                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f)
+                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
             }.BuildMockDbSet().Object);
 
         _dataAccess = new DataAccess(_dbContextMock.Object);

@@ -1,10 +1,7 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Services;
-using lumires.Core.Events.Movies;
+using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
-using lumires.Domain.Exceptions;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByMovie;
 
@@ -64,7 +61,7 @@ internal sealed record ReviewItemResponse(
     bool IsLikedByMe
 );
 
-internal sealed class Endpoint(DataAccess db, IMovieResolver movieResolver)
+internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService, IMovieResolver movieResolver)
     : Endpoint<Query, PagedResponse<ReviewItemResponse>>
 {
     public override void Configure()
@@ -75,8 +72,9 @@ internal sealed class Endpoint(DataAccess db, IMovieResolver movieResolver)
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        
-        var wasExisting = await movieResolver.EnsureMovieExistsAsync(query.MovieId, ct);
+        var lang = currentUserService.LangCulture;
+        var userId = currentUserService.UserId;
+        var wasExisting = await movieResolver.EnsureMovieExistsAsync(query.MovieId, lang, ct);
 
         var movieExists = await db.MovieExistsAsync(query.MovieId, ct);
         if (!movieExists)
@@ -92,7 +90,7 @@ internal sealed class Endpoint(DataAccess db, IMovieResolver movieResolver)
             return;
         }
 
-        var response = await db.GetReviewsAsync(query, ct);
+        var response = await db.GetReviewsAsync(query, userId, ct);
         var count = await db.GetReviewsCountAsync(query, ct);
 
         var paged = new PagedResponse<ReviewItemResponse>(

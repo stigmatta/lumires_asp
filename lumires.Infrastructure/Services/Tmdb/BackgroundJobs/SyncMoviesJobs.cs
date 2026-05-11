@@ -48,4 +48,15 @@ public class SyncMoviesJobs(IExternalMovieService movieSyncService, ILogger<Sync
 
         logger.LogInformation("Genres sync completed at {Time}", DateTime.UtcNow);
     }
+
+    [TickerFunction("SyncCredits")]
+    public async Task SyncCredits(
+        CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Starting credits sync at {Time}", DateTime.UtcNow);
+
+        await movieSyncService.SyncCredits(20, cancellationToken);
+
+        logger.LogInformation("Credits sync completed at {Time}", DateTime.UtcNow);
+    }
 }

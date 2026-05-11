@@ -65,15 +65,17 @@ internal sealed class GetThisWeekPopularTests
     }
 
     [Test]
-    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
-    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 100, "Warner")]
+    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20, 200, "HBO")]
     public async Task GetThisWeekPopular_Should_Be_200_And_Correct_When_Not_Empty(
         int externalId,
         string dateStr,
         string posterPath,
         float voteAverage,
         int voteCount,
-        float popularity)
+        float popularity,
+        int runtime,
+        string company)
 
     {
         //Arrange
@@ -81,7 +83,7 @@ internal sealed class GetThisWeekPopularTests
 
         var movies = new List<Movie>
         {
-            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
+            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
@@ -107,15 +109,17 @@ internal sealed class GetThisWeekPopularTests
 
 
     [Test]
-    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
-    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 100, "Warner")]
+    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20, 200, "HBO")]
     public async Task GetThisWeekPopular_Should_ReturnCachedResponse_On_SecondCall(
         int externalId,
         string dateStr,
         string posterPath,
         float voteAverage,
         int voteCount,
-        float popularity)
+        float popularity,
+        int runtime,
+        string company)
 
     {
         //Arrange
@@ -123,7 +127,7 @@ internal sealed class GetThisWeekPopularTests
 
         var movies = new List<Movie>
         {
-            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
+            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
@@ -150,22 +154,24 @@ internal sealed class GetThisWeekPopularTests
     }
 
     [Test]
-    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20)]
-    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20)]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 100, "Warner")]
+    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20, 200, "HBO")]
     public async Task GetThisWeekPopular_Should_CacheSeparately_Per_Language(
         int externalId,
         string dateStr,
         string posterPath,
         float voteAverage,
         int voteCount,
-        float popularity)
+        float popularity,
+        int runtime,
+        string company)
     {
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
 
         var movies = new List<Movie>
         {
-            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity)
+            new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
@@ -218,7 +224,8 @@ internal sealed class GetThisWeekPopularTests
             {
                 callCount++;
                 if (callCount == 1)
-                    return new List<Movie> { new(1, DateOnly.Parse("2010-07-16"), "/poster.jpg", 4.5f, 200, 20f) }
+                    return new List<Movie>
+                            { new(1, DateOnly.Parse("2010-07-16"), "/poster.jpg", 4.5f, 200, 20f, 100, "HBO") }
                         .BuildMockDbSet().Object;
 
                 throw new Exception("DB недоступна");

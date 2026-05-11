@@ -11,11 +11,11 @@ namespace Tests.ApiTests.Reviews;
 
 public class LikeReviewTests
 {
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<INotificationService> _notificationMock = null!;
-    
+
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<INotificationService> _notificationMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -101,7 +101,7 @@ public class LikeReviewTests
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
         var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0m, false);
-        review.ToggleLike(userId); 
+        review.ToggleLike(userId);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();

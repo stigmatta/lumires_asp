@@ -13,7 +13,7 @@ public sealed class NotificationService(
             .User(userId.ToString())
             .ReceiveNotification(message);
     }
-    
+
     public async Task SendToUsersAsync(Guid[] userIds, NotificationMessage message)
     {
         var stringIds = userIds.Select(id => id.ToString()).ToArray();

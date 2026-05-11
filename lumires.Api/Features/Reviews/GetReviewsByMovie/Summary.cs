@@ -11,7 +11,7 @@ internal sealed class Summary : Summary<Endpoint>
         Summary = "GetReviewsByMovie";
         Description = """
                       Get reviews for a specific movie sorted & filtered & paginated.
-                      
+
                       If movie doesnt exist - returns empty collection.
 
                       Returns the reviews DTO and pagination info.

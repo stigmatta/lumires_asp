@@ -21,8 +21,8 @@ public sealed class OutboxService(IAppDbContext db) : INotificationService
     private async Task SaveOutboxAsync(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message)
     {
         var outbox = new OutboxMessage(
-            type: message.Type.ToString(),
-            payload: JsonSerializer.Serialize(new OutboxPayload(primaryUserId, secondaryUserId, message))
+            message.Type.ToString(),
+            JsonSerializer.Serialize(new OutboxPayload(primaryUserId, secondaryUserId, message))
         );
 
         await db.OutboxMessages.AddAsync(outbox);
@@ -30,7 +30,7 @@ public sealed class OutboxService(IAppDbContext db) : INotificationService
 }
 
 public sealed record OutboxPayload(
-    Guid PrimaryUserId,      
-    Guid? SecondaryUserId,   
+    Guid PrimaryUserId,
+    Guid? SecondaryUserId,
     NotificationMessage Message
 );

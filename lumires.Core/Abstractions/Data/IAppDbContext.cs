@@ -19,7 +19,10 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<ReviewLike> ReviewLikes { get; }
     DbSet<ReviewCommentLike> ReviewCommentLikes { get; }
     DbSet<OutboxMessage> OutboxMessages { get; }
-    
+    DbSet<MovieCast> MovieCasts { get; }
+    DbSet<MovieDirector> MovieDirectors { get; }
+    DbSet<Person> Persons { get; }
+
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

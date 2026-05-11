@@ -4,8 +4,8 @@ using JetBrains.Annotations;
 namespace lumires.Core.Events.Movies;
 
 [UsedImplicitly]
-public sealed class MovieReferencedEvent : IEvent
+public sealed class MovieEnrichmentEvent : IEvent
 {
     public int ExternalId { get; init; }
-    public string Language { get; init; } = null!;
+    public string SkipLanguage { get; init; } = null!;
 }

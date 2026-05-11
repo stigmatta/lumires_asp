@@ -1,10 +1,8 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Services;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
-using lumires.Core.Events.Movies;
 using lumires.Domain.Exceptions;
 using ZiggyCreatures.Caching.Fusion;
 
@@ -40,7 +38,11 @@ internal sealed record Response(
     string? PosterPath,
     string? BackdropPath,
     LocalizationResponse? Localization,
-    GenresResponse Genres
+    GenresResponse Genres,
+    IReadOnlyCollection<string> Cast,
+    IReadOnlyCollection<string> Directors,
+    string ProductionCompany,
+    int Runtime
 );
 
 internal sealed class Endpoint(
@@ -67,12 +69,13 @@ internal sealed class Endpoint(
                 cacheKey,
                 async (_, token) =>
                 {
-                    await movieResolver.EnsureMovieExistsAsync(query.Id, token);
+                    await movieResolver.EnsureMovieExistsAsync(query.Id, lang, token);
 
                     return await dataAccess.GetMovieByIdAsync(query.Id, lang, token)
                            ?? throw new ExternalMovieException(ResultStatus.NotFound, "Movie not found");
                 },
-                options => options.SetDuration(CacheDuration.Medium).SetFailSafe(true),
+                options => options.SetDuration(CacheDuration.Medium)
+                    .SetFailSafe(true),
                 ct
             );
         }

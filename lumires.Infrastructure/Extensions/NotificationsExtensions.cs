@@ -11,7 +11,7 @@ internal static class NotificationsExtensions
     public static IServiceCollection AddNotifications(this IServiceCollection services)
     {
         services.AddSignalR();
-        
+
         services.AddScoped<INotificationService, OutboxService>();
 
         services.AddScoped<NotificationService>();
@@ -20,7 +20,7 @@ internal static class NotificationsExtensions
 
         return services;
     }
-    
+
     public static void MapCustomHubs(this IEndpointRouteBuilder endpoints, IConfiguration configuration)
     {
         var hubUrl = configuration["SignalRSettings:HubUrl"] ?? "/hubs/notifications";

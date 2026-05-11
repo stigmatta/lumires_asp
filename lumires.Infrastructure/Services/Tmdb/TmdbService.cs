@@ -10,7 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services.Tmdb;
 
-public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalMovieService
+public sealed class TmdbService(
+    ITmdbApi tmdbApi,
+    IAppDbContext db,
+    IPersonResolver personResolver,
+    ILogger<TmdbService> logger) : IExternalMovieService
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
     private const string EnLang = "en-US";
@@ -36,7 +40,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == DefLang)
             return externalMovie;
 
-        var fallbackResponse = await tmdbApi.GetMovieAsync(movieId, DefLang, ct);
+        var fallbackResponse = await tmdbApi.GetMovieShortenedAsync(movieId, DefLang, ct);
         if (fallbackResponse.Content == null) return externalMovie;
 
         var fallback = MapToDomain(fallbackResponse.Content);
@@ -263,10 +267,72 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         return Result.Success();
     }
 
+    public async Task<Result> SyncCredits(int batchSize = 20, CancellationToken ct = default)
+    {
+        var moviesWithoutCredits = await db.Movies
+            .AsNoTracking()
+            .Where(m => !m.Cast.Any() && !m.Directors.Any())
+            .Select(m => new { m.Id, m.ExternalId })
+            .Take(batchSize * 3)
+            .ToListAsync(ct);
+
+        logger.LogInformation("Found {Count} movies without credits", moviesWithoutCredits.Count);
+
+        if (moviesWithoutCredits.Count == 0)
+            return Result.Success();
+
+        foreach (var batch in moviesWithoutCredits.Chunk(batchSize))
+        {
+            foreach (var movieInfo in batch)
+                try
+                {
+                    var response = await tmdbApi.GetMovieAsync(movieInfo.ExternalId, EnLang, ct);
+                    if (response.Error != null)
+                    {
+                        logger.LogError(response.Error, "Refit error for tmdbId={TmdbId}: {Message}",
+                            movieInfo.ExternalId, response.Error.Message);
+                        continue;
+                    }
+
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            return Result.Unauthorized();
+                        case HttpStatusCode.NotFound:
+                            return Result.NotFound();
+                    }
+
+                    if (!response.IsSuccessStatusCode || response.Content?.Credits == null)
+                    {
+                        logger.LogWarning("No credits in response for tmdbId={TmdbId}", movieInfo.ExternalId);
+                        continue;
+                    }
+
+                    logger.LogInformation(
+                        "Credits for tmdbId={TmdbId}: cast={CastCount}, crew={CrewCount}",
+                        movieInfo.ExternalId,
+                        response.Content.Credits.Cast?.Count ?? 0,
+                        response.Content.Credits.Crew?.Count ?? 0);
+
+                    await AddCreditsToExistingMovieAsync(movieInfo.ExternalId, response.Content.Credits, ct);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to sync credits for tmdbId={TmdbId}", movieInfo.ExternalId);
+                }
+
+            var saved = await db.SaveChangesAsync(ct);
+            logger.LogInformation("Saved {Count} changes", saved);
+            await Task.Delay(300, ct);
+        }
+
+        return Result.Success();
+    }
+
     private async Task<Movie?> FetchAndBuildMovieAsync(int tmdbId, CancellationToken ct)
     {
         var enTask = tmdbApi.GetMovieAsync(tmdbId, EnLang, ct);
-        var ukTask = tmdbApi.GetMovieAsync(tmdbId, UaLang, ct);
+        var ukTask = tmdbApi.GetMovieShortenedAsync(tmdbId, UaLang, ct);
 
         await Task.WhenAll(enTask, ukTask);
 
@@ -284,7 +350,7 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         var tasks = tmdbIds.Select(async id =>
         {
             var enTask = tmdbApi.GetMovieAsync(id, EnLang, ct);
-            var ukTask = tmdbApi.GetMovieAsync(id, UaLang, ct);
+            var ukTask = tmdbApi.GetMovieShortenedAsync(id, UaLang, ct);
             await Task.WhenAll(enTask, ukTask);
             return (id, en: await enTask, uk: await ukTask);
         });
@@ -326,6 +392,10 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         var trailerKey = tmdb.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
 
+        var topCast = GetTopExternalCast(tmdb.Credits?.Cast);
+        var directors = GetExternalDirectors(tmdb.Credits?.Crew);
+        var company = GetProductionCompany(tmdb.ProductionCompanies);
+
         var genres = new ExternalGenres(
             tmdb.Genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
         );
@@ -338,10 +408,14 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             tmdb.VoteAverage,
             tmdb.VoteCount,
             tmdb.Popularity,
+            tmdb.Runtime,
+            company,
             tmdb.BackdropPath,
             tmdb.ReleaseDate,
             trailerKey,
-            genres
+            genres,
+            topCast,
+            directors
         );
     }
 
@@ -351,10 +425,19 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
 
         var genreIds = en.Genres.Select(g => g.Id).ToList();
+        var topCastData = GetTopCastData(en.Credits?.Cast);
+        var directorsData = GetDirectorsData(en.Credits?.Crew);
+        var companyData = GetProductionCompany(en.ProductionCompanies);
 
         var genres = await db.Genres
             .Where(g => genreIds.Contains(g.ExternalId))
             .ToListAsync(ct);
+
+        var personDict = await personResolver.ResolveAsync(
+            topCastData.Select(c => (c.ExternalId, c.Name))
+                .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            ct);
+        ;
 
         var movie = new Movie(
             en.Id,
@@ -363,6 +446,8 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
             en.VoteAverage,
             en.VoteCount,
             en.Popularity,
+            en.Runtime,
+            companyData,
             en.BackdropPath,
             trailerKey
         );
@@ -370,11 +455,102 @@ public sealed class TmdbService(ITmdbApi tmdbApi, IAppDbContext db) : IExternalM
         movie.AddGenres(genres);
         movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
         movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
+        movie.AddSlug(SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}"));
 
-        var slug = SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}");
+        foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
+            movie.AddCast(new MovieCast(personDict[c.ExternalId].Id, c.Character, c.Order));
 
-        movie.AddSlug(slug);
+        foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
+            movie.AddDirector(new MovieDirector(personDict[d.ExternalId].Id));
 
         return movie;
+    }
+
+    private static IReadOnlyCollection<ExternalCastMember> GetTopExternalCast(IReadOnlyList<CastMember>? cast)
+    {
+        if (cast is null || cast.Count == 0)
+            return [];
+
+        return cast
+            .OrderBy(x => x.Order)
+            .Take(6)
+            .Select(x => new ExternalCastMember(
+                x.Id,
+                x.Name,
+                x.Character ?? string.Empty,
+                x.Order
+            ))
+            .ToList();
+    }
+
+    private static IReadOnlyCollection<ExternalDirector> GetExternalDirectors(IReadOnlyList<CrewMember>? crew)
+    {
+        if (crew is null || crew.Count == 0)
+            return [];
+
+        return crew
+            .Where(x => x.Job == "Director")
+            .Take(2)
+            .Select(x => new ExternalDirector(x.Id, x.Name))
+            .ToList();
+    }
+
+    private static string GetProductionCompany(IReadOnlyCollection<TmdbProductionCompanyItem> companies)
+    {
+        if (companies.Count == 0)
+            return string.Empty;
+
+        return companies
+            .Select(c => c.Name)
+            .FirstOrDefault() ?? string.Empty;
+    }
+
+    private static List<(int ExternalId, string Name, string Character, int Order)>
+        GetTopCastData(IReadOnlyList<CastMember>? cast)
+    {
+        if (cast is null || cast.Count == 0) return [];
+
+        return cast
+            .OrderBy(x => x.Order)
+            .Take(6)
+            .Select(x => (x.Id, x.Name, x.Character ?? "", x.Order))
+            .ToList();
+    }
+
+    private static List<(int ExternalId, string Name)>
+        GetDirectorsData(IReadOnlyList<CrewMember>? crew)
+    {
+        if (crew is null || crew.Count == 0) return [];
+
+        return crew
+            .Where(x => x.Job == "Director")
+            .Take(2)
+            .Select(x => (x.Id, x.Name))
+            .ToList();
+    }
+
+    private async Task AddCreditsToExistingMovieAsync(int movieId, CreditsResponse credits, CancellationToken ct)
+    {
+        var movie = await db.Movies
+            .Include(m => m.Cast)
+            .Include(m => m.Directors)
+            .FirstOrDefaultAsync(m => m.ExternalId == movieId, ct);
+
+        if (movie is null) return;
+        if (movie.Cast.Count != 0 || movie.Directors.Count != 0) return;
+
+        var topCastData = GetTopCastData(credits.Cast);
+        var directorsData = GetDirectorsData(credits.Crew);
+
+        var personDict = await personResolver.ResolveAsync(
+            topCastData.Select(c => (c.ExternalId, c.Name))
+                .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            ct);
+
+        foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
+            movie.AddCast(new MovieCast(personDict[c.ExternalId].Id, c.Character, c.Order));
+
+        foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
+            movie.AddDirector(new MovieDirector(personDict[d.ExternalId].Id));
     }
 }

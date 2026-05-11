@@ -239,10 +239,11 @@ internal sealed class ArchitecturalTests
 
     [Test]
     [RequiresUnreferencedCode("Test code, trimming not applicable")]
-    public void Core_Service_Interfaces_Should_Be_Implemented_In_Infrastructure()
+    public void Core_Service_Interfaces_Should_Be_Implemented_In_Infrastructure_Or_Api()
     {
         var coreAssembly = typeof(lumires.Core.NamespaceMarker).Assembly;
         var infraAssembly = typeof(InfraRegistration).Assembly;
+        var apiAssembly = typeof(ApiRegistration).Assembly;
 
         var serviceInterfaces = coreAssembly.GetTypes()
             .Where(t => t.IsInterface &&
@@ -253,9 +254,17 @@ internal sealed class ArchitecturalTests
             .Where(t => t.Namespace?.StartsWith(InfraNamespace + ".Services") == true)
             .ToList();
 
+        var apiTypes = apiAssembly.GetTypes()
+            .Where(t => t.Namespace?.StartsWith(ApiNamespace + ".Services") == true)
+            .ToList();
+
+        var allTypes = infraTypes
+            .Concat(apiTypes)
+            .ToList();
+
         var unimplemented = serviceInterfaces
             .Where(iface =>
-                !infraTypes.Any(t => iface.IsAssignableFrom(t) && t is { IsAbstract: false, IsInterface: false }))
+                !allTypes.Any(t => iface.IsAssignableFrom(t) && t is { IsAbstract: false, IsInterface: false }))
             .ToList();
 
         unimplemented.Should().BeEmpty(

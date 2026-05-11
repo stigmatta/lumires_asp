@@ -22,7 +22,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0"/>
         <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.12"/>
-        <PackageReference Include="Npgsql" Version="9.0.4" />
+        <PackageReference Include="Npgsql" Version="9.0.4"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.12.4"/>
         <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.5.0"/>
     </ItemGroup>

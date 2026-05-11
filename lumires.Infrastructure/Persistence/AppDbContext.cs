@@ -20,6 +20,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<ReviewLike> ReviewLikes => Set<ReviewLike>();
     public DbSet<ReviewCommentLike> ReviewCommentLikes => Set<ReviewCommentLike>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<MovieCast> MovieCasts => Set<MovieCast>();
+    public DbSet<MovieDirector> MovieDirectors => Set<MovieDirector>();
+    public DbSet<Person> Persons => Set<Person>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

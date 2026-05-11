@@ -7,14 +7,32 @@ public record ExternalMovie(
     int ExternalId,
     string Title,
     string? Overview,
-    string PosterPath,
+    string? PosterPath,
     float VoteAverage,
     int VoteCount,
     float Popularity,
+    int Runtime,
+    string ProductionCompany,
     string? BackdropPath,
     DateOnly ReleaseDate,
     string? TrailerUrl,
-    ExternalGenres Genres
+    ExternalGenres Genres,
+    IReadOnlyCollection<ExternalCastMember> TopCast,
+    IReadOnlyCollection<ExternalDirector> Directors
+);
+
+[UsedImplicitly]
+public record ExternalCastMember(
+    int Id,
+    string Name,
+    string Character,
+    int Order
+);
+
+[UsedImplicitly]
+public record ExternalDirector(
+    int Id,
+    string Name
 );
 
 [UsedImplicitly]

@@ -9,6 +9,10 @@ public interface ITmdbApi
     Task<ApiResponse<TmdbMovieResponse>> GetMovieAsync(int movieId, [AliasAs("language")] string lang,
         CancellationToken ct);
 
+    [Get("/movie/{movieId}")]
+    Task<ApiResponse<TmdbMovieResponse>> GetMovieShortenedAsync(int movieId, [AliasAs("language")] string lang,
+        CancellationToken ct);
+
     [Get("/trending/movie/week")]
     Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetTrendingMoviesAsync(CancellationToken ct);
 

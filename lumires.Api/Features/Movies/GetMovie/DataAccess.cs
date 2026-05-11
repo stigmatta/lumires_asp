@@ -40,7 +40,16 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                             .FirstOrDefault() ?? string.Empty,
                         lang
                     ))
-                    .ToList())
+                    .ToList()),
+                m.Cast
+                    .OrderByDescending(c => c.Order)
+                    .Select(c => c.Person.Name)
+                    .ToList(),
+                m.Directors
+                    .Select(d => d.Person.Name)
+                    .ToList(),
+                m.ProductionCompany,
+                m.Runtime
             ))
             .SingleOrDefaultAsync(ct);
     }

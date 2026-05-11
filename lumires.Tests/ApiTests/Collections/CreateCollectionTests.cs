@@ -30,7 +30,7 @@ internal sealed class CreateCollectionTests
         _localizerMock
             .Setup(x => x[It.IsAny<string>()])
             .Returns((string key) => new LocalizedString(key, key));
-        
+
         _currentUserMock = new Mock<ICurrentUserService>();
         _currentUserMock
             .Setup(x => x.UserId)
@@ -162,8 +162,8 @@ internal sealed class CreateCollectionTests
         dbContextMock.Setup(x => x.Movies)
             .Returns(new List<Movie>
             {
-                new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f),
-                new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f)
+                new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner"),
+                new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner-2")
             }.BuildMockDbSet().Object);
         dbContextMock.Setup(x => x.Collections).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
@@ -172,7 +172,7 @@ internal sealed class CreateCollectionTests
             .Where(m => movieIds.Contains(m.ExternalId))
             .Select(m => m.Id)
             .ToList();
-        
+
         var dataAccess = new DataAccess(dbContextMock.Object, _localizerMock.Object);
         var ep = CreateEndpoint(dataAccess);
 

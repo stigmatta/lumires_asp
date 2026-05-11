@@ -38,7 +38,6 @@ public sealed class OutboxProcessor(
             .ToList();
 
         foreach (var (message, payload) in payloads)
-        {
             try
             {
                 var primary = new UserNotification(
@@ -67,10 +66,9 @@ public sealed class OutboxProcessor(
                 logger.LogError(ex, "Failed to process outbox message {Id}", message.Id);
                 message.MarkFailed(ex.Message);
             }
-        }
 
         var groups = payloads
-            .Where(x => x.message.ProcessedAt != null) 
+            .Where(x => x.message.ProcessedAt != null)
             .GroupBy(x => x.payload.Message.Type)
             .ToList();
 

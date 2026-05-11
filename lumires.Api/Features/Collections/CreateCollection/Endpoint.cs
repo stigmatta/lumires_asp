@@ -38,7 +38,7 @@ internal sealed class Endpoint(
             {
                 foreach (var error in result.ValidationErrors)
                     AddError(error.ErrorMessage);
-        
+
                 await Send.ErrorsAsync(400, ct);
                 return;
             }
@@ -46,6 +46,7 @@ internal sealed class Endpoint(
             await HttpContext.SendErrorAsync(result.Status, ct);
             return;
         }
+
         var response = new Response(
             result.Value,
             command.Title,

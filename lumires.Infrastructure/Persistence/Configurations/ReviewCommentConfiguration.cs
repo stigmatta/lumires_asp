@@ -27,7 +27,7 @@ internal sealed class ReviewCommentConfiguration : IEntityTypeConfiguration<Revi
             .WithMany(r => r.ReviewComments)
             .HasForeignKey(rc => rc.ReviewId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasOne(rc => rc.TargetedUser)
             .WithMany()
             .HasForeignKey(rc => rc.TargetedUserId)

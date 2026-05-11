@@ -4,22 +4,28 @@ namespace lumires.Domain.Entities;
 
 public sealed class Movie
 {
+    private readonly List<MovieCast> _cast = [];
+    private readonly List<MovieDirector> _directors = [];
     private readonly List<Genre> _genres = [];
     private readonly List<MovieLocalization> _localizations = [];
+    private readonly List<Review> _reviews = [];
+
 
     private Movie()
     {
     }
 
-    public Movie(int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
+    public Movie(int externalId, DateOnly releaseDate, string? posterPath, float voteAverage,
+        int voteCount, float popularity, int runtime, string productionCompany, string? backdropPath = null,
+        string? trailerUrl = null)
         : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity,
-            backdropPath, trailerUrl)
+            runtime, productionCompany, backdropPath, trailerUrl)
     {
     }
 
-    public Movie(Guid id, int externalId, DateOnly releaseDate, string posterPath, float voteAverage,
-        int voteCount, float popularity, string? backdropPath = null, string? trailerUrl = null)
+    public Movie(Guid id, int externalId, DateOnly releaseDate, string? posterPath, float voteAverage,
+        int voteCount, float popularity, int runtime, string productionCompany, string? backdropPath = null,
+        string? trailerUrl = null)
     {
         if (externalId <= 0)
             throw new MovieValidationException("ExternalId must be positive", nameof(externalId));
@@ -45,11 +51,13 @@ public sealed class Movie
         Popularity = popularity;
         BackdropPath = backdropPath;
         TrailerUrl = trailerUrl;
+        Runtime = runtime;
+        ProductionCompany = productionCompany;
     }
 
     public Guid Id { get; }
     public int ExternalId { get; }
-    public string Slug { get; private set; }
+    public string Slug { get; private set; } = null!;
     public DateOnly ReleaseDate { get; private set; }
     public string? PosterPath { get; private set; }
     public string? BackdropPath { get; private set; }
@@ -57,13 +65,16 @@ public sealed class Movie
     public float VoteAverage { get; private set; }
     public int VoteCount { get; private set; }
     public float Popularity { get; private set; }
+    public int Runtime { get; private set; }
+    public string ProductionCompany { get; private set; } = null!;
 
     public IReadOnlyCollection<Genre> Genres => _genres.AsReadOnly();
     public IReadOnlyCollection<MovieLocalization> Localizations => _localizations.AsReadOnly();
+    public IReadOnlyCollection<MovieCast> Cast => _cast.AsReadOnly();
+    public IReadOnlyCollection<MovieDirector> Directors => _directors.AsReadOnly();
+    public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
 
-    /// <summary>
-    ///     Adds a localization and sets the navigation & foreign key automatically.
-    /// </summary>
+
     public void AddLocalization(MovieLocalization localization)
     {
         ArgumentNullException.ThrowIfNull(localization);
@@ -94,9 +105,35 @@ public sealed class Movie
         }
     }
 
+    public void AddReview(Review review)
+    {
+        ArgumentNullException.ThrowIfNull(review);
+        _reviews.Add(review);
+    }
+
     public void SyncGenres(IEnumerable<Genre> genres)
     {
         _genres.Clear();
         foreach (var genre in genres) _genres.Add(genre);
+    }
+
+    public void AddCast(MovieCast cast)
+    {
+        ArgumentNullException.ThrowIfNull(cast);
+
+        if (_cast.Any(c => c.PersonId == cast.Id))
+            throw new InvalidMovieOperationException($"Actor '{cast.Id}' already added to this movie");
+
+        _cast.Add(cast);
+    }
+
+    public void AddDirector(MovieDirector director)
+    {
+        ArgumentNullException.ThrowIfNull(director);
+
+        if (_directors.Any(c => c.Id == director.Id))
+            throw new InvalidMovieOperationException($"Director '{director.Id}' already added to this movie");
+
+        _directors.Add(director);
     }
 }

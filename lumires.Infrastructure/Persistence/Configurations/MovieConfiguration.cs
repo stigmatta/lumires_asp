@@ -26,8 +26,16 @@ internal sealed class MovieConfiguration : IEntityTypeConfiguration<Movie>
             .IsRequired()
             .HasMaxLength(StringLimits.Default);
 
+        builder.Property(m => m.ProductionCompany)
+            .HasMaxLength(StringLimits.Default);
+
         builder.HasMany(m => m.Genres)
             .WithMany()
             .UsingEntity("MovieGenres");
+
+        builder.HasMany(m => m.Reviews)
+            .WithOne(r => r.Movie)
+            .HasForeignKey(r => r.MovieId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

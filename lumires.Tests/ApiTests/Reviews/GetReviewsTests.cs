@@ -1,7 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
 using lumires.Api.Features.Reviews.GetReviewsByMovie;
-using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Events.Movies;
@@ -15,25 +14,25 @@ namespace Tests.ApiTests.Reviews;
 
 internal sealed class GetReviewsTests
 {
+    private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
-    private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IMovieResolver> _resolverMock  = null!;
+    private Mock<IMovieResolver> _resolverMock = null!;
 
 
     [Before(Test)]
     public void Setup()
     {
         _dbContextMock = new Mock<IAppDbContext>();
-        
+
         _currentUserMock = new Mock<ICurrentUserService>();
         _currentUserMock
             .Setup(x => x.UserId)
             .Returns(Guid.NewGuid());
-        
+
         _resolverMock = new Mock<IMovieResolver>();
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
 
@@ -42,13 +41,13 @@ internal sealed class GetReviewsTests
         _dbContextMock
             .Setup(x => x.Reviews)
             .Returns(reviews.Object);
-        
+
         _dbContextMock
             .Setup(x => x.Movies)
             .Returns(new List<Movie>().BuildMockDbSet().Object);
-        
 
-        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
+
+        _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -61,14 +60,15 @@ internal sealed class GetReviewsTests
                 var services = new ServiceCollection();
                 services.AddSingleton(da);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
-                services.AddSingleton(typeof(IEventHandler<MovieReferencedEvent>), 
+                services.AddSingleton(typeof(IEventHandler<MovieReferencedEvent>),
                     Mock.Of<IEventHandler<MovieReferencedEvent>>());
-                services.AddSingleton(typeof(EventBus<MovieReferencedEvent>), 
+                services.AddSingleton(typeof(EventBus<MovieReferencedEvent>),
                     new EventBus<MovieReferencedEvent>([Mock.Of<IEventHandler<MovieReferencedEvent>>()]));
                 services.AddRouting();
                 ctx.RequestServices = services.BuildServiceProvider();
             },
             da,
+            _currentUserMock.Object,
             _resolverMock.Object);
     }
 
@@ -234,9 +234,9 @@ internal sealed class GetReviewsTests
         _dbContextMock.Setup(x => x.Movies)
             .Returns(new List<Movie>
             {
-                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f)
+                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
             }.BuildMockDbSet().Object);
 
-        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 }

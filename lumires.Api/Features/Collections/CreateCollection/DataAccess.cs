@@ -26,7 +26,7 @@ internal class DataAccess(IAppDbContext db, IStringLocalizer<SharedResource> loc
                 .Where(m => command.MovieIds.Contains(m.ExternalId))
                 .Select(m => new { m.Id, m.ExternalId })
                 .ToListAsync(ct);
-            
+
             if (movieIds.Count != command.MovieIds.Count)
                 return Result.Invalid(new ValidationError(localizer["ValidationError_SomeMovies_WereNotFound"]));
 

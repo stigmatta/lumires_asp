@@ -2,7 +2,9 @@
 
 public sealed class OutboxMessage
 {
-    private OutboxMessage() { }
+    private OutboxMessage()
+    {
+    }
 
     public OutboxMessage(string type, string payload)
     {
@@ -19,7 +21,11 @@ public sealed class OutboxMessage
     public DateTimeOffset? ProcessedAt { get; private set; }
     public string? Error { get; private set; }
 
-    public void MarkProcessed() => ProcessedAt = DateTimeOffset.UtcNow;
+    public void MarkProcessed()
+    {
+        ProcessedAt = DateTimeOffset.UtcNow;
+    }
+
     public void MarkFailed(string error)
     {
         Error = error;

@@ -23,35 +23,11 @@ internal static class Helpers
         return [genre];
     }
 
-    internal static ExternalMovie CreateExternalMovie(
-        int id,
-        string title,
-        string poster,
-        float voteAverage,
-        int voteCount,
-        float popularity,
-        DateOnly releaseDate,
-        ExternalGenres? genres = null)
-    {
-        return new ExternalMovie(
-            id,
-            title,
-            null,
-            poster,
-            voteAverage,
-            voteCount,
-            popularity,
-            null,
-            releaseDate,
-            null,
-            genres ?? CreateExternalGenres()
-        );
-    }
-
     internal static List<Review> CreateReviews(int count = 5, int externalMovieId = 1)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Movie(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f);
+        var movie = new Movie(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f,
+            200, "HBO");
 
         var list = new List<Review>();
 
@@ -73,82 +49,78 @@ internal static class Helpers
 
         return list;
     }
-    
-internal static List<Review> CreateReviewsWithComments(
-    int reviewsCount = 3,
-    int commentsPerReview = 3)
-{
-    var movieId = Guid.NewGuid();
-    var movie = new Movie(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f);
 
-    var reviews = new List<Review>();
-
-    for (var i = 0; i < reviewsCount; i++)
+    internal static List<Review> CreateReviewsWithComments(
+        int reviewsCount = 3,
+        int commentsPerReview = 3)
     {
-        var reviewer = new User(Guid.NewGuid(), $"reviewer{i}", $"reviewer{i}@mail.com");
+        var movieId = Guid.NewGuid();
+        var movie = new Movie(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
 
-        var review = new Review(
-            reviewer.Id,
-            movieId,
-            $"Title {i}",
-            $"Text {i}",
-            5,
-            true);
+        var reviews = new List<Review>();
 
-        typeof(Review)
-            .GetProperty(nameof(Review.Reviewer))!
-            .SetValue(review, reviewer);
-
-        typeof(Review)
-            .GetProperty(nameof(Review.Movie))!
-            .SetValue(review, movie);
-
-        var comments = new List<ReviewComment>();
-
-        for (var j = 0; j < commentsPerReview; j++)
+        for (var i = 0; i < reviewsCount; i++)
         {
-            var commentator = new User(Guid.NewGuid(), $"commentator{i}_{j}", $"c{i}{j}@mail.com");
+            var reviewer = new User(Guid.NewGuid(), $"reviewer{i}", $"reviewer{i}@mail.com");
 
-            var comment = new ReviewComment(
-                Guid.NewGuid(),
-                review.Id,
-                $"Comment {j}",
-                commentator.Id
-            );
+            var review = new Review(
+                reviewer.Id,
+                movieId,
+                $"Title {i}",
+                $"Text {i}",
+                5,
+                true);
 
-            typeof(ReviewComment)
-                .GetProperty(nameof(ReviewComment.Commentator))!
-                .SetValue(comment, commentator);
+            typeof(Review)
+                .GetProperty(nameof(Review.Reviewer))!
+                .SetValue(review, reviewer);
 
-            if (j % 2 == 0)
+            typeof(Review)
+                .GetProperty(nameof(Review.Movie))!
+                .SetValue(review, movie);
+
+            var comments = new List<ReviewComment>();
+
+            for (var j = 0; j < commentsPerReview; j++)
             {
-                typeof(ReviewComment)
-                    .GetProperty(nameof(ReviewComment.TargetedUser))!
-                    .SetValue(comment, reviewer);
+                var commentator = new User(Guid.NewGuid(), $"commentator{i}_{j}", $"c{i}{j}@mail.com");
+
+                var comment = new ReviewComment(
+                    Guid.NewGuid(),
+                    review.Id,
+                    $"Comment {j}",
+                    commentator.Id
+                );
 
                 typeof(ReviewComment)
-                    .GetProperty(nameof(ReviewComment.TargetedUserId))!
-                    .SetValue(comment, reviewer.Id);
+                    .GetProperty(nameof(ReviewComment.Commentator))!
+                    .SetValue(comment, commentator);
+
+                if (j % 2 == 0)
+                {
+                    typeof(ReviewComment)
+                        .GetProperty(nameof(ReviewComment.TargetedUser))!
+                        .SetValue(comment, reviewer);
+
+                    typeof(ReviewComment)
+                        .GetProperty(nameof(ReviewComment.TargetedUserId))!
+                        .SetValue(comment, reviewer.Id);
+                }
+
+                comments.Add(comment);
             }
 
-            comments.Add(comment);
+            var field = typeof(Review)
+                .GetField("_reviewComments", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (field is not null)
+                field.SetValue(review, comments);
+            else
+                throw new Exception("Backing field '_reviewComments' not found");
+
+            reviews.Add(review);
         }
 
-        var field = typeof(Review)
-            .GetField("_reviewComments", BindingFlags.NonPublic | BindingFlags.Instance);
-
-        if (field is not null)
-        {
-            field.SetValue(review, comments);
-        }
-        else
-        {
-            throw new Exception("Backing field '_reviewComments' not found");
-        }
-
-        reviews.Add(review);
+        return reviews;
     }
-
-    return reviews;
-}
 }
