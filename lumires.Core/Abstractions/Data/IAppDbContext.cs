@@ -6,11 +6,12 @@ namespace lumires.Core.Abstractions.Data;
 
 public interface IAppDbContext : IDisposable, IAsyncDisposable
 {
-    DbSet<Movie> Movies { get; }
-    DbSet<MovieLocalization> MovieLocalizations { get; }
+    DbSet<Film> Films { get; }
+    DbSet<FilmLocalization> FilmLocalizations { get; }
 
     DbSet<UserNotification> UserNotifications { get; }
-    DbSet<Collection> Collections { get; }
+    DbSet<FilmsList> FilmsLists { get; }
+    DbSet<ListFilm> ListFilms { get; }
     DbSet<User> Users { get; }
     DbSet<Genre> Genres { get; }
     DbSet<GenreLocalization> GenreLocalizations { get; }
@@ -19,8 +20,8 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<ReviewLike> ReviewLikes { get; }
     DbSet<ReviewCommentLike> ReviewCommentLikes { get; }
     DbSet<OutboxMessage> OutboxMessages { get; }
-    DbSet<MovieCast> MovieCasts { get; }
-    DbSet<MovieDirector> MovieDirectors { get; }
+    DbSet<FilmCast> FilmCasts { get; }
+    DbSet<FilmDirector> FilmDirectors { get; }
     DbSet<Person> Persons { get; }
 
     DatabaseFacade Database { get; }

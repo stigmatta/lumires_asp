@@ -1,9 +1,9 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Reviews.GetReviewsByMovie;
+using lumires.Api.Features.Reviews.GetReviewsByFilm;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Events.Movies;
+using lumires.Core.Events.Films;
 using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +17,7 @@ internal sealed class GetReviewsTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
-    private Mock<IMovieResolver> _resolverMock = null!;
+    private Mock<IFilmResolver> _resolverMock = null!;
 
 
     [Before(Test)]
@@ -30,9 +30,9 @@ internal sealed class GetReviewsTests
             .Setup(x => x.UserId)
             .Returns(Guid.NewGuid());
 
-        _resolverMock = new Mock<IMovieResolver>();
+        _resolverMock = new Mock<IFilmResolver>();
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.EnsureFilmExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
 
@@ -43,8 +43,8 @@ internal sealed class GetReviewsTests
             .Returns(reviews.Object);
 
         _dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
 
 
         _dataAccess = new DataAccess(_dbContextMock.Object);
@@ -60,10 +60,10 @@ internal sealed class GetReviewsTests
                 var services = new ServiceCollection();
                 services.AddSingleton(da);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
-                services.AddSingleton(typeof(IEventHandler<MovieReferencedEvent>),
-                    Mock.Of<IEventHandler<MovieReferencedEvent>>());
-                services.AddSingleton(typeof(EventBus<MovieReferencedEvent>),
-                    new EventBus<MovieReferencedEvent>([Mock.Of<IEventHandler<MovieReferencedEvent>>()]));
+                services.AddSingleton(typeof(IEventHandler<FilmReferencedEvent>),
+                    Mock.Of<IEventHandler<FilmReferencedEvent>>());
+                services.AddSingleton(typeof(EventBus<FilmReferencedEvent>),
+                    new EventBus<FilmReferencedEvent>([Mock.Of<IEventHandler<FilmReferencedEvent>>()]));
                 services.AddRouting();
                 ctx.RequestServices = services.BuildServiceProvider();
             },
@@ -84,7 +84,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = reviews.First().Movie.ExternalId,
+            FilmId = reviews.First().Film.ExternalId,
             Page = 1,
             PageSize = 5
         }, CancellationToken.None);
@@ -105,7 +105,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = 1
+            FilmId = 1
         }, CancellationToken.None);
 
         // Assert
@@ -125,7 +125,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = reviews.First().Movie.ExternalId,
+            FilmId = reviews.First().Film.ExternalId,
             Filter = FilterEnum.FiveStars
         }, CancellationToken.None);
 
@@ -145,7 +145,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = reviews.First().Movie.ExternalId,
+            FilmId = reviews.First().Film.ExternalId,
             SortBy = SortEnum.MostLiked
         }, CancellationToken.None);
 
@@ -165,7 +165,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = reviews.First().Movie.ExternalId,
+            FilmId = reviews.First().Film.ExternalId,
             Page = 2,
             PageSize = 3
         }, CancellationToken.None);
@@ -186,7 +186,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = reviews.First().Movie.ExternalId,
+            FilmId = reviews.First().Film.ExternalId,
             Page = 1,
             PageSize = 5
         }, CancellationToken.None);
@@ -209,7 +209,7 @@ internal sealed class GetReviewsTests
         // Act
         await ep.HandleAsync(new Query
         {
-            MovieId = review.Movie.ExternalId
+            FilmId = review.Film.ExternalId
         }, CancellationToken.None);
 
         var item = ep.Response.Results.First();
@@ -230,9 +230,9 @@ internal sealed class GetReviewsTests
         var mock = reviews.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Reviews).Returns(mock.Object);
 
-        var movieId = reviews.FirstOrDefault()?.Movie?.ExternalId ?? 1;
-        _dbContextMock.Setup(x => x.Movies)
-            .Returns(new List<Movie>
+        var movieId = reviews.FirstOrDefault()?.Film?.ExternalId ?? 1;
+        _dbContextMock.Setup(x => x.Films)
+            .Returns(new List<Film>
             {
                 new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
             }.BuildMockDbSet().Object);

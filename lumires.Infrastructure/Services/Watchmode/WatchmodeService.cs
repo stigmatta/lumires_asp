@@ -10,16 +10,16 @@ namespace Infrastructure.Services.Watchmode;
 
 public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache cache) : IStreamingService
 {
-    public async Task<Result<List<MovieSource>>> GetSourcesAsync(
+    public async Task<Result<List<FilmSource>>> GetSourcesAsync(
         int tmdbId,
         CancellationToken ct,
         string region = "US")
     {
-        var sourcesKey = CacheKeys.MovieSources(tmdbId, region);
+        var sourcesKey = CacheKeys.FilmSources(tmdbId, region);
 
         try
         {
-            var sources = await cache.GetOrSetAsync<List<MovieSource>>(
+            var sources = await cache.GetOrSetAsync<List<FilmSource>>(
                 sourcesKey,
                 async (_, token) =>
                 {
@@ -38,7 +38,7 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
                         return [];
 
                     return externalSources.Content
-                        .Select(dto => new MovieSource(
+                        .Select(dto => new FilmSource(
                             tmdbId,
                             dto.Name,
                             dto.Type,
@@ -66,7 +66,7 @@ public sealed class WatchmodeService(IWatchmodeApi watchmodeApi, IFusionCache ca
 
     private async Task<Result<int>> GetWatchmodeIdAsync(int tmdbId, CancellationToken ct)
     {
-        var idMapKey = CacheKeys.MovieSourceExternalId(tmdbId);
+        var idMapKey = CacheKeys.FilmSourceExternalId(tmdbId);
 
         try
         {

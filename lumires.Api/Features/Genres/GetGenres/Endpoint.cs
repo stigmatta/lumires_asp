@@ -23,6 +23,7 @@ internal sealed class Endpoint(
     public override void Configure()
     {
         Get("/genres/");
+        Description(x => x.WithTags("Genres"));
         AllowAnonymous();
     }
 

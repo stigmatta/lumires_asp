@@ -1,9 +1,9 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Collections.CreateCollection;
+using lumires.Api.Features.FilmsLists.CreateFilmsList;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Events.Movies;
+using lumires.Core.Events.Films;
 using lumires.Core.Resources;
 using lumires.Domain.Entities;
 using lumires.Domain.Exceptions;
@@ -42,8 +42,8 @@ internal sealed class CreateCollectionTests
         var dbContextMock = new Mock<IAppDbContext>();
 
         dbContextMock
-            .Setup(x => x.Collections)
-            .Returns(new List<Collection>().BuildMockDbSet().Object);
+            .Setup(x => x.FilmsLists)
+            .Returns(new List<FilmsList>().BuildMockDbSet().Object);
 
         dbContextMock
             .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -62,7 +62,7 @@ internal sealed class CreateCollectionTests
                 services.AddSingleton(_currentUserMock.Object);
                 services.AddSingleton(da);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
-                services.AddSingleton(Mock.Of<IEventHandler<MovieReferencedEvent>>());
+                services.AddSingleton(Mock.Of<IEventHandler<FilmReferencedEvent>>());
                 services.AddRouting();
                 ctx.RequestServices = services.BuildServiceProvider();
             },
@@ -96,7 +96,7 @@ internal sealed class CreateCollectionTests
             CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<CollectionValidationException>();
+        await act.Should().ThrowAsync<FilmsListValidationException>();
     }
 
     [Test]
@@ -112,7 +112,7 @@ internal sealed class CreateCollectionTests
 
         // Assert
         ep.Response.Title.Should().Be(command.Title);
-        ep.Response.CollectionId.Should().NotBe(Guid.Empty);
+        ep.Response.FilmsListId.Should().NotBe(Guid.Empty);
         ep.Response.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5));
     }
 
@@ -125,13 +125,13 @@ internal sealed class CreateCollectionTests
             .Setup(x => x.UserId)
             .Returns(expectedUserId);
 
-        Collection? savedCollection = null;
+        FilmsList? savedCollection = null;
         var dbContextMock = new Mock<IAppDbContext>();
-        var collectionsDbSetMock = new Mock<DbSet<Collection>>();
+        var collectionsDbSetMock = new Mock<DbSet<FilmsList>>();
         collectionsDbSetMock
-            .Setup(x => x.Add(It.IsAny<Collection>()))
-            .Callback<Collection>(c => savedCollection = c);
-        dbContextMock.Setup(x => x.Collections).Returns(collectionsDbSetMock.Object);
+            .Setup(x => x.Add(It.IsAny<FilmsList>()))
+            .Callback<FilmsList>(c => savedCollection = c);
+        dbContextMock.Setup(x => x.FilmsLists).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
         var dataAccess = new DataAccess(dbContextMock.Object, _localizerMock.Object);
@@ -153,22 +153,22 @@ internal sealed class CreateCollectionTests
         // Arrange
         var movieIds = new List<int> { 550, 551 };
 
-        Collection? savedCollection = null;
+        FilmsList? savedCollection = null;
         var dbContextMock = new Mock<IAppDbContext>();
-        var collectionsDbSetMock = new Mock<DbSet<Collection>>();
+        var collectionsDbSetMock = new Mock<DbSet<FilmsList>>();
         collectionsDbSetMock
-            .Setup(x => x.Add(It.IsAny<Collection>()))
-            .Callback<Collection>(c => savedCollection = c);
-        dbContextMock.Setup(x => x.Movies)
-            .Returns(new List<Movie>
+            .Setup(x => x.Add(It.IsAny<FilmsList>()))
+            .Callback<FilmsList>(c => savedCollection = c);
+        dbContextMock.Setup(x => x.Films)
+            .Returns(new List<Film>
             {
                 new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner"),
                 new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner-2")
             }.BuildMockDbSet().Object);
-        dbContextMock.Setup(x => x.Collections).Returns(collectionsDbSetMock.Object);
+        dbContextMock.Setup(x => x.FilmsLists).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
-        var expectedMovieIds = dbContextMock.Object.Movies
+        var expectedMovieIds = dbContextMock.Object.Films
             .Where(m => movieIds.Contains(m.ExternalId))
             .Select(m => m.Id)
             .ToList();
@@ -182,8 +182,8 @@ internal sealed class CreateCollectionTests
             CancellationToken.None);
 
         // Assert
-        savedCollection!.Movies.Should().HaveCount(2);
-        savedCollection.Movies.Select(m => m.MovieId).Should().BeEquivalentTo(expectedMovieIds);
+        savedCollection!.Films.Should().HaveCount(2);
+        savedCollection.Films.Select(m => m.FilmId).Should().BeEquivalentTo(expectedMovieIds);
     }
 
     [Test]

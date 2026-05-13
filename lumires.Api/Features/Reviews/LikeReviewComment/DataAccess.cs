@@ -23,11 +23,14 @@ internal class DataAccess(
         if (reviewComment is null) return Result.NotFound();
 
         var currentUserId = currentUserService.UserId;
+        var currentUsername = await currentUserService.GetUsernameAsync(ct);
+
         var isLiked = reviewComment.ToggleLike(currentUserId);
 
         if (isLiked)
         {
             var message = new NotificationMessage(NotificationType.LikedReviewComment, currentUserId.ToString(),
+                currentUsername,
                 reviewComment.Id.ToString(),
                 DateTime.UtcNow);
 

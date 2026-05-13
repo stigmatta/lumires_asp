@@ -20,12 +20,12 @@ public class PersonConfiguration : IEntityTypeConfiguration<Person>
             .HasMaxLength(StringLimits.Default);
 
 
-        builder.HasMany(p => p.MovieCasts)
+        builder.HasMany(p => p.FilmCasts)
             .WithOne(mc => mc.Person)
             .HasForeignKey(mc => mc.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(p => p.MovieDirectors)
+        builder.HasMany(p => p.FilmDirectors)
             .WithOne(md => md.Person)
             .HasForeignKey(md => md.PersonId)
             .OnDelete(DeleteBehavior.Cascade);

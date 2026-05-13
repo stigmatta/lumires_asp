@@ -26,7 +26,7 @@ internal static class Helpers
     internal static List<Review> CreateReviews(int count = 5, int externalMovieId = 1)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Movie(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f,
+        var movie = new Film(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f,
             200, "HBO");
 
         var list = new List<Review>();
@@ -41,7 +41,7 @@ internal static class Helpers
                 .SetValue(review, user);
 
             typeof(Review)
-                .GetProperty(nameof(Review.Movie))!
+                .GetProperty(nameof(Review.Film))!
                 .SetValue(review, movie);
 
             list.Add(review);
@@ -55,7 +55,7 @@ internal static class Helpers
         int commentsPerReview = 3)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Movie(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
+        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
 
         var reviews = new List<Review>();
 
@@ -76,7 +76,7 @@ internal static class Helpers
                 .SetValue(review, reviewer);
 
             typeof(Review)
-                .GetProperty(nameof(Review.Movie))!
+                .GetProperty(nameof(Review.Film))!
                 .SetValue(review, movie);
 
             var comments = new List<ReviewComment>();

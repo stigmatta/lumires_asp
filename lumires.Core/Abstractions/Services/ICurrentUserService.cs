@@ -3,7 +3,6 @@
 public interface ICurrentUserService
 {
     Guid UserId { get; }
-    string Username { get; }
     string UserRole { get; }
     string UserTier { get; }
     string Email { get; }
@@ -11,4 +10,5 @@ public interface ICurrentUserService
     bool IsAuthenticated { get; }
     string CurrentLanguage { get; }
     string LangCulture { get; }
+    Task<string> GetUsernameAsync(CancellationToken ct);
 }

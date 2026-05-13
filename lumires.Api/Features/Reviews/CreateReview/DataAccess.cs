@@ -11,8 +11,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     internal async Task<Result<Guid>> CreateReviewAsync(Command command, Guid userId, CancellationToken ct)
     {
-        var movieId = await db.Movies
-            .Where(m => m.ExternalId == command.MovieId)
+        var movieId = await db.Films
+            .Where(m => m.ExternalId == command.FilmId)
             .Select(m => m.Id)
             .FirstOrDefaultAsync(ct);
 

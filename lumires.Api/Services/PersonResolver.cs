@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Services;
 
-internal class PersonResolver(IAppDbContext db) : IPersonResolver, IDataAccess
+internal class PersonResolver(IAppDbContext db) : IPersonResolver, IResolver
 {
     public async Task<Dictionary<int, Person>> ResolveAsync(IEnumerable<(int ExternalId, string Name)> persons,
         CancellationToken ct)

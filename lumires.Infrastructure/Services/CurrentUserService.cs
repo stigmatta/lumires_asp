@@ -1,11 +1,13 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
+using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
-public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
+public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor, IAppDbContext db) : ICurrentUserService
 {
     private readonly ClaimsPrincipal? _user = httpContextAccessor.HttpContext?.User;
 
@@ -18,14 +20,8 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
             ? id
             : Guid.Empty;
 
-
     //Email always should be existing in the claims
     public string Email => _user?.FindFirstValue(ClaimTypes.Email)!;
-
-    public string Username =>
-        _user?.FindFirstValue("display_name")
-        ?? Email.Split('@')[0]
-        ?? "unknown";
 
     public bool IsEmailConfirmed =>
         bool.TryParse(
@@ -41,4 +37,22 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
         "uk" => "uk-UA",
         _ => "en-US"
     };
+
+    public async Task<string> GetUsernameAsync(CancellationToken ct)
+    {
+        var result = await db.Users
+            .Where(u => u.Id == UserId)
+            .Select(u => new
+            {
+                u.Username, u.Email
+            })
+            .FirstOrDefaultAsync(ct);
+
+        if (result == null)
+            return "unknown";
+
+        return !string.IsNullOrWhiteSpace(result.Username)
+            ? result.Username
+            : result.Email?.Split('@')[0] ?? "unknown";
+    }
 }

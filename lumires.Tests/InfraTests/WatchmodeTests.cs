@@ -194,7 +194,7 @@ internal sealed class WatchmodeTests
         // Arrange
         const int tmdbId = 123;
         const string region = "US";
-        var expectedCacheKey = CacheKeys.MovieSources(tmdbId, region);
+        var expectedCacheKey = CacheKeys.FilmSources(tmdbId, region);
 
         var mockSearchResponse = new WatchmodeSearchResponse(
             new List<WatchmodeTitleResult>
@@ -241,7 +241,7 @@ internal sealed class WatchmodeTests
         await service.GetSourcesAsync(tmdbId, CancellationToken.None);
 
         // Assert
-        var cachedResult = await _cache.GetOrDefaultAsync<List<MovieSource>>(expectedCacheKey);
+        var cachedResult = await _cache.GetOrDefaultAsync<List<FilmSource>>(expectedCacheKey);
         cachedResult.Should().NotBeNull();
         cachedResult.Should().HaveCount(1);
 
@@ -255,7 +255,7 @@ internal sealed class WatchmodeTests
         // Arrange
         const int tmdbId = 456;
         const int expectedWatchmodeId = 67890;
-        var expectedCacheKey = CacheKeys.MovieSourceExternalId(tmdbId);
+        var expectedCacheKey = CacheKeys.FilmSourceExternalId(tmdbId);
 
         var mockSearchResponse = new WatchmodeSearchResponse(
             new List<WatchmodeTitleResult>

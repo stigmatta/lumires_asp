@@ -10,7 +10,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
     {
     }
 
-    public Review(Guid userId, Guid movieId, string? title, string text, decimal? rating,
+    public Review(Guid userId, Guid filmId, string? title, string text, decimal? rating,
         bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
@@ -18,7 +18,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
         UpdatedAt = CreatedAt;
 
         UserId = userId;
-        MovieId = movieId;
+        FilmId = filmId;
 
         Title = title;
         Text = text ?? throw new ArgumentNullException(nameof(text));
@@ -43,8 +43,8 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public DateOnly UpdatedAt { get; }
     public User Reviewer { get; private set; } = null!;
     public Guid UserId { get; private set; }
-    public Movie Movie { get; private set; } = null!;
-    public Guid MovieId { get; private set; }
+    public Film Film { get; private set; } = null!;
+    public Guid FilmId { get; private set; }
     public string? Title { get; private set; }
     public string Text { get; private set; }
     public decimal? Rating { get; private set; }

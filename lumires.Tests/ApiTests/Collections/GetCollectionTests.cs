@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Collections.GetCollection;
+using lumires.Api.Features.FilmsLists.GetFilmsList;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
@@ -26,8 +26,8 @@ internal sealed class GetCollectionTests
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Collections)
-            .Returns(new List<Collection>().BuildMockDbSet().Object);
+            .Setup(x => x.FilmsLists)
+            .Returns(new List<FilmsList>().BuildMockDbSet().Object);
 
         _dataAccess = new DataAccess(dbContextMock.Object);
     }
@@ -39,16 +39,16 @@ internal sealed class GetCollectionTests
         var userId = Guid.CreateVersion7();
         var user = new User(userId, "test_user", "test_user@gmail.com");
 
-        var collection = new Collection("Test Title", user.Id, "Test description");
+        var collection = new FilmsList("Test Title", user.Id, "Test description");
 
-        typeof(Collection)
-            .GetProperty(nameof(Collection.User))!
+        typeof(FilmsList)
+            .GetProperty(nameof(FilmsList.User))!
             .SetValue(collection, user);
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Collections)
-            .Returns(new List<Collection> { collection }.BuildMockDbSet().Object);
+            .Setup(x => x.FilmsLists)
+            .Returns(new List<FilmsList> { collection }.BuildMockDbSet().Object);
 
         var dataAccess = new DataAccess(dbContextMock.Object);
 
@@ -74,16 +74,16 @@ internal sealed class GetCollectionTests
         var userId = Guid.CreateVersion7();
         var user = new User(userId, "test_user", "test_user@gmail.com");
 
-        var collection = new Collection("Test Title", user.Id, "Test description");
+        var collection = new FilmsList("Test Title", user.Id, "Test description");
 
-        typeof(Collection)
-            .GetProperty(nameof(Collection.User))!
+        typeof(FilmsList)
+            .GetProperty(nameof(FilmsList.User))!
             .SetValue(collection, user);
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Collections)
-            .Returns(new List<Collection> { collection }.BuildMockDbSet().Object);
+            .Setup(x => x.FilmsLists)
+            .Returns(new List<FilmsList> { collection }.BuildMockDbSet().Object);
 
         var dataAccess = new DataAccess(dbContextMock.Object);
 
@@ -107,16 +107,16 @@ internal sealed class GetCollectionTests
         var userId = Guid.CreateVersion7();
         var user = new User(userId, "test_user", "test_user@gmail.com");
 
-        var collection = new Collection("Test Title", user.Id, "Test description");
+        var collection = new FilmsList("Test Title", user.Id, "Test description");
 
-        typeof(Collection)
-            .GetProperty(nameof(Collection.User))!
+        typeof(FilmsList)
+            .GetProperty(nameof(FilmsList.User))!
             .SetValue(collection, user);
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Collections)
-            .Returns(new List<Collection> { collection }.BuildMockDbSet().Object);
+            .Setup(x => x.FilmsLists)
+            .Returns(new List<FilmsList> { collection }.BuildMockDbSet().Object);
 
         var dataAccess = new DataAccess(dbContextMock.Object);
 

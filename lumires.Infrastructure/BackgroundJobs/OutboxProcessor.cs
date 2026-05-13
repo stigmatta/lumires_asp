@@ -67,33 +67,49 @@ public sealed class OutboxProcessor(
                 message.MarkFailed(ex.Message);
             }
 
+
         var groups = payloads
             .Where(x => x.message.ProcessedAt != null)
             .GroupBy(x => x.payload.Message.Type)
             .ToList();
 
-        foreach (var group in groups)
+        if (groups.Count > 0)
         {
-            var userIds = group
-                .SelectMany(x =>
-                {
-                    var ids = new List<Guid> { x.payload.PrimaryUserId };
-                    if (x.payload.SecondaryUserId.HasValue)
-                        ids.Add(x.payload.SecondaryUserId.Value);
-                    return ids;
-                })
+            var senderIds = groups
+                .Select(g => g.First().payload.Message.SenderId)
                 .Distinct()
-                .ToArray();
+                .ToList();
 
-            var notificationMessage = group.First().payload.Message;
+            var senderNames = await db.Users
+                .Where(u => senderIds.Contains(u.Id.ToString()))
+                .ToDictionaryAsync(u => u.Id.ToString(), u => u.Username, ct);
 
-            try
+            foreach (var group in groups)
             {
-                await notificationService.SendToUsersAsync(userIds, notificationMessage);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to send SignalR notification for type {Type}", group.Key);
+                var userIds = group
+                    .SelectMany(x =>
+                    {
+                        var ids = new List<Guid> { x.payload.PrimaryUserId };
+                        if (x.payload.SecondaryUserId.HasValue) ids.Add(x.payload.SecondaryUserId.Value);
+                        return ids;
+                    })
+                    .Distinct()
+                    .ToArray();
+
+                var notificationMessage = group.First().payload.Message;
+                var enriched = notificationMessage with
+                {
+                    SenderName = senderNames.GetValueOrDefault(notificationMessage.SenderId)
+                };
+
+                try
+                {
+                    await notificationService.SendToUsersAsync(userIds, enriched);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to send SignalR notification for type {Type}", group.Key);
+                }
             }
         }
 

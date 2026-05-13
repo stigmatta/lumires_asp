@@ -31,9 +31,9 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(r => r.Movie)
+        builder.HasOne(r => r.Film)
             .WithMany(m => m.Reviews)
-            .HasForeignKey(r => r.MovieId)
+            .HasForeignKey(r => r.FilmId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Metadata

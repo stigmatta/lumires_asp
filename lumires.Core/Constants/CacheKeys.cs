@@ -2,29 +2,29 @@
 
 public static class CacheKeys
 {
-    public static string MovieKey(int id, string lang)
+    public static string FilmKey(int id, string lang)
     {
-        return $"movie:{id}:{lang}";
+        return $"film:{id}:{lang}";
     }
 
-    public static string MovieSources(int id, string region)
+    public static string FilmSources(int id, string region)
     {
         return $"sources:{id}:{region}";
     }
 
-    public static string MovieSourceExternalId(int id)
+    public static string FilmSourceExternalId(int id)
     {
         return $"wm_id:{id}";
     }
 
-    public static string ThisWeekPopularMovies(string lang)
+    public static string ThisWeekPopularFilms(string lang)
     {
-        return $"this_week_popular_movies:{lang}";
+        return $"this_week_popular_films:{lang}";
     }
 
-    public static string ThisWeekRecentMovies(string lang)
+    public static string ThisWeekRecentFilms(string lang)
     {
-        return $"this_week_recent_movies:{lang}";
+        return $"this_week_recent_films:{lang}";
     }
 
     public static string GenresList(string lang)

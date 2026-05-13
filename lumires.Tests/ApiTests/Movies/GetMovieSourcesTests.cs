@@ -1,7 +1,7 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Movies.GetMovieSources;
+using lumires.Api.Features.Films.GetFilmSources;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Models;
@@ -64,7 +64,7 @@ internal sealed class GetMovieSourcesTests
         string quality)
     {
         // Arrange
-        var movieSource = new MovieSource(
+        var movieSource = new FilmSource(
             id,
             name,
             type,
@@ -72,7 +72,7 @@ internal sealed class GetMovieSourcesTests
             quality,
             0);
 
-        var sourceList = new List<MovieSource> { movieSource };
+        var sourceList = new List<FilmSource> { movieSource };
 
         _streamingMock
             .Setup(s => s.GetSourcesAsync(It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
@@ -102,7 +102,7 @@ internal sealed class GetMovieSourcesTests
         //Arrange
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result<List<MovieSource>>.Error());
+            .ReturnsAsync(Result<List<FilmSource>>.Error());
 
         var ep = Factory.Create<Endpoint>(
             _streamingMock.Object);
@@ -125,7 +125,7 @@ internal sealed class GetMovieSourcesTests
         //Arrange
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result<List<MovieSource>>.Unauthorized());
+            .ReturnsAsync(Result<List<FilmSource>>.Unauthorized());
 
         var ep = Factory.Create<Endpoint>(
             _streamingMock.Object);
@@ -154,7 +154,7 @@ internal sealed class GetMovieSourcesTests
         string quality)
     {
         // Arrange
-        var expectedSources = new List<MovieSource>
+        var expectedSources = new List<FilmSource>
         {
             new(
                 id,
@@ -193,7 +193,7 @@ internal sealed class GetMovieSourcesTests
         const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result<List<MovieSource>>.NotFound);
+            .ReturnsAsync(Result<List<FilmSource>>.NotFound);
 
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
@@ -214,7 +214,7 @@ internal sealed class GetMovieSourcesTests
         const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result<List<MovieSource>>.Error());
+            .ReturnsAsync(Result<List<FilmSource>>.Error());
 
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
@@ -235,7 +235,7 @@ internal sealed class GetMovieSourcesTests
         const int id = 1;
         _streamingMock.Setup(s => s.GetSourcesAsync
                 (It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
-            .ReturnsAsync(Result<List<MovieSource>>.Unauthorized());
+            .ReturnsAsync(Result<List<FilmSource>>.Unauthorized());
 
         var ep = Factory.Create<Endpoint>(_streamingMock.Object);
 
@@ -255,7 +255,7 @@ internal sealed class GetMovieSourcesTests
     [Arguments(456, "GB")]
     public void CacheKeys_MovieSources_Should_Match_Expected_Format(int tmdbId, string region)
     {
-        var formatted = CacheKeys.MovieSources(tmdbId, region);
+        var formatted = CacheKeys.FilmSources(tmdbId, region);
         formatted.Should().Be($"sources:{tmdbId}:{region}");
     }
 
@@ -264,7 +264,7 @@ internal sealed class GetMovieSourcesTests
     [Arguments(789)]
     public void CacheKeys_MovieSourceExternalId_Should_Match_Expected_Format(int tmdbId)
     {
-        var formatted = CacheKeys.MovieSourceExternalId(tmdbId);
+        var formatted = CacheKeys.FilmSourceExternalId(tmdbId);
         formatted.Should().Be($"wm_id:{tmdbId}");
     }
 }

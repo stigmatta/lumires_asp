@@ -5,5 +5,5 @@ namespace lumires.Core.Abstractions.Services;
 
 public interface IStreamingService
 {
-    Task<Result<List<MovieSource>>> GetSourcesAsync(int tmdbId, CancellationToken ct, string region = "US");
+    Task<Result<List<FilmSource>>> GetSourcesAsync(int tmdbId, CancellationToken ct, string region = "US");
 }

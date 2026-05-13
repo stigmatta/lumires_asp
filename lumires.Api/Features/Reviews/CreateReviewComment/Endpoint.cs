@@ -19,7 +19,8 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Post("/movies/{Slug}/{MovieId}/reviews/{ReviewId}/reply");
+        Post("/films/{Slug}/{filmId}/reviews/{ReviewId}/reply");
+        Description(x => x.WithTags("Reviews"));
     }
 
     public override async Task HandleAsync(Command command, CancellationToken ct)

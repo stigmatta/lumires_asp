@@ -33,13 +33,13 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 
-        builder.HasMany(x => x.Collections)
+        builder.HasMany(x => x.FilmsLists)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Metadata
-            .FindNavigation(nameof(User.Collections))?
+            .FindNavigation(nameof(User.FilmsLists))?
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Metadata

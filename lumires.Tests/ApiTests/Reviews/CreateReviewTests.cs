@@ -29,13 +29,13 @@ internal sealed class CreateReviewTests
 
         _dbContextMock = new Mock<IAppDbContext>();
 
-        var movies = new List<Movie>
+        var movies = new List<Film>
         {
             new(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
         }.BuildMockDbSet();
 
         _dbContextMock
-            .Setup(x => x.Movies)
+            .Setup(x => x.Films)
             .Returns(movies.Object);
 
         _dbContextMock
@@ -108,8 +108,8 @@ internal sealed class CreateReviewTests
     {
         // Arrange
         _dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
 
         var dataAccess = new DataAccess(_dbContextMock.Object);
         var ep = CreateEndpoint(dataAccess);
@@ -191,11 +191,11 @@ internal sealed class CreateReviewTests
         ep.Response.Rating.Should().BeNull();
     }
 
-    private Movie SetupMovieExists()
+    private Film SetupMovieExists()
     {
-        var movie = new Movie(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
-        var movies = new List<Movie> { movie }.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Movies).Returns(movies.Object);
+        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
+        var movies = new List<Film> { movie }.BuildMockDbSet();
+        _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
 
         return movie;
     }

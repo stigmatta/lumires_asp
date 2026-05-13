@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Reviews.GetReviewsByMoviePreview;
+using lumires.Api.Features.Reviews.GetReviewsByFilmPreview;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
@@ -16,7 +16,7 @@ internal sealed class GetReviewsPreviewTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
-    private Mock<IMovieResolver> _resolverMock = null!;
+    private Mock<IFilmResolver> _resolverMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -24,14 +24,14 @@ internal sealed class GetReviewsPreviewTests
         _dbContextMock = new Mock<IAppDbContext>();
         _currentUserMock = new Mock<ICurrentUserService>();
 
-        _resolverMock = new Mock<IMovieResolver>();
+        _resolverMock = new Mock<IFilmResolver>();
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.EnsureFilmExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
 
         _dbContextMock
             .Setup(x => x.Reviews)
@@ -72,7 +72,7 @@ internal sealed class GetReviewsPreviewTests
         var ep = CreateEndpoint();
 
         // Act
-        await ep.HandleAsync(new Query(reviews.First().Movie.ExternalId), CancellationToken.None);
+        await ep.HandleAsync(new Query(reviews.First().Film.ExternalId), CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
@@ -100,8 +100,8 @@ internal sealed class GetReviewsPreviewTests
     {
         // Arrange
         _dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
 
         var ep = CreateEndpoint();
 
@@ -120,13 +120,13 @@ internal sealed class GetReviewsPreviewTests
         SetupReviews(reviews);
 
         _resolverMock
-            .Setup(x => x.EnsureMovieExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.EnsureFilmExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         var ep = CreateEndpoint();
 
         // Act
-        await ep.HandleAsync(new Query(reviews.First().Movie.ExternalId), CancellationToken.None);
+        await ep.HandleAsync(new Query(reviews.First().Film.ExternalId), CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
@@ -143,7 +143,7 @@ internal sealed class GetReviewsPreviewTests
         var ep = CreateEndpoint();
 
         // Act
-        await ep.HandleAsync(new Query(reviews.First().Movie.ExternalId), CancellationToken.None);
+        await ep.HandleAsync(new Query(reviews.First().Film.ExternalId), CancellationToken.None);
 
         // Assert
         ep.Response.Reviews.Should().BeInDescendingOrder(x => x.LikeCount);
@@ -161,7 +161,7 @@ internal sealed class GetReviewsPreviewTests
         var ep = CreateEndpoint();
 
         // Act
-        await ep.HandleAsync(new Query(review.Movie.ExternalId), CancellationToken.None);
+        await ep.HandleAsync(new Query(review.Film.ExternalId), CancellationToken.None);
 
         var item = ep.Response.Reviews.First();
 
@@ -189,7 +189,7 @@ internal sealed class GetReviewsPreviewTests
         var ep = CreateEndpoint();
 
         // Act
-        await ep.HandleAsync(new Query(review.Movie.ExternalId), CancellationToken.None);
+        await ep.HandleAsync(new Query(review.Film.ExternalId), CancellationToken.None);
 
         var item = ep.Response.Reviews.First();
 
@@ -207,10 +207,10 @@ internal sealed class GetReviewsPreviewTests
         var reviewsMock = reviews.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Reviews).Returns(reviewsMock.Object);
 
-        var movieId = reviews.FirstOrDefault()?.Movie?.ExternalId ?? 1;
+        var movieId = reviews.FirstOrDefault()?.Film?.ExternalId ?? 1;
 
-        _dbContextMock.Setup(x => x.Movies)
-            .Returns(new List<Movie>
+        _dbContextMock.Setup(x => x.Films)
+            .Returns(new List<Film>
             {
                 new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
             }.BuildMockDbSet().Object);

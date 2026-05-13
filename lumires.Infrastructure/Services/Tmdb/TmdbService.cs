@@ -14,16 +14,16 @@ public sealed class TmdbService(
     ITmdbApi tmdbApi,
     IAppDbContext db,
     IPersonResolver personResolver,
-    ILogger<TmdbService> logger) : IExternalMovieService
+    ILogger<TmdbService> logger) : IExternalFilmService
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
     private const string EnLang = "en-US";
     private const string UaLang = "uk-UA";
 
-    public async Task<Result<ExternalMovie>> GetMovieDetailsAsync(int movieId, string lang,
+    public async Task<Result<ExternalFilm>> GetFilmDetailsAsync(int movieId, string lang,
         CancellationToken ct = default)
     {
-        var tmdbResponse = await tmdbApi.GetMovieAsync(movieId, lang, ct);
+        var tmdbResponse = await tmdbApi.GetFilmAsync(movieId, lang, ct);
 
         switch (tmdbResponse.StatusCode)
         {
@@ -35,43 +35,43 @@ public sealed class TmdbService(
 
         if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content == null) return Result.Error();
 
-        var externalMovie = MapToDomain(tmdbResponse.Content);
+        var externalFilm = MapToDomain(tmdbResponse.Content);
 
-        if ((!string.IsNullOrWhiteSpace(externalMovie.Overview) && externalMovie.TrailerUrl != null) || lang == DefLang)
-            return externalMovie;
+        if ((!string.IsNullOrWhiteSpace(externalFilm.Overview) && externalFilm.TrailerUrl != null) || lang == DefLang)
+            return externalFilm;
 
-        var fallbackResponse = await tmdbApi.GetMovieShortenedAsync(movieId, DefLang, ct);
-        if (fallbackResponse.Content == null) return externalMovie;
+        var fallbackResponse = await tmdbApi.GetFilmShortenedAsync(movieId, DefLang, ct);
+        if (fallbackResponse.Content == null) return externalFilm;
 
         var fallback = MapToDomain(fallbackResponse.Content);
 
-        return externalMovie with
+        return externalFilm with
         {
-            Overview = string.IsNullOrWhiteSpace(externalMovie.Overview) ? fallback.Overview : externalMovie.Overview,
-            TrailerUrl = externalMovie.TrailerUrl ?? fallback.TrailerUrl
+            Overview = string.IsNullOrWhiteSpace(externalFilm.Overview) ? fallback.Overview : externalFilm.Overview,
+            TrailerUrl = externalFilm.TrailerUrl ?? fallback.TrailerUrl
         };
     }
 
-    public async Task<Result> SyncTrendingMoviesAsync(CancellationToken ct)
+    public async Task<Result> SyncTrendingFilmsAsync(CancellationToken ct)
     {
-        var trendingResponse = await tmdbApi.GetTrendingMoviesAsync(ct);
+        var trendingResponse = await tmdbApi.GetTrendingFilmsAsync(ct);
 
         if (trendingResponse.StatusCode == HttpStatusCode.Unauthorized)
             return Result.Unauthorized();
 
         if (!trendingResponse.IsSuccessStatusCode || trendingResponse.Content is null)
-            return Result.Error("Failed to fetch trending movies from TMDB");
+            return Result.Error("Failed to fetch trending films from TMDB");
 
         foreach (var batch in trendingResponse.Content.Results.Chunk(10))
         {
             var tmdbIds = batch.Select(m => m.Id).ToList();
 
-            var existingIds = await db.Movies
+            var existingIds = await db.Films
                 .Where(m => tmdbIds.Contains(m.ExternalId))
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var results = new List<(int tmdbId, Movie? movie, bool isExisting)>();
+            var results = new List<(int tmdbId, Film? film, bool isExisting)>();
             foreach (var m in batch)
             {
                 if (existingIds.Contains(m.Id))
@@ -80,7 +80,7 @@ public sealed class TmdbService(
                     continue;
                 }
 
-                var movie = await FetchAndBuildMovieAsync(m.Id, ct);
+                var movie = await FetchAndBuildFilmAsync(m.Id, ct);
                 results.Add((m.Id, movie, false));
             }
 
@@ -92,9 +92,9 @@ public sealed class TmdbService(
             if (existingToUpdate.Count > 0)
                 await UpdateLocalizationsAsync(existingToUpdate, ct);
 
-            foreach (var (_, movie, isExisting) in results)
-                if (!isExisting && movie is not null)
-                    await db.Movies.AddAsync(movie, ct);
+            foreach (var (_, film, isExisting) in results)
+                if (!isExisting && film is not null)
+                    await db.Films.AddAsync(film, ct);
 
             await db.SaveChangesAsync(ct);
         }
@@ -102,16 +102,16 @@ public sealed class TmdbService(
         return Result.NoContent();
     }
 
-    public async Task<Result> SyncPopularMoviesAsync(CancellationToken ct)
+    public async Task<Result> SyncPopularFilmsAsync(CancellationToken ct)
     {
-        const int targetNewMovies = 40;
-        var newMoviesCount = 0;
+        const int targetNewFilms = 40;
+        var newFilmsCount = 0;
         var page = 1;
         const int maxPages = 10;
 
-        while (newMoviesCount < targetNewMovies && page <= maxPages)
+        while (newFilmsCount < targetNewFilms && page <= maxPages)
         {
-            var popularResponse = await tmdbApi.GetPopularMoviesAsync(page, ct);
+            var popularResponse = await tmdbApi.GetPopularFilmsAsync(page, ct);
 
             if (!popularResponse.IsSuccessStatusCode || popularResponse.Content is null)
                 break;
@@ -119,31 +119,31 @@ public sealed class TmdbService(
             var data = popularResponse.Content;
             var tmdbIds = data.Results.Select(m => m.Id).ToList();
 
-            var existingIds = await db.Movies
+            var existingIds = await db.Films
                 .Where(m => tmdbIds.Contains(m.ExternalId))
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var newMovies = data.Results
+            var newFilms = data.Results
                 .Where(m => !existingIds.Contains(m.Id))
                 .ToList();
 
-            if (newMovies.Count == 0)
+            if (newFilms.Count == 0)
             {
                 page++;
                 continue;
             }
 
-            foreach (var batch in newMovies.Chunk(10))
+            foreach (var batch in newFilms.Chunk(10))
             {
-                var movies = new List<Movie?>();
+                var films = new List<Film?>();
                 foreach (var m in batch)
-                    movies.Add(await FetchAndBuildMovieAsync(m.Id, ct));
+                    films.Add(await FetchAndBuildFilmAsync(m.Id, ct));
 
-                foreach (var movie in movies.OfType<Movie>())
+                foreach (var film in films.OfType<Film>())
                 {
-                    await db.Movies.AddAsync(movie, ct);
-                    newMoviesCount++;
+                    await db.Films.AddAsync(film, ct);
+                    newFilmsCount++;
                 }
 
                 await db.SaveChangesAsync(ct);
@@ -158,7 +158,7 @@ public sealed class TmdbService(
         return Result.NoContent();
     }
 
-    public async Task<Result> SyncRecentMoviesAsync(CancellationToken ct)
+    public async Task<Result> SyncRecentFilmsAsync(CancellationToken ct)
     {
         var today = DateTime.UtcNow;
         const int fromDays = 30;
@@ -185,22 +185,22 @@ public sealed class TmdbService(
         {
             var tmdbIds = batch.Select(m => m.Id).ToList();
 
-            var existingIds = await db.Movies
+            var existingIds = await db.Films
                 .Where(m => tmdbIds.Contains(m.ExternalId))
                 .Select(m => m.ExternalId)
                 .ToHashSetAsync(ct);
 
-            var results = new List<(int tmdbId, Movie? movie, bool isExisting)>();
-            foreach (var m in batch)
+            var results = new List<(int tmdbId, Film? film, bool isExisting)>();
+            foreach (var f in batch)
             {
-                if (existingIds.Contains(m.Id))
+                if (existingIds.Contains(f.Id))
                 {
-                    results.Add((m.Id, null, true));
+                    results.Add((f.Id, null, true));
                     continue;
                 }
 
-                var movie = await FetchAndBuildMovieAsync(m.Id, ct);
-                results.Add((m.Id, movie, false));
+                var movie = await FetchAndBuildFilmAsync(f.Id, ct);
+                results.Add((f.Id, movie, false));
             }
 
             var existingToUpdate = results
@@ -211,9 +211,9 @@ public sealed class TmdbService(
             if (existingToUpdate.Count > 0)
                 await UpdateLocalizationsAsync(existingToUpdate, ct);
 
-            foreach (var (_, movie, isExisting) in results)
-                if (!isExisting && movie is not null)
-                    await db.Movies.AddAsync(movie, ct);
+            foreach (var (_, film, isExisting) in results)
+                if (!isExisting && film is not null)
+                    await db.Films.AddAsync(film, ct);
 
             await db.SaveChangesAsync(ct);
         }
@@ -269,28 +269,28 @@ public sealed class TmdbService(
 
     public async Task<Result> SyncCredits(int batchSize = 20, CancellationToken ct = default)
     {
-        var moviesWithoutCredits = await db.Movies
+        var filmsWithoutCredits = await db.Films
             .AsNoTracking()
             .Where(m => !m.Cast.Any() && !m.Directors.Any())
             .Select(m => new { m.Id, m.ExternalId })
             .Take(batchSize * 3)
             .ToListAsync(ct);
 
-        logger.LogInformation("Found {Count} movies without credits", moviesWithoutCredits.Count);
+        logger.LogInformation("Found {Count} films without credits", filmsWithoutCredits.Count);
 
-        if (moviesWithoutCredits.Count == 0)
+        if (filmsWithoutCredits.Count == 0)
             return Result.Success();
 
-        foreach (var batch in moviesWithoutCredits.Chunk(batchSize))
+        foreach (var batch in filmsWithoutCredits.Chunk(batchSize))
         {
-            foreach (var movieInfo in batch)
+            foreach (var filmInfo in batch)
                 try
                 {
-                    var response = await tmdbApi.GetMovieAsync(movieInfo.ExternalId, EnLang, ct);
+                    var response = await tmdbApi.GetFilmAsync(filmInfo.ExternalId, EnLang, ct);
                     if (response.Error != null)
                     {
                         logger.LogError(response.Error, "Refit error for tmdbId={TmdbId}: {Message}",
-                            movieInfo.ExternalId, response.Error.Message);
+                            filmInfo.ExternalId, response.Error.Message);
                         continue;
                     }
 
@@ -304,21 +304,21 @@ public sealed class TmdbService(
 
                     if (!response.IsSuccessStatusCode || response.Content?.Credits == null)
                     {
-                        logger.LogWarning("No credits in response for tmdbId={TmdbId}", movieInfo.ExternalId);
+                        logger.LogWarning("No credits in response for tmdbId={TmdbId}", filmInfo.ExternalId);
                         continue;
                     }
 
                     logger.LogInformation(
                         "Credits for tmdbId={TmdbId}: cast={CastCount}, crew={CrewCount}",
-                        movieInfo.ExternalId,
+                        filmInfo.ExternalId,
                         response.Content.Credits.Cast?.Count ?? 0,
                         response.Content.Credits.Crew?.Count ?? 0);
 
-                    await AddCreditsToExistingMovieAsync(movieInfo.ExternalId, response.Content.Credits, ct);
+                    await AddCreditsToExistingFilmAsync(filmInfo.ExternalId, response.Content.Credits, ct);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Failed to sync credits for tmdbId={TmdbId}", movieInfo.ExternalId);
+                    logger.LogError(ex, "Failed to sync credits for tmdbId={TmdbId}", filmInfo.ExternalId);
                 }
 
             var saved = await db.SaveChangesAsync(ct);
@@ -329,10 +329,10 @@ public sealed class TmdbService(
         return Result.Success();
     }
 
-    private async Task<Movie?> FetchAndBuildMovieAsync(int tmdbId, CancellationToken ct)
+    private async Task<Film?> FetchAndBuildFilmAsync(int tmdbId, CancellationToken ct)
     {
-        var enTask = tmdbApi.GetMovieAsync(tmdbId, EnLang, ct);
-        var ukTask = tmdbApi.GetMovieShortenedAsync(tmdbId, UaLang, ct);
+        var enTask = tmdbApi.GetFilmAsync(tmdbId, EnLang, ct);
+        var ukTask = tmdbApi.GetFilmShortenedAsync(tmdbId, UaLang, ct);
 
         await Task.WhenAll(enTask, ukTask);
 
@@ -342,15 +342,15 @@ public sealed class TmdbService(
         if (!en.IsSuccessStatusCode || en.Content is null) return null;
         if (!uk.IsSuccessStatusCode || uk.Content is null) return null;
 
-        return await ToMovieAsync(en.Content, uk.Content, ct);
+        return await ToFilmAsync(en.Content, uk.Content, ct);
     }
 
     private async Task UpdateLocalizationsAsync(List<int> tmdbIds, CancellationToken ct)
     {
         var tasks = tmdbIds.Select(async id =>
         {
-            var enTask = tmdbApi.GetMovieAsync(id, EnLang, ct);
-            var ukTask = tmdbApi.GetMovieShortenedAsync(id, UaLang, ct);
+            var enTask = tmdbApi.GetFilmAsync(id, EnLang, ct);
+            var ukTask = tmdbApi.GetFilmShortenedAsync(id, UaLang, ct);
             await Task.WhenAll(enTask, ukTask);
             return (id, en: await enTask, uk: await ukTask);
         });
@@ -361,7 +361,7 @@ public sealed class TmdbService(
         {
             if (!en.IsSuccessStatusCode || !uk.IsSuccessStatusCode) continue;
 
-            var movie = await db.Movies
+            var movie = await db.Films
                 .Include(m => m.Genres)
                 .Include(m => m.Localizations)
                 .FirstOrDefaultAsync(m => m.ExternalId == tmdbId, ct);
@@ -371,7 +371,7 @@ public sealed class TmdbService(
             foreach (var loc in movie.Localizations)
             {
                 var source = loc.LanguageCode == EnLang ? en.Content : uk.Content;
-                loc.Update(source!.Title, source.Overview);
+                loc.Update(source!.Title, source.Overview, source.Tagline);
             }
 
             if (en.Content!.Genres.Count > 0)
@@ -387,7 +387,7 @@ public sealed class TmdbService(
         }
     }
 
-    private static ExternalMovie MapToDomain(TmdbMovieResponse tmdb)
+    private static ExternalFilm MapToDomain(TmdbMovieResponse tmdb)
     {
         var trailerKey = tmdb.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
@@ -400,7 +400,7 @@ public sealed class TmdbService(
             tmdb.Genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
         );
 
-        return new ExternalMovie(
+        return new ExternalFilm(
             tmdb.Id,
             tmdb.Title,
             tmdb.Overview,
@@ -413,13 +413,14 @@ public sealed class TmdbService(
             tmdb.BackdropPath,
             tmdb.ReleaseDate,
             trailerKey,
+            tmdb.Tagline,
             genres,
             topCast,
             directors
         );
     }
 
-    private async Task<Movie> ToMovieAsync(TmdbMovieResponse en, TmdbMovieResponse uk, CancellationToken ct)
+    private async Task<Film> ToFilmAsync(TmdbMovieResponse en, TmdbMovieResponse uk, CancellationToken ct)
     {
         var trailerKey = en.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
@@ -439,7 +440,7 @@ public sealed class TmdbService(
             ct);
         ;
 
-        var movie = new Movie(
+        var film = new Film(
             en.Id,
             en.ReleaseDate,
             en.PosterPath,
@@ -452,18 +453,18 @@ public sealed class TmdbService(
             trailerKey
         );
 
-        movie.AddGenres(genres);
-        movie.AddLocalization(new MovieLocalization(EnLang, en.Title, en.Overview));
-        movie.AddLocalization(new MovieLocalization(UaLang, uk.Title, uk.Overview));
-        movie.AddSlug(SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}"));
+        film.AddGenres(genres);
+        film.AddLocalization(new FilmLocalization(EnLang, en.Title, en.Overview, en.Tagline));
+        film.AddLocalization(new FilmLocalization(UaLang, uk.Title, uk.Overview, uk.Tagline));
+        film.AddSlug(SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}"));
 
         foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
-            movie.AddCast(new MovieCast(personDict[c.ExternalId].Id, c.Character, c.Order));
+            film.AddCast(new FilmCast(personDict[c.ExternalId].Id, c.Character, c.Order));
 
         foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
-            movie.AddDirector(new MovieDirector(personDict[d.ExternalId].Id));
+            film.AddDirector(new FilmDirector(personDict[d.ExternalId].Id));
 
-        return movie;
+        return film;
     }
 
     private static IReadOnlyCollection<ExternalCastMember> GetTopExternalCast(IReadOnlyList<CastMember>? cast)
@@ -529,9 +530,9 @@ public sealed class TmdbService(
             .ToList();
     }
 
-    private async Task AddCreditsToExistingMovieAsync(int movieId, CreditsResponse credits, CancellationToken ct)
+    private async Task AddCreditsToExistingFilmAsync(int movieId, CreditsResponse credits, CancellationToken ct)
     {
-        var movie = await db.Movies
+        var movie = await db.Films
             .Include(m => m.Cast)
             .Include(m => m.Directors)
             .FirstOrDefaultAsync(m => m.ExternalId == movieId, ct);
@@ -548,9 +549,9 @@ public sealed class TmdbService(
             ct);
 
         foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
-            movie.AddCast(new MovieCast(personDict[c.ExternalId].Id, c.Character, c.Order));
+            movie.AddCast(new FilmCast(personDict[c.ExternalId].Id, c.Character, c.Order));
 
         foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
-            movie.AddDirector(new MovieDirector(personDict[d.ExternalId].Id));
+            movie.AddDirector(new FilmDirector(personDict[d.ExternalId].Id));
     }
 }

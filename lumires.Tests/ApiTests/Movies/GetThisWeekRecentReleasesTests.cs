@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Features.Movies.GetThisWeekPopular;
+using lumires.Api.Features.Films.GetThisWeekPopular;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
@@ -28,8 +28,8 @@ internal sealed class GetThisWeekRecentReleasesTests
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
     }
 
     [After(Test)]
@@ -44,8 +44,8 @@ internal sealed class GetThisWeekRecentReleasesTests
         //Arrange
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
-            .Returns(new List<Movie>().BuildMockDbSet().Object);
+            .Setup(x => x.Films)
+            .Returns(new List<Film>().BuildMockDbSet().Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
 
@@ -78,14 +78,14 @@ internal sealed class GetThisWeekRecentReleasesTests
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
 
-        var movies = new List<Movie>
+        var movies = new List<Film>
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
+            .Setup(x => x.Films)
             .Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
@@ -122,14 +122,14 @@ internal sealed class GetThisWeekRecentReleasesTests
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
 
-        var movies = new List<Movie>
+        var movies = new List<Film>
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
+            .Setup(x => x.Films)
             .Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
@@ -166,14 +166,14 @@ internal sealed class GetThisWeekRecentReleasesTests
         //Arrange
         var releaseDate = DateOnly.Parse(dateStr);
 
-        var movies = new List<Movie>
+        var movies = new List<Film>
         {
             new(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, company)
         }.BuildMockDbSet();
 
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
+            .Setup(x => x.Films)
             .Returns(movies.Object);
 
         var dbQueries = new DataAccess(dbContextMock.Object);
@@ -206,7 +206,7 @@ internal sealed class GetThisWeekRecentReleasesTests
         ep1FirstResponse.Items.Should().BeEquivalentTo(ep1SecondResponse.Items);
         ep2FirstResponse.Items.Should().BeEquivalentTo(ep2SecondResponse.Items);
 
-        dbContextMock.Verify(x => x.Movies, Times.Exactly(2));
+        dbContextMock.Verify(x => x.Films, Times.Exactly(2));
     }
 
     [Test]
@@ -216,12 +216,12 @@ internal sealed class GetThisWeekRecentReleasesTests
         var callCount = 0;
         var dbContextMock = new Mock<IAppDbContext>();
         dbContextMock
-            .Setup(x => x.Movies)
+            .Setup(x => x.Films)
             .Returns(() =>
             {
                 callCount++;
                 if (callCount == 1)
-                    return new List<Movie>
+                    return new List<Film>
                             { new(1, DateOnly.Parse("2010-07-16"), "/poster.jpg", 4.5f, 200, 20f, 200, "HBO") }
                         .BuildMockDbSet().Object;
 
@@ -246,9 +246,9 @@ internal sealed class GetThisWeekRecentReleasesTests
     public async Task GetThisWeekRecentReleases_Should_ReadLangCulture_OnEveryRequest()
     {
         // Arrange
-        var movies = new List<Movie>().BuildMockDbSet();
+        var movies = new List<Film>().BuildMockDbSet();
         var dbContextMock = new Mock<IAppDbContext>();
-        dbContextMock.Setup(x => x.Movies).Returns(movies.Object);
+        dbContextMock.Setup(x => x.Films).Returns(movies.Object);
 
         var userMock = new Mock<ICurrentUserService>();
         userMock.Setup(x => x.LangCulture).Returns("en");
@@ -268,9 +268,9 @@ internal sealed class GetThisWeekRecentReleasesTests
     public async Task GetThisWeekRecentReleases_Should_ReturnEmptyResponse_WhenDataAccessReturnsNull()
     {
         // Arrange
-        var movies = new List<Movie>().BuildMockDbSet();
+        var movies = new List<Film>().BuildMockDbSet();
         var dbContextMock = new Mock<IAppDbContext>();
-        dbContextMock.Setup(x => x.Movies).Returns(movies.Object);
+        dbContextMock.Setup(x => x.Films).Returns(movies.Object);
 
         var userMock = new Mock<ICurrentUserService>();
         userMock.Setup(x => x.LangCulture).Returns("en");

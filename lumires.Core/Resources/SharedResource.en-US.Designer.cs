@@ -150,11 +150,11 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Movie reference is invalid.
+        ///   Looks up a localized string similar to Film reference is invalid.
         /// </summary>
-        internal static string ValidationError_MovieId_Invalid {
+        internal static string ValidationError_FilmId_Invalid {
             get {
-                return ResourceManager.GetString("ValidationError_MovieId_Invalid", resourceCulture);
+                return ResourceManager.GetString("ValidationError_FilmId_Invalid", resourceCulture);
             }
         }
         
@@ -168,11 +168,11 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some movies were not found.
+        ///   Looks up a localized string similar to Some films were not found.
         /// </summary>
-        internal static string ValidationError_SomeMovies_WereNotFound {
+        internal static string ValidationError_SomeFilms_WereNotFound {
             get {
-                return ResourceManager.GetString("ValidationError_SomeMovies_WereNotFound", resourceCulture);
+                return ResourceManager.GetString("ValidationError_SomeFilms_WereNotFound", resourceCulture);
             }
         }
         

@@ -5,7 +5,7 @@ using lumires.Core.Abstractions.Services;
 namespace lumires.Api.Features.Reviews.CreateReview;
 
 [UsedImplicitly]
-internal sealed record Command(int MovieId, string? Title, string Text, decimal? Rating, bool IsSpoilerFree);
+internal sealed record Command(int FilmId, string? Title, string Text, decimal? Rating, bool IsSpoilerFree);
 
 [UsedImplicitly]
 internal sealed record Response(
@@ -23,7 +23,8 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Post("/movies/{Slug}/{MovieId:int}/reviews/");
+        Post("/films/{Slug}/{filmId:int}/reviews/");
+        Description(x => x.WithTags("Reviews"));
     }
 
     public override async Task HandleAsync(Command command, CancellationToken ct)

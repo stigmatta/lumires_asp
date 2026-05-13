@@ -42,6 +42,7 @@ public static class ApiRegistration
             };
             o.ExcludeNonFastEndpoints = true;
             o.ShortSchemaNames = true;
+            o.AutoTagPathSegmentIndex = 0;
         });
 
 
@@ -64,7 +65,7 @@ public static class ApiRegistration
                         Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
             };
         });
-        builder.Services.AddScoped<IMovieResolver, MovieResolver>();
+        builder.Services.AddScoped<IFilmResolver, FilmResolver>();
         builder.Services.AddScoped<IPersonResolver, PersonResolver>();
 
         return builder;

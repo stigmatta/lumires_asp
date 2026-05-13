@@ -5,7 +5,7 @@ namespace lumires.Domain.Entities;
 
 public sealed partial class User
 {
-    private readonly List<Collection> _collections = [];
+    private readonly List<FilmsList> _filmsLists = [];
     private readonly List<ReviewComment> _reviewComments = [];
     private readonly List<Review> _reviews = [];
 
@@ -38,7 +38,7 @@ public sealed partial class User
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
 
-    public IReadOnlyCollection<Collection> Collections => _collections.AsReadOnly();
+    public IReadOnlyCollection<FilmsList> FilmsLists => _filmsLists.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 

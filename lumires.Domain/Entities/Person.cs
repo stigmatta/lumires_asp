@@ -18,6 +18,6 @@ public class Person
 
     public string Name { get; private set; } = string.Empty;
 
-    public ICollection<MovieCast> MovieCasts { get; private set; } = new List<MovieCast>();
-    public ICollection<MovieDirector> MovieDirectors { get; private set; } = new List<MovieDirector>();
+    public ICollection<FilmCast> FilmCasts { get; private set; } = new List<FilmCast>();
+    public ICollection<FilmDirector> FilmDirectors { get; private set; } = new List<FilmDirector>();
 }

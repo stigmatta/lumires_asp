@@ -6,18 +6,18 @@ namespace Infrastructure.Services.Tmdb;
 public interface ITmdbApi
 {
     [Get("/movie/{movieId}?append_to_response=credits,videos")]
-    Task<ApiResponse<TmdbMovieResponse>> GetMovieAsync(int movieId, [AliasAs("language")] string lang,
+    Task<ApiResponse<TmdbMovieResponse>> GetFilmAsync(int movieId, [AliasAs("language")] string lang,
         CancellationToken ct);
 
     [Get("/movie/{movieId}")]
-    Task<ApiResponse<TmdbMovieResponse>> GetMovieShortenedAsync(int movieId, [AliasAs("language")] string lang,
+    Task<ApiResponse<TmdbMovieResponse>> GetFilmShortenedAsync(int movieId, [AliasAs("language")] string lang,
         CancellationToken ct);
 
     [Get("/trending/movie/week")]
-    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetTrendingMoviesAsync(CancellationToken ct);
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetTrendingFilmsAsync(CancellationToken ct);
 
     [Get("/movie/popular")]
-    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetPopularMoviesAsync(
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetPopularFilmsAsync(
         [AliasAs("sort_by")] int page,
         CancellationToken ct);
 

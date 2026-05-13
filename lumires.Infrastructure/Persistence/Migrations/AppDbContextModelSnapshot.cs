@@ -22,122 +22,22 @@ namespace Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MovieGenres", b =>
+            modelBuilder.Entity("FilmGenres", b =>
                 {
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("GenresId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("MovieId")
-                        .HasColumnType("uuid");
+                    b.HasKey("FilmId", "GenresId");
 
-                    b.HasKey("GenresId", "MovieId");
+                    b.HasIndex("GenresId");
 
-                    b.HasIndex("MovieId");
-
-                    b.ToTable("MovieGenres");
+                    b.ToTable("FilmGenres");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<bool>("IsPrivate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Collections", (string)null);
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.CollectionMovie", b =>
-                {
-                    b.Property<Guid>("CollectionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MovieId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CollectionId", "MovieId");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("CollectionId", "Order")
-                        .IsUnique();
-
-                    b.ToTable("CollectionMovies", (string)null);
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.Genre", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ExternalId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalId")
-                        .IsUnique();
-
-                    b.ToTable("Genres");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.GenreLocalization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GenreId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GenreId");
-
-                    b.ToTable("GenreLocalizations");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.Movie", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.Film", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -189,10 +89,10 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("Slug");
 
-                    b.ToTable("Movies");
+                    b.ToTable("Films");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieCast", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.FilmCast", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,7 +103,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<Guid>("MovieId")
+                    b.Property<Guid>("FilmId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Order")
@@ -214,20 +114,20 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
+                    b.HasIndex("FilmId");
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("MovieCasts");
+                    b.ToTable("FilmCasts");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieDirector", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.FilmDirector", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("MovieId")
+                    b.Property<Guid>("FilmId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PersonId")
@@ -235,14 +135,14 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
+                    b.HasIndex("FilmId");
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("MovieDirectors");
+                    b.ToTable("FilmDirectors");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieLocalization", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.FilmLocalization", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -251,13 +151,17 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("LanguageCode")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
 
-                    b.Property<Guid>("MovieId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Tagline")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -266,9 +170,109 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
+                    b.HasIndex("FilmId");
 
-                    b.ToTable("MovieLocalizations");
+                    b.ToTable("FilmLocalizations");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.FilmsList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<bool>("IsPrivate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FilmsList", (string)null);
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.Genre", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ExternalId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalId")
+                        .IsUnique();
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.GenreLocalization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GenreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("GenreLocalizations");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.ListFilm", b =>
+                {
+                    b.Property<Guid>("FilmsListId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("FilmsListId", "FilmId");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("FilmsListId", "Order")
+                        .IsUnique();
+
+                    b.ToTable("ListFilms", (string)null);
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.OutboxMessage", b =>
@@ -330,14 +334,14 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsSpoilerFree")
                         .HasColumnType("boolean");
 
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
-
-                    b.Property<Guid>("MovieId")
-                        .HasColumnType("uuid");
 
                     b.Property<decimal?>("Rating")
                         .HasPrecision(3, 1)
@@ -360,7 +364,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieId");
+                    b.HasIndex("FilmId");
 
                     b.HasIndex("UserId");
 
@@ -503,49 +507,79 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("UserNotifications");
                 });
 
-            modelBuilder.Entity("MovieGenres", b =>
+            modelBuilder.Entity("FilmGenres", b =>
                 {
+                    b.HasOne("lumires.Domain.Entities.Film", null)
+                        .WithMany()
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("lumires.Domain.Entities.Genre", null)
                         .WithMany()
                         .HasForeignKey("GenresId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("lumires.Domain.Entities.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.FilmCast", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany("Cast")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Person", "Person")
+                        .WithMany("FilmCasts")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.FilmDirector", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany("Directors")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Person", "Person")
+                        .WithMany("FilmDirectors")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.FilmLocalization", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany("Localizations")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.FilmsList", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.User", "User")
-                        .WithMany("Collections")
+                        .WithMany("FilmsLists")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.CollectionMovie", b =>
-                {
-                    b.HasOne("lumires.Domain.Entities.Collection", "Collection")
-                        .WithMany("Movies")
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Collection");
-
-                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.GenreLocalization", b =>
@@ -559,60 +593,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.MovieCast", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.ListFilm", b =>
                 {
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
-                        .WithMany("Cast")
-                        .HasForeignKey("MovieId")
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany()
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.FilmsList", "FilmsList")
+                        .WithMany("Films")
+                        .HasForeignKey("FilmsListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("lumires.Domain.Entities.Person", "Person")
-                        .WithMany("MovieCasts")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Film");
 
-                    b.Navigation("Movie");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.MovieDirector", b =>
-                {
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
-                        .WithMany("Directors")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("lumires.Domain.Entities.Person", "Person")
-                        .WithMany("MovieDirectors")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.MovieLocalization", b =>
-                {
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
-                        .WithMany("Localizations")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
+                    b.Navigation("FilmsList");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Review", b =>
                 {
-                    b.HasOne("lumires.Domain.Entities.Movie", "Movie")
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
                         .WithMany("Reviews")
-                        .HasForeignKey("MovieId")
+                        .HasForeignKey("FilmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -622,7 +626,7 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Movie");
+                    b.Navigation("Film");
 
                     b.Navigation("Reviewer");
                 });
@@ -683,17 +687,7 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("lumires.Domain.Entities.Collection", b =>
-                {
-                    b.Navigation("Movies");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.Genre", b =>
-                {
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("lumires.Domain.Entities.Movie", b =>
+            modelBuilder.Entity("lumires.Domain.Entities.Film", b =>
                 {
                     b.Navigation("Cast");
 
@@ -704,11 +698,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Reviews");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.FilmsList", b =>
+                {
+                    b.Navigation("Films");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.Genre", b =>
+                {
+                    b.Navigation("Localizations");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.Person", b =>
                 {
-                    b.Navigation("MovieCasts");
+                    b.Navigation("FilmCasts");
 
-                    b.Navigation("MovieDirectors");
+                    b.Navigation("FilmDirectors");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Review", b =>
@@ -725,7 +729,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("lumires.Domain.Entities.User", b =>
                 {
-                    b.Navigation("Collections");
+                    b.Navigation("FilmsLists");
 
                     b.Navigation("ReviewComments");
 

@@ -38,7 +38,8 @@ internal sealed class Endpoint(DataAccess db)
 {
     public override void Configure()
     {
-        Get("/movies/{slug}/{movieId}/reviews/{reviewId}");
+        Get("/films/{slug}/{filmId}/reviews/{reviewId}");
+        Description(x => x.WithTags("Reviews"));
         AllowAnonymous();
     }
 

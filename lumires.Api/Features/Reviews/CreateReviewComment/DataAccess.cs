@@ -18,6 +18,7 @@ internal class DataAccess(
     internal async Task<Result<Response>> CreateReviewCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
+        var currentUsername = await currentUserService.GetUsernameAsync(ct);
 
         var review = await db.Reviews.FirstOrDefaultAsync(m => m.Id == command.ReviewId, ct);
         if (review is null) return Result.NotFound();
@@ -26,7 +27,7 @@ internal class DataAccess(
 
         await db.ReviewComments.AddAsync(reviewComment, ct);
 
-        var message = new NotificationMessage(NotificationType.ReviewReplied, currentUserId.ToString(),
+        var message = new NotificationMessage(NotificationType.ReviewReplied, currentUserId.ToString(), currentUsername,
             reviewComment.Id.ToString(), //TODO or review.Id ?
             DateTime.UtcNow);
 

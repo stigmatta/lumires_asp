@@ -10,9 +10,9 @@ internal sealed class Validator : Validator<Command>
 {
     public Validator(IStringLocalizer<SharedResource> localizer)
     {
-        RuleFor(x => x.MovieId)
+        RuleFor(x => x.FilmId)
             .Must(x => x != 0)
-            .WithMessage(localizer["ValidationError_MovieId_Invalid"]);
+            .WithMessage(localizer["ValidationError_FilmId_Invalid"]);
         RuleFor(x => x.Title)
             .MinimumLength(StringLimits.MinLength)
             .WithMessage(localizer["ValidationError_Title_TooShort"])

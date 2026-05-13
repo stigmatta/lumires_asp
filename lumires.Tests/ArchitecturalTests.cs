@@ -219,21 +219,21 @@ internal sealed class ArchitecturalTests
 
     [Test]
     [RequiresUnreferencedCode("Test code, trimming not applicable")]
-    public void Api_IAppDbContext_Should_Only_Be_Used_In_IDataAccess_Implementations()
+    public void Api_IAppDbContext_Should_Only_Be_Used_In_MarkerInterface_Implementations()
     {
         var assembly = typeof(ApiRegistration).Assembly;
         var dbContextTypeName = typeof(IAppDbContext).FullName;
 
         var violations = assembly.GetTypes()
             .Where(t => t is { IsAbstract: false, IsInterface: false } &&
-                        !t.IsAssignableTo(typeof(IDataAccess)) &&
+                        !t.IsAssignableTo(typeof(IDataAccess)) && !t.IsAssignableTo(typeof(IResolver)) &&
                         t.GetConstructors()
                             .SelectMany(c => c.GetParameters())
                             .Any(p => p.ParameterType.FullName == dbContextTypeName))
             .ToList();
 
         violations.Should().BeEmpty(
-            $"IAppDbContext should only be injected in IDataAccess implementations. " +
+            $"IAppDbContext should only be injected in Marker interface implementations. " +
             $"Failed types: {string.Join(", ", violations.Select(t => t.FullName))}");
     }
 
