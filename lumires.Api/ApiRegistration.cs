@@ -5,6 +5,7 @@ using FastEndpoints.Swagger;
 using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using NSwag;
 using Scalar.AspNetCore;
 using ServiceDefaults;
@@ -73,6 +74,13 @@ public static class ApiRegistration
 
     public static WebApplication UseApi(this WebApplication app)
     {
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor |
+                ForwardedHeaders.XForwardedProto
+        });
+        
         app.UseRequestLocalization();
         app.UseRouting();
         app.UseCors("Frontend");
