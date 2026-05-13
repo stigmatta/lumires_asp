@@ -15,7 +15,8 @@ internal sealed record Query(int Id);
 internal sealed record LocalizationResponse(
     string LanguageCode,
     string Title,
-    string? Overview
+    string? Overview,
+    string? Tagline
 );
 
 [UsedImplicitly]

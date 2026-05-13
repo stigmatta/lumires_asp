@@ -27,7 +27,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Select(l => new LocalizationResponse(
                         l.LanguageCode,
                         l.Title,
-                        l.Description
+                        l.Description,
+                        l.Tagline
                     ))
                     .FirstOrDefault(),
                 new GenresResponse(m.Genres
