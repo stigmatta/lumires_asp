@@ -1,8 +1,9 @@
-﻿using lumires.Domain.Exceptions;
+﻿using lumires.Domain.Base;
+using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
 
-public sealed class FilmsList
+public sealed class FilmsList: LikeableEntity<FilmsListLike>
 {
     private readonly List<ListFilm> _films = [];
 
@@ -51,5 +52,15 @@ public sealed class FilmsList
     private void UpdateTimestamp()
     {
         UpdatedAt = DateTimeOffset.UtcNow;
+    }
+    
+    protected override Guid GetUserId(FilmsListLike like)
+    {
+        return like.UserId;
+    }
+
+    protected override FilmsListLike CreateLike(Guid userId)
+    {
+        return new FilmsListLike { FilmsListId = Id, UserId = userId };
     }
 }

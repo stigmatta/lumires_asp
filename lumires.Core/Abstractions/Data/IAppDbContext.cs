@@ -19,6 +19,7 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<ReviewComment> ReviewComments { get; }
     DbSet<ReviewLike> ReviewLikes { get; }
     DbSet<ReviewCommentLike> ReviewCommentLikes { get; }
+    DbSet<FilmsListLike> FilmsListLikes { get; }
     DbSet<OutboxMessage> OutboxMessages { get; }
     DbSet<FilmCast> FilmCasts { get; }
     DbSet<FilmDirector> FilmDirectors { get; }
