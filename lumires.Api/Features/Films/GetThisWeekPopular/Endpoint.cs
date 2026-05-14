@@ -10,6 +10,7 @@ namespace lumires.Api.Features.Films.GetThisWeekPopular;
 internal sealed record WeeklyPopularItem(
     int ExternalId,
     string Title,
+    int ReleaseYear,
     int VoteCount,
     string Slug,
     string? TrailerUrl,

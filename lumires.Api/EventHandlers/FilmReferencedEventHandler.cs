@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
@@ -94,13 +95,14 @@ internal sealed partial class FilmReferencedEventHandler(
                     data.TrailerUrl
                 );
 
-                var fimlGenres = data.Genres.Items
+                var filmGenres = data.Genres.Items
                     .Select(x => genreIdSet.GetValueOrDefault(x.ExternalId))
                     .OfType<Genre>();
 
-                film.AddGenres(fimlGenres);
+                film.AddGenres(filmGenres);
 
-                film.AddSlug($"{data.Title}-{data.ReleaseDate.Year}");
+                var slugifiedTitle = SlugExtensions.Slugify($"{data.Title}-{data.ReleaseDate.Year}");
+                film.AddSlug(slugifiedTitle);
 
                 foreach (var c in data.TopCast.Where(c => personDict.ContainsKey(c.Id)))
                     film.AddCast(new FilmCast(

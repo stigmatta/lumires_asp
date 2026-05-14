@@ -80,7 +80,7 @@ public static class ApiRegistration
                 ForwardedHeaders.XForwardedFor |
                 ForwardedHeaders.XForwardedProto
         });
-        
+
         app.UseRequestLocalization();
         app.UseRouting();
         app.UseCors("Frontend");

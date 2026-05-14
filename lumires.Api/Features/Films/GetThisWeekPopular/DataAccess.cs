@@ -23,6 +23,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
+                movie.ReleaseDate.Year,
                 movie.VoteCount,
                 movie.Slug,
                 movie.TrailerUrl,

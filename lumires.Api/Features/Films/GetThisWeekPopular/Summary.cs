@@ -25,6 +25,7 @@ internal sealed class Summary : Summary<Endpoint>
             new WeeklyPopularItem(
                 550,
                 "Fight Club",
+                1999,
                 22500,
                 "fight-club-1999",
                 "some-trailer-url",
@@ -33,6 +34,7 @@ internal sealed class Summary : Summary<Endpoint>
             new WeeklyPopularItem(
                 238,
                 "The Godfather",
+                1972,
                 3252,
                 "the-godfather-1972",
                 "some-trailer-url",

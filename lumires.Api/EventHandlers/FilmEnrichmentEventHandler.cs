@@ -68,6 +68,8 @@ internal sealed partial class FilmEnrichmentEventHandler(
             {
                 if (!filmDict.TryGetValue(externalId, out var film)) continue;
 
+                if (film.Localizations.Any(l => l.LanguageCode == culture)) continue;
+
                 film.AddLocalization(new FilmLocalization(
                     culture,
                     data.Title,

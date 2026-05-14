@@ -25,6 +25,7 @@ internal sealed class Summary : Summary<Endpoint>
                 1022789,
                 "Inside Out 2",
                 8420,
+                2018,
                 "inside-out-some-year",
                 "some-url",
                 "/xg27NrXi7VXCGUr7MG75UqLl5Vg.jpg"
@@ -33,6 +34,7 @@ internal sealed class Summary : Summary<Endpoint>
                 748783,
                 "The Garfield Movie",
                 3105,
+                2011,
                 "the-garfield-movie-some-year",
                 "some-url",
                 "/fgsHxzACcBRpDLZJ9gTSMPSHLad.jpg"
