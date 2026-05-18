@@ -329,6 +329,17 @@ public sealed class TmdbService(
         return Result.Success();
     }
 
+    public async Task<Result<long>> GetTotalFilmsCountAsync(CancellationToken ct)
+    {
+        var response = await tmdbApi.GetTotalFilmsCountAsync(ct: ct);
+        if (!response.IsSuccessStatusCode || response.Content is null)
+            return Result.Error("Failed to fetch total films from TMDB");
+        
+        long totalFilms = response.Content.TotalResults;
+
+        return Result.Success(totalFilms);
+    }
+
     public async Task<Result<IReadOnlyCollection<ExternalFilmShort>>> GetSimilarFilmsAsync(
         int movieId,
         string lang,

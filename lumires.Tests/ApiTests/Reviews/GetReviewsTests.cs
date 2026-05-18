@@ -192,7 +192,7 @@ internal sealed class GetReviewsTests
         }, CancellationToken.None);
 
         // Assert
-        ep.Response.TotalCount.Should().Be(7);
+        ep.Response.TotalResults.Should().Be(7);
     }
 
     [Test]

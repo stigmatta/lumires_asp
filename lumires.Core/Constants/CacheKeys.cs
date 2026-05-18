@@ -31,4 +31,9 @@ public static class CacheKeys
     {
         return $"genres:{lang}";
     }
+    
+    public static string FilmsSummary()
+    {
+        return "films_summary";
+    }
 }
