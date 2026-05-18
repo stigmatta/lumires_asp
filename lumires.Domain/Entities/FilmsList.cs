@@ -3,7 +3,7 @@ using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
 
-public sealed class FilmsList: LikeableEntity<FilmsListLike>
+public sealed class FilmsList : LikeableEntity<FilmsListLike>
 {
     private readonly List<ListFilm> _films = [];
 
@@ -14,10 +14,10 @@ public sealed class FilmsList: LikeableEntity<FilmsListLike>
     public FilmsList(string title, Guid userId, string? description = null, bool isPrivate = false)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new FilmsListValidationException("Title cannot be empty");
+            throw new DomainException("Title cannot be empty", nameof(title));
 
         if (userId == Guid.Empty)
-            throw new FilmsListValidationException("UserId is required");
+            throw new DomainException("UserId is required", nameof(userId));
 
         Id = Guid.CreateVersion7();
         Title = title;
@@ -53,7 +53,7 @@ public sealed class FilmsList: LikeableEntity<FilmsListLike>
     {
         UpdatedAt = DateTimeOffset.UtcNow;
     }
-    
+
     protected override Guid GetUserId(FilmsListLike like)
     {
         return like.UserId;

@@ -10,11 +10,11 @@ public sealed class ListFilm
 
     public ListFilm(Guid filmsListId, Guid filmId, int order)
     {
-        if (filmsListId == Guid.Empty) throw new FilmsListValidationException("Collection ID is invalid");
+        if (filmsListId == Guid.Empty) throw new DomainException("Collection ID is invalid", nameof(filmsListId));
 
-        if (filmId == Guid.Empty) throw new FilmsListValidationException("Movie ID is invalid");
+        if (filmId == Guid.Empty) throw new DomainException("Movie ID is invalid", nameof(filmId));
 
-        if (order < 0) throw new FilmsListValidationException("Order cannot be negative");
+        if (order < 0) throw new DomainException("Order cannot be negative", nameof(order));
 
         FilmsListId = filmsListId;
         FilmId = filmId;

@@ -334,14 +334,86 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("ExternalId")
                         .HasColumnType("integer");
 
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExternalId")
+                        .IsUnique();
+
+                    b.ToTable("People", (string)null);
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.PersonDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Biography")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateOnly?>("Birthday")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("Deathday")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PlaceOfBirth")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("ProfilePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
+                    b.ToTable("PersonsDetails");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.PersonLocalization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PersonId1")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.HasIndex("PersonId1");
+
+                    b.HasIndex("PersonId", "LanguageCode")
+                        .IsUnique();
+
+                    b.ToTable("PersonsLocalizations");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Review", b =>
@@ -645,6 +717,32 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("FilmsList");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.PersonDetail", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Person", "Person")
+                        .WithOne("Detail")
+                        .HasForeignKey("lumires.Domain.Entities.PersonDetail", "PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.PersonLocalization", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Person", null)
+                        .WithMany("Localizations")
+                        .HasForeignKey("PersonId1");
+
+                    b.Navigation("Person");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.Review", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Film", "Film")
@@ -745,9 +843,13 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("lumires.Domain.Entities.Person", b =>
                 {
+                    b.Navigation("Detail");
+
                     b.Navigation("FilmCasts");
 
                     b.Navigation("FilmDirectors");
+
+                    b.Navigation("Localizations");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Review", b =>

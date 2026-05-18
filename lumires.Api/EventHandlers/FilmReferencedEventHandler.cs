@@ -76,14 +76,13 @@ internal sealed partial class FilmReferencedEventHandler(
             .Distinct()
             .ToList();
 
-        var personDict = await personResolver.ResolveAsync(allPeople, ct);
+        var personDict = await personResolver.ResolveAsync(allPeople, command.Language, ct);
 
         foreach (var data in filmData)
             try
             {
                 var film = new Film(
-                    Guid.CreateVersion7(),
-                    data!.ExternalId,
+                    data.ExternalId,
                     data.ReleaseDate,
                     data.PosterPath,
                     data.VoteAverage,

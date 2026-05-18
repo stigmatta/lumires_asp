@@ -11,5 +11,7 @@ public interface IExternalFilmService
     Task<Result> SyncPopularFilmsAsync(CancellationToken ct);
     Task<Result> SyncGenresAsync(CancellationToken ct);
     Task<Result> SyncCredits(int batchSize, CancellationToken ct = default);
-    Task<Result<IReadOnlyCollection<ExternalFilmShort>>> GetSimilarFilmsAsync(int movieId, string lang, CancellationToken ct);
+
+    Task<Result<IReadOnlyCollection<ExternalFilmShort>>> GetSimilarFilmsAsync(int movieId, string lang,
+        CancellationToken ct);
 }

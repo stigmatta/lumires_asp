@@ -5,36 +5,54 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Services;
 
-internal class PersonResolver(IAppDbContext db) : IPersonResolver, IResolver
+public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResolver> logger) : IPersonResolver, IResolver
 {
-    public async Task<Dictionary<int, Person>> ResolveAsync(IEnumerable<(int ExternalId, string Name)> persons,
-        CancellationToken ct)
+    public async Task<Dictionary<int, Person>> ResolveAsync(
+        IEnumerable<(int ExternalId, string Name)> persons,
+        string languageCode,
+        CancellationToken ct = default)
     {
-        var list = persons.DistinctBy(p => p.ExternalId).ToList();
-        var externalIds = list.Select(p => p.ExternalId).ToList();
+        var personData = persons.ToList();
+        if (personData.Count == 0)
+            return [];
 
-        var existing = await db.Persons
+        var externalIds = personData.Select(p => p.ExternalId).Distinct().ToList();
+
+        var existingPersons = await db.Persons
+            .Include(p => p.Localizations)
             .Where(p => externalIds.Contains(p.ExternalId))
-            .ToListAsync(ct);
+            .ToDictionaryAsync(p => p.ExternalId, ct);
 
-        var dict = existing.ToDictionary(p => p.ExternalId);
+        var result = new Dictionary<int, Person>();
+        var personsToAdd = new List<Person>();
 
-        foreach (var (externalId, name) in list)
-        {
-            if (dict.ContainsKey(externalId)) continue;
-
-            var tracked = db.Persons.Local.FirstOrDefault(p => p.ExternalId == externalId);
-            if (tracked is not null)
+        foreach (var (externalId, name) in personData)
+            if (existingPersons.TryGetValue(externalId, out var existing))
             {
-                dict[externalId] = tracked;
-                continue;
+                if (existing.Localizations.All(l => l.LanguageCode != languageCode))
+                    existing.AddLocalization(new PersonLocalization(languageCode, name));
+                result[externalId] = existing;
+            }
+            else if (!result.ContainsKey(externalId))
+            {
+                var newPerson = new Person(externalId);
+                newPerson.AddLocalization(new PersonLocalization(languageCode, name));
+
+                personsToAdd.Add(newPerson);
+                result[externalId] = newPerson;
             }
 
-            var person = new Person(externalId, name);
-            await db.Persons.AddAsync(person, ct);
-            dict[externalId] = person;
-        }
+        if (personsToAdd.Count <= 0) return result;
 
-        return dict;
+        await db.Persons.AddRangeAsync(personsToAdd, ct);
+        LogPersonsAdded(logger, personsToAdd.Count);
+
+        return result;
     }
+
+    [LoggerMessage(
+        EventId = 1,
+        Level = LogLevel.Information,
+        Message = "Added {Count} new persons to database")]
+    private static partial void LogPersonsAdded(ILogger logger, int count);
 }

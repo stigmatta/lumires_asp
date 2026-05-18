@@ -40,10 +40,18 @@ internal sealed record Response(
     string? BackdropPath,
     LocalizationResponse? Localization,
     GenresResponse Genres,
-    IReadOnlyCollection<string> Cast,
-    IReadOnlyCollection<string> Directors,
+    IReadOnlyCollection<PersonShortItem> Cast,
+    IReadOnlyCollection<PersonShortItem> Directors,
     string ProductionCompany,
-    int Runtime
+    int Runtime,
+    float VoteAverage,
+    int VoteCount
+);
+
+[UsedImplicitly]
+internal record PersonShortItem(
+    string Name,
+    int Id
 );
 
 internal sealed class Endpoint(
@@ -74,14 +82,14 @@ internal sealed class Endpoint(
                     await filmResolver.EnsureFilmExistsAsync(query.Id, lang, token);
 
                     return await dataAccess.GetFilmByIdAsync(query.Id, lang, token)
-                           ?? throw new ExternalFilmException(ResultStatus.NotFound, "Film not found");
+                           ?? throw new ResultException(ResultStatus.NotFound, "Film not found");
                 },
                 options => options.SetDuration(CacheDuration.Medium)
                     .SetFailSafe(true),
                 ct
             );
         }
-        catch (ExternalFilmException ex)
+        catch (ResultException ex)
         {
             await HttpContext.SendErrorAsync(ex.Status, ct);
         }

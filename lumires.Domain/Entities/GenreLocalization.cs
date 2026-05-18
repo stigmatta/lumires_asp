@@ -11,10 +11,10 @@ public sealed class GenreLocalization
     public GenreLocalization(string languageCode, string name)
     {
         if (string.IsNullOrWhiteSpace(languageCode))
-            throw new GenreLocalizationValidationException("LanguageCode is required", nameof(languageCode));
+            throw new DomainException("LanguageCode is required", nameof(languageCode));
 
         if (string.IsNullOrWhiteSpace(name))
-            throw new GenreLocalizationValidationException("Name is required", nameof(name));
+            throw new DomainException("Name is required", nameof(name));
 
         Id = Guid.CreateVersion7();
         LanguageCode = languageCode.Trim();
@@ -31,14 +31,14 @@ public sealed class GenreLocalization
     internal void SetGenre(Genre genre)
     {
         Genre = genre ??
-                throw new GenreLocalizationValidationException("Genre is required to be linked", nameof(genre));
+                throw new DomainException("Genre is required to be linked", nameof(genre));
         GenreId = genre.Id;
     }
 
     public void Update(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new GenreLocalizationValidationException("Name is required", nameof(name));
+            throw new DomainException("Name is required", nameof(name));
 
         Name = name;
     }

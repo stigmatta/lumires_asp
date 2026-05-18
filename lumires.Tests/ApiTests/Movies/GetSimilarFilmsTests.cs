@@ -14,9 +14,9 @@ namespace Tests.ApiTests.Movies;
 internal sealed class GetSimilarFilmsTests
 {
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IExternalFilmService> _externalFilmServiceMock = null!;
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<IExternalFilmService> _externalFilmServiceMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -34,11 +34,13 @@ internal sealed class GetSimilarFilmsTests
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
-    private Endpoint CreateEndpoint(DataAccess? dataAccess = null) =>
-        Factory.Create<Endpoint>(
+    private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
+    {
+        return Factory.Create<Endpoint>(
             _currentUserMock.Object,
             _externalFilmServiceMock.Object,
             dataAccess ?? _dataAccess);
+    }
 
     // -------------------------------------------------------------------------
     // Error responses
@@ -97,7 +99,7 @@ internal sealed class GetSimilarFilmsTests
 
 
     [Test]
-    [Arguments(42,  1, "/back1.jpg", "/poster1.jpg", 2020, 7.5f, 351, 25f)]
+    [Arguments(42, 1, "/back1.jpg", "/poster1.jpg", 2020, 7.5f, 351, 25f)]
     [Arguments(550, 2, "/back2.jpg", "/poster2.jpg", 2018, 8.1f, 228, 21f)]
     public async Task GetSimilarFilms_Should_Be_200_WhenServiceSucceeds(
         int queryId, int externalId, string backdropPath, string posterPath,
@@ -129,7 +131,7 @@ internal sealed class GetSimilarFilmsTests
     }
 
     [Test]
-    [Arguments(42,  3)]
+    [Arguments(42, 3)]
     [Arguments(550, 5)]
     public async Task GetSimilarFilms_Should_ReturnAllFilmsFromService(int queryId, int filmCount)
     {
@@ -153,7 +155,7 @@ internal sealed class GetSimilarFilmsTests
 
 
     [Test]
-    [Arguments(42,  "en-US")]
+    [Arguments(42, "en-US")]
     [Arguments(550, "uk-UA")]
     public async Task GetSimilarFilms_Should_PassLangCulture_ToService(int queryId, string lang)
     {
@@ -183,7 +185,7 @@ internal sealed class GetSimilarFilmsTests
         {
             new(10, "Film A", null, 2005, 8, 27, 20),
             new(20, "Film B", null, 1999, 8, 27, 20),
-            new(30, "Film C", null, 2003, 8, 27, 20),
+            new(30, "Film C", null, 2003, 8, 27, 20)
         };
 
         _externalFilmServiceMock
@@ -222,9 +224,9 @@ internal sealed class GetSimilarFilmsTests
         // Arrange 
         var films = new List<ExternalFilmShort>
         {
-            new(10, "Existing A", null, 1952, 8, 25,  20),
-            new(20, "Existing B", null, 1932, 8, 25,  63),
-            new(30, "New Film",   null, 2004, 8, 25,  12),
+            new(10, "Existing A", null, 1952, 8, 25, 20),
+            new(20, "Existing B", null, 1932, 8, 25, 63),
+            new(30, "New Film", null, 2004, 8, 25, 12)
         };
 
         _externalFilmServiceMock
@@ -251,16 +253,18 @@ internal sealed class GetSimilarFilmsTests
         await act.Should().NotThrowAsync();
         ep.HttpContext.Response.StatusCode.Should().Be(200);
     }
-    
-    private static Film CreateFilm(int externalId) =>
-        new(
-            externalId:        externalId,
-            releaseDate:       new DateOnly(2000, 1, 1),
-            posterPath:        null,
-            voteAverage:       0f,
-            voteCount:         0,
-            popularity:        0f,
-            runtime:           90,
-            productionCompany: "Test"
+
+    private static Film CreateFilm(int externalId)
+    {
+        return new Film(
+            externalId,
+            new DateOnly(2000, 1, 1),
+            null,
+            0f,
+            0,
+            0f,
+            90,
+            "Test"
         );
+    }
 }

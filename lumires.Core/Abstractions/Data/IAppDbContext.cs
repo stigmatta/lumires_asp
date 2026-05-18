@@ -24,6 +24,8 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<FilmCast> FilmCasts { get; }
     DbSet<FilmDirector> FilmDirectors { get; }
     DbSet<Person> Persons { get; }
+    DbSet<PersonLocalization> PersonsLocalizations { get; }
+    DbSet<PersonDetail> PersonsDetails { get; }
 
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

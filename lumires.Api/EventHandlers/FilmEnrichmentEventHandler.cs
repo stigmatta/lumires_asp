@@ -48,14 +48,16 @@ internal sealed partial class FilmEnrichmentEventHandler(
                 semaphore.Dispose();
             }
 
-            var successful = results.OfType<(int, string, ExternalFilm)>().ToList();
+            var successful = results
+                .OfType<(int ExternalId, string Culture, ExternalFilm Data)>()
+                .ToList();
 
             if (successful.Count == 0) return;
 
             await using var scope = scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
 
-            var externalIds = successful.Select(x => x.Item1).Distinct().ToList();
+            var externalIds = successful.Select(x => x.ExternalId).Distinct().ToList();
 
             var films = await db.Films
                 .Include(m => m.Localizations)
@@ -63,6 +65,18 @@ internal sealed partial class FilmEnrichmentEventHandler(
                 .ToListAsync(ct);
 
             var filmDict = films.ToDictionary(m => m.ExternalId);
+
+            var allPeople = successful
+                .SelectMany(x => x.Data.TopCast.Select(c => (x.Culture, c.Id, c.Name))
+                    .Concat(x.Data.Directors.Select(d => (x.Culture, d.Id, d.Name))))
+                .ToList();
+
+            var peopleExternalIds = allPeople.Select(p => p.Id).Distinct().ToList();
+
+            var persons = await db.Persons
+                .Include(p => p.Localizations)
+                .Where(p => peopleExternalIds.Contains(p.ExternalId))
+                .ToDictionaryAsync(p => p.ExternalId, ct);
 
             foreach (var (externalId, culture, data) in successful)
             {
@@ -75,6 +89,14 @@ internal sealed partial class FilmEnrichmentEventHandler(
                     data.Title,
                     data.Overview,
                     data.Tagline));
+            }
+
+            foreach (var (culture, externalId, name) in allPeople)
+            {
+                if (!persons.TryGetValue(externalId, out var person)) continue;
+                if (person.Localizations.Any(l => l.LanguageCode == culture)) continue;
+
+                person.AddLocalization(new PersonLocalization(culture, name));
             }
 
             await db.SaveChangesAsync(ct);
