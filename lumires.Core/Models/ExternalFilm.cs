@@ -51,7 +51,8 @@ public record ExternalGenres(
 public record ExternalFilmShort(
     int ExternalId,
     string Title,
-    string? BackdropPath,
+    string? PosterPath,
+    int ReleaseYear,
     float VoteAverage,
     int VoteCount,
     float Popularity

@@ -41,10 +41,11 @@ public sealed record TmdbMovieShortResponse
 {
     public int Id { get; init; }
     public string Title { get; init; } = string.Empty;
-    public string Overview { get; init; } = string.Empty;
-    public string ReleaseDate { get; init; } = string.Empty;
+    public float VoteAverage { get; init; }
+    public int VoteCount { get; init; }
+    public DateOnly ReleaseDate { get; init; }
     public string? PosterPath { get; init; }
-    public string? BackdropPath { get; init; }
+    public float Popularity { get; init; }
 }
 
 [UsedImplicitly]

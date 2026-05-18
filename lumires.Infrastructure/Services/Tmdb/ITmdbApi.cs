@@ -18,7 +18,7 @@ public interface ITmdbApi
 
     [Get("/movie/popular")]
     Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetPopularFilmsAsync(
-        [AliasAs("sort_by")] int page,
+        [AliasAs("page")] int page,
         CancellationToken ct);
 
     [Get("/discover/movie")]
@@ -36,4 +36,11 @@ public interface ITmdbApi
     [Get("/genre/movie/list")]
     Task<ApiResponse<TmdbGenresResponse>> GetGenresAsync(
         [AliasAs("language")] string lang, CancellationToken ct);
+
+    [Get("/movie/{movieId}/similar")]
+    Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetSimilarFilmsAsync(
+        int movieId,
+        [AliasAs("language")] string lang,
+        CancellationToken ct,
+        [AliasAs("page")] int page = 1);
 }

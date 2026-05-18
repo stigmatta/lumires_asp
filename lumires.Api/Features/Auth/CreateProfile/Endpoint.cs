@@ -25,6 +25,7 @@ internal sealed class Endpoint(ICurrentUserService currentUserService, DataAcces
     public override void Configure()
     {
         Post("/auth/register");
+        Description(x => x.WithTags("Auth"));
     }
 
     public override async Task HandleAsync(Command command, CancellationToken ct)

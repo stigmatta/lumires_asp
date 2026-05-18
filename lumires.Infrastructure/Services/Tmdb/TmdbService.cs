@@ -329,6 +329,39 @@ public sealed class TmdbService(
         return Result.Success();
     }
 
+    public async Task<Result<IReadOnlyCollection<ExternalFilmShort>>> GetSimilarFilmsAsync(
+        int movieId,
+        string lang,
+        CancellationToken ct)
+    {
+        var response = await tmdbApi.GetSimilarFilmsAsync(movieId, EnLang, ct);
+
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.Unauthorized:
+                return Result.Unauthorized();
+            case HttpStatusCode.NotFound:
+                return Result.NotFound();
+        }
+
+        if (!response.IsSuccessStatusCode || response.Content is null)
+            return Result.Error("Failed to fetch similar films from TMDB");
+
+        var items = response.Content.Results
+            .Select(m => new ExternalFilmShort(
+                m.Id,
+                m.Title,
+                m.PosterPath,
+                m.ReleaseDate.Year,
+                m.VoteAverage,
+                m.VoteCount,
+                m.Popularity
+            ))
+            .ToList();
+
+        return Result.Success<IReadOnlyCollection<ExternalFilmShort>>(items);
+    }
+
     private async Task<Film?> FetchAndBuildFilmAsync(int tmdbId, CancellationToken ct)
     {
         var enTask = tmdbApi.GetFilmAsync(tmdbId, EnLang, ct);

@@ -18,6 +18,7 @@ internal sealed class Endpoint(ICurrentUserService currentUserService, DataAcces
     public override void Configure()
     {
         Get("/auth/me");
+        Description(x => x.WithTags("Auth"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)
