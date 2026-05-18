@@ -1,18 +1,18 @@
 ﻿using System.Reflection;
+using FluentAssertions;
 using lumires.Api.Features.FilmsLists.GetFilmsListsByFilm;
 using lumires.Core.Abstractions.Data;
+using lumires.Domain.Base;
 using lumires.Domain.Entities;
 using MockQueryable.Moq;
 using Moq;
-using FluentAssertions;
-using lumires.Domain.Base;
 
 namespace Tests.ApiTests.Collections;
 
 internal sealed class GetFilmsListsByFilmTests
 {
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -33,13 +33,13 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(43, "/h.jpg")]),
-            BuildFilmsList("Medium", likesCount: 50,  films: [(34, "/m.jpg")]),
-            BuildFilmsList("Low",    likesCount: 1,   films: [(45, "/l.jpg")])
+            BuildFilmsList("High", 100, [(43, "/h.jpg")]),
+            BuildFilmsList("Medium", 50, [(34, "/m.jpg")]),
+            BuildFilmsList("Low", 1, [(45, "/l.jpg")])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().BeEmpty();
@@ -50,13 +50,13 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(43, "/h.jpg")]),
-            BuildFilmsList("Medium", likesCount: 50,  films: [(34, "/m.jpg")]),
-            BuildFilmsList("Low",    likesCount: 1,   films: [(42, "/l.jpg")])
+            BuildFilmsList("High", 100, [(43, "/h.jpg")]),
+            BuildFilmsList("Medium", 50, [(34, "/m.jpg")]),
+            BuildFilmsList("Low", 1, [(42, "/l.jpg")])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().ContainSingle()
@@ -68,13 +68,13 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(43, "/h.jpg")]),
-            BuildFilmsList("Medium", likesCount: 50,  films: [(34, "/m.jpg")]),
-            BuildFilmsList("Low",    likesCount: 1,   films: [(42, "/l.jpg")])
+            BuildFilmsList("High", 100, [(43, "/h.jpg")]),
+            BuildFilmsList("Medium", 50, [(34, "/m.jpg")]),
+            BuildFilmsList("Low", 1, [(42, "/l.jpg")])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().ContainSingle()
@@ -88,13 +88,13 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(43, "/h.jpg")]),
-            BuildFilmsList("Medium", likesCount: 50,  films: [(34, "/m.jpg")]),
-            BuildFilmsList("Low",    likesCount: 1,   films: [(42, "/l.jpg")])
+            BuildFilmsList("High", 100, [(43, "/h.jpg")]),
+            BuildFilmsList("Medium", 50, [(34, "/m.jpg")]),
+            BuildFilmsList("Low", 1, [(42, "/l.jpg")])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().ContainSingle()
@@ -106,13 +106,13 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(42, "/h.jpg")]),
-            BuildFilmsList("Medium", likesCount: 50,  films: [(42, "/m.jpg")]),
-            BuildFilmsList("Low",    likesCount: 1,   films: [(42, "/l.jpg")])
+            BuildFilmsList("High", 100, [(42, "/h.jpg")]),
+            BuildFilmsList("Medium", 50, [(42, "/m.jpg")]),
+            BuildFilmsList("Low", 1, [(42, "/l.jpg")])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Select(x => x.Name)
@@ -125,20 +125,20 @@ internal sealed class GetFilmsListsByFilmTests
         // Arrange — 6 lists all containing the target film
         var lists = Enumerable.Range(1, 6)
             .Select(i => BuildFilmsList(
-                title: $"List {i}",
-                likesCount: i,
-                films: [(42, $"/backdrop{i}.jpg")]
+                $"List {i}",
+                i,
+                [(42, $"/backdrop{i}.jpg")]
             ))
             .ToList();
 
         SetupFilmsLists(lists);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().HaveCount(4,
-            because: "the query applies Take(4)");
+            "the query applies Take(4)");
     }
 
     [Test]
@@ -146,11 +146,11 @@ internal sealed class GetFilmsListsByFilmTests
     {
         // Arrange
         SetupFilmsLists([
-            BuildFilmsList("High",   likesCount: 100, films: [(42, null)]),
+            BuildFilmsList("High", 100, [(42, null)])
         ]);
 
         // Act
-        var result = await _dataAccess.GetFilmListsByFilmIdAsync(filmId: 42, ct: CancellationToken.None);
+        var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
         result.FilmLists.Should().ContainSingle()
@@ -159,22 +159,24 @@ internal sealed class GetFilmsListsByFilmTests
     }
 
 
-    private static Film CreateFilm(int externalId, string? backdropPath) =>
-        new(
-            externalId:        externalId,
-            releaseDate:       new DateOnly(2000, 1, 1),
-            posterPath:        null,
-            voteAverage:       0f,
-            voteCount:         0,
-            popularity:        0f,
-            runtime:           90,
-            productionCompany: "Test",
-            backdropPath:      backdropPath
+    private static Film CreateFilm(int externalId, string? backdropPath)
+    {
+        return new Film(
+            externalId,
+            new DateOnly(2000, 1, 1),
+            null,
+            0f,
+            0,
+            0f,
+            90,
+            "Test",
+            backdropPath
         );
+    }
 
     private static ListFilm CreateListFilm(Guid filmsListId, Film film)
     {
-        var listFilm = new ListFilm(filmsListId, film.Id, order: 1);
+        var listFilm = new ListFilm(filmsListId, film.Id, 1);
 
         typeof(ListFilm)
             .GetProperty(nameof(ListFilm.Film))!
@@ -188,7 +190,7 @@ internal sealed class GetFilmsListsByFilmTests
         int likesCount,
         IEnumerable<(int ExternalId, string? BackdropPath)> films)
     {
-        var list = new FilmsList(title, userId: Guid.NewGuid());
+        var list = new FilmsList(title, Guid.NewGuid());
 
         var filmsField = typeof(FilmsList)
             .GetField("_films", BindingFlags.NonPublic | BindingFlags.Instance)!;

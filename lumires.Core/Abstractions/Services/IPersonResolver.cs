@@ -6,5 +6,6 @@ public interface IPersonResolver
 {
     Task<Dictionary<int, Person>> ResolveAsync(
         IEnumerable<(int ExternalId, string Name)> persons,
-        CancellationToken ct);
+        string languageCode,
+        CancellationToken ct = default);
 }

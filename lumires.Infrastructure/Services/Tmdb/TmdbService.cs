@@ -470,8 +470,8 @@ public sealed class TmdbService(
         var personDict = await personResolver.ResolveAsync(
             topCastData.Select(c => (c.ExternalId, c.Name))
                 .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            EnLang,
             ct);
-        ;
 
         var film = new Film(
             en.Id,
@@ -491,11 +491,13 @@ public sealed class TmdbService(
         film.AddLocalization(new FilmLocalization(UaLang, uk.Title, uk.Overview, uk.Tagline));
         film.AddSlug(SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}"));
 
-        foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
-            film.AddCast(new FilmCast(personDict[c.ExternalId].Id, c.Character, c.Order));
+        foreach (var c in topCastData)
+            if (personDict.TryGetValue(c.ExternalId, out var person))
+                film.AddCast(new FilmCast(person.Id, c.Character, c.Order));
 
-        foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
-            film.AddDirector(new FilmDirector(personDict[d.ExternalId].Id));
+        foreach (var d in directorsData)
+            if (personDict.TryGetValue(d.ExternalId, out var person))
+                film.AddDirector(new FilmDirector(person.Id));
 
         return film;
     }
@@ -570,8 +572,8 @@ public sealed class TmdbService(
             .Include(m => m.Directors)
             .FirstOrDefaultAsync(m => m.ExternalId == movieId, ct);
 
-        if (movie is null) return;
-        if (movie.Cast.Count != 0 || movie.Directors.Count != 0) return;
+        if (movie is null || movie.Cast.Count > 0 || movie.Directors.Count > 0)
+            return;
 
         var topCastData = GetTopCastData(credits.Cast);
         var directorsData = GetDirectorsData(credits.Crew);
@@ -579,12 +581,15 @@ public sealed class TmdbService(
         var personDict = await personResolver.ResolveAsync(
             topCastData.Select(c => (c.ExternalId, c.Name))
                 .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            EnLang,
             ct);
 
-        foreach (var c in topCastData.Where(c => personDict.ContainsKey(c.ExternalId)))
-            movie.AddCast(new FilmCast(personDict[c.ExternalId].Id, c.Character, c.Order));
+        foreach (var c in topCastData)
+            if (personDict.TryGetValue(c.ExternalId, out var person))
+                movie.AddCast(new FilmCast(person.Id, c.Character, c.Order));
 
-        foreach (var d in directorsData.Where(d => personDict.ContainsKey(d.ExternalId)))
-            movie.AddDirector(new FilmDirector(personDict[d.ExternalId].Id));
+        foreach (var d in directorsData)
+            if (personDict.TryGetValue(d.ExternalId, out var person))
+                movie.AddDirector(new FilmDirector(person.Id));
     }
 }

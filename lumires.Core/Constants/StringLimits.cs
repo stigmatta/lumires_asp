@@ -8,6 +8,7 @@ public static class StringLimits
     public const int ShortText = 50;
     public const int Name = 100;
     public const int Default = 255;
-    public const int Description = 2000;
     public const int Url = 500;
+    public const int Description = 2000;
+    public const int Biography = 4000;
 }

@@ -12,10 +12,10 @@ public sealed class UserNotification
     public UserNotification(Guid userId, NotificationType type, string senderId, string? targetId = null)
     {
         if (userId == Guid.Empty)
-            throw new NotificationValidationException("UserId is required");
+            throw new DomainException("UserId is required", nameof(UserId));
 
         if (string.IsNullOrWhiteSpace(senderId))
-            throw new NotificationValidationException("SenderId is required");
+            throw new DomainException("SenderId is required", nameof(SenderId));
 
         Id = Guid.CreateVersion7();
         UserId = userId;
@@ -36,7 +36,7 @@ public sealed class UserNotification
     public void MarkAsRead()
     {
         if (ReadAt.HasValue)
-            throw new InvalidNotificationOperationException("Notification already read");
+            throw new DomainException("Notification already read", nameof(ReadAt));
 
         ReadAt = DateTimeOffset.UtcNow;
     }

@@ -16,15 +16,15 @@ public sealed partial class User
 
     public User(Guid id, string? username, string email)
     {
-        if (id == Guid.Empty) throw new UserValidationException("UserId is invalid");
+        if (id == Guid.Empty) throw new DomainException("UserId is invalid", nameof(id));
 
         if (!IsEmailValid(email))
-            throw new UserValidationException("Email is not valid");
+            throw new DomainException("Email is not valid", nameof(email));
 
         if (string.IsNullOrWhiteSpace(username)) username = email.Split('@')[0];
 
         if (!IsUsernameValid(username))
-            throw new UserValidationException("Username contains invalid characters or starts incorrectly.");
+            throw new DomainException("Username contains invalid characters or starts incorrectly.", nameof(username));
 
         Id = id;
         Username = username;

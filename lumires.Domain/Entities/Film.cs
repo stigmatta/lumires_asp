@@ -28,25 +28,25 @@ public sealed class Film
         string? trailerUrl = null)
     {
         if (externalId <= 0)
-            throw new FilmValidationException("ExternalId must be positive", nameof(externalId));
+            throw new DomainException("ExternalId must be positive", nameof(externalId));
 
         if (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31))
-            throw new FilmValidationException("Invalid movie release date", nameof(releaseDate));
+            throw new DomainException("Invalid movie release date", nameof(releaseDate));
 
         if (voteAverage is < 0 or > 10)
-            throw new FilmValidationException("Invalid average vote rating", nameof(voteAverage));
+            throw new DomainException("Invalid average vote rating", nameof(voteAverage));
 
         if (voteCount < 0)
-            throw new FilmValidationException("Invalid vote count", nameof(voteCount));
+            throw new DomainException("Invalid vote count", nameof(voteCount));
 
         if (popularity < 0)
-            throw new FilmValidationException("Invalid popularity", nameof(popularity));
+            throw new DomainException("Invalid popularity", nameof(popularity));
 
         Id = id;
         ExternalId = externalId;
         ReleaseDate = releaseDate;
         PosterPath = posterPath;
-        VoteAverage = voteAverage;
+        VoteAverage = (float)Math.Round(voteAverage / 2.0, 1);
         VoteCount = voteCount;
         Popularity = popularity;
         BackdropPath = backdropPath;
@@ -80,7 +80,7 @@ public sealed class Film
         ArgumentNullException.ThrowIfNull(localization);
 
         if (_localizations.Any(l => l.LanguageCode == localization.LanguageCode))
-            throw new InvalidFilmOperationException("Localization already exists for this language");
+            throw new DomainException("Localization already exists for this language");
 
         localization.SetFilm(this);
         _localizations.Add(localization);
@@ -99,7 +99,7 @@ public sealed class Film
         foreach (var genre in genres)
         {
             if (_genres.Any(g => g.Id == genre.Id))
-                throw new InvalidFilmOperationException($"Genre '{genre.Id}' already added to this movie");
+                throw new DomainException($"Genre '{genre.Id}' already added to this movie");
 
             _genres.Add(genre);
         }
@@ -122,7 +122,7 @@ public sealed class Film
         ArgumentNullException.ThrowIfNull(cast);
 
         if (_cast.Any(c => c.PersonId == cast.Id))
-            throw new InvalidFilmOperationException($"Actor '{cast.Id}' already added to this movie");
+            throw new DomainException($"Actor '{cast.Id}' already added to this movie");
 
         _cast.Add(cast);
     }
@@ -132,7 +132,7 @@ public sealed class Film
         ArgumentNullException.ThrowIfNull(director);
 
         if (_directors.Any(c => c.Id == director.Id))
-            throw new InvalidFilmOperationException($"Director '{director.Id}' already added to this movie");
+            throw new DomainException($"Director '{director.Id}' already added to this movie");
 
         _directors.Add(director);
     }

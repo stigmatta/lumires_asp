@@ -11,10 +11,10 @@ public sealed class FilmLocalization
     public FilmLocalization(string languageCode, string title, string? description, string? tagline)
     {
         if (string.IsNullOrWhiteSpace(languageCode))
-            throw new FilmLocalizationValidationException("LanguageCode is required", nameof(languageCode));
+            throw new DomainException("LanguageCode is required", nameof(languageCode));
 
         if (string.IsNullOrWhiteSpace(title))
-            throw new FilmLocalizationValidationException("Title is required", nameof(title));
+            throw new DomainException("Title is required", nameof(title));
 
         Id = Guid.CreateVersion7();
         LanguageCode = languageCode.Trim();
@@ -39,14 +39,14 @@ public sealed class FilmLocalization
     internal void SetFilm(Film film)
     {
         Film = film ??
-                throw new FilmLocalizationValidationException("Movie is required to be linked", nameof(film));
+               throw new DomainException("Movie is required to be linked", nameof(film));
         FilmId = film.Id;
     }
 
     public void Update(string title, string? description, string? tagline)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new FilmLocalizationValidationException("Title is required", nameof(title));
+            throw new DomainException("Title is required", nameof(title));
 
         Title = title;
         Description = description;

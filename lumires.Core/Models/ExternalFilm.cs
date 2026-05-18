@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using lumires.Domain.Enums;
 
 namespace lumires.Core.Models;
 
@@ -57,3 +58,16 @@ public record ExternalFilmShort(
     int VoteCount,
     float Popularity
 );
+
+[UsedImplicitly]
+public class ExternalPerson
+{
+    public int ExternalId { get; init; }
+    public required string Name { get; init; }
+    public string Biography { get; init; } = string.Empty;
+    public DateOnly? Birthday { get; init; }
+    public DateOnly? Deathday { get; init; }
+    public GenderType Gender { get; init; }
+    public string? PlaceOfBirth { get; init; }
+    public string? ProfilePath { get; init; }
+}

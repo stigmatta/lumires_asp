@@ -96,7 +96,7 @@ internal sealed class CreateCollectionTests
             CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<FilmsListValidationException>();
+        await act.Should().ThrowAsync<DomainException>();
     }
 
     [Test]

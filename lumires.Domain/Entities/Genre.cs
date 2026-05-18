@@ -13,7 +13,7 @@ public sealed class Genre
     public Genre(int externalId)
     {
         if (externalId <= 0)
-            throw new GenreValidationException("ExternalId must be positive", nameof(externalId));
+            throw new DomainException("ExternalId must be positive", nameof(externalId));
 
         Id = Guid.CreateVersion7();
         ExternalId = externalId;
@@ -26,7 +26,7 @@ public sealed class Genre
     public void AddLocalization(string name, string languageCode)
     {
         if (_localizations.Any(l => l.LanguageCode == languageCode))
-            throw new GenreValidationException($"Localization for '{languageCode}' already exists",
+            throw new DomainException($"Localization for '{languageCode}' already exists",
                 nameof(languageCode));
 
         var localization = new GenreLocalization(languageCode, name);

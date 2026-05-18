@@ -14,9 +14,9 @@ internal sealed class GetMovieTests
 {
     private FusionCache _cache = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IFilmResolver> _resolverMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<IFilmResolver> _resolverMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -82,7 +82,8 @@ internal sealed class GetMovieTests
     {
         // Arrange
         var releaseDate = DateOnly.Parse(dateStr);
-        var movie = new Film(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime, productionCompany);
+        var movie = new Film(externalId, releaseDate, posterPath, voteAverage, voteCount, popularity, runtime,
+            productionCompany);
         var movies = new List<Film> { movie }.BuildMockDbSet();
 
         _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
@@ -112,7 +113,7 @@ internal sealed class GetMovieTests
 
         // Assert
         _resolverMock.Verify(
-            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(),It.IsAny<CancellationToken>()),
+            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -142,7 +143,7 @@ internal sealed class GetMovieTests
         // Assert
         secondResponse.Should().BeEquivalentTo(firstResponse);
         _resolverMock.Verify(
-            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(),It.IsAny<CancellationToken>()),
+            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once); // второй раз из кэша
     }
 
@@ -177,9 +178,7 @@ internal sealed class GetMovieTests
 
         // Assert — resolver вызван дважды (по одному на язык)
         _resolverMock.Verify(
-            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(),It.IsAny<CancellationToken>()),
+            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Exactly(2));
     }
-
 }
-

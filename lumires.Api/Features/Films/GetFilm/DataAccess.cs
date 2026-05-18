@@ -43,14 +43,27 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     ))
                     .ToList()),
                 m.Cast
-                    .OrderByDescending(c => c.Order)
-                    .Select(c => c.Person.Name)
+                    .Select(c => new PersonShortItem(
+                        c.Person.Localizations
+                            .Where(pl => pl.LanguageCode == lang)
+                            .Select(pl => pl.Name)
+                            .FirstOrDefault() ?? string.Empty,
+                        c.Person.ExternalId
+                    ))
                     .ToList(),
                 m.Directors
-                    .Select(d => d.Person.Name)
+                    .Select(c => new PersonShortItem(
+                        c.Person.Localizations
+                            .Where(pl => pl.LanguageCode == lang)
+                            .Select(pl => pl.Name)
+                            .FirstOrDefault() ?? string.Empty,
+                        c.Person.ExternalId
+                    ))
                     .ToList(),
                 m.ProductionCompany,
-                m.Runtime
+                m.Runtime,
+                m.VoteAverage,
+                m.VoteCount
             ))
             .SingleOrDefaultAsync(ct);
     }

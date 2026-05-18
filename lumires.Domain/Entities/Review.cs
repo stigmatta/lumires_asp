@@ -1,4 +1,5 @@
 ﻿using lumires.Domain.Base;
+using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
 
@@ -26,11 +27,11 @@ public sealed class Review : LikeableEntity<ReviewLike>
         if (rating is not null)
         {
             if (rating is < 0 or > 5)
-                throw new ArgumentOutOfRangeException(nameof(rating), "Rating must be between 0 and 5.");
+                throw new DomainException("Rating must be between 0 and 5.", nameof(rating));
 
             var remainder = rating % 0.5m;
             if (remainder != 0)
-                throw new ArgumentException("Rating must be a multiple of 0.5 (e.g. 1, 1.5, 2, 2.5).", nameof(rating));
+                throw new DomainException("Rating must be a multiple of 0.5 (e.g. 1, 1.5, 2, 2.5).", nameof(rating));
         }
 
         Rating = rating;
