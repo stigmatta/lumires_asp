@@ -20,17 +20,10 @@ internal class FilmResolver(IAppDbContext db) : IFilmResolver, IResolver
             return true;
 
         await new FilmReferencedEvent
-            {
-                ExternalIds = [externalId],
-                Language = language
-            }
-            .PublishAsync(Mode.WaitForAll, ct);
-
-        await new FilmEnrichmentEvent
         {
             ExternalIds = [externalId],
-            SkipLanguage = language
-        }.PublishAsync(Mode.WaitForNone, ct);
+            Language = language
+        }.PublishAsync(Mode.WaitForAll, ct);
 
         return false;
     }

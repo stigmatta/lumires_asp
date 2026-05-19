@@ -165,7 +165,9 @@ internal sealed class ArchitecturalTests
     {
         var result = Types.InAssembly(typeof(lumires.Core.NamespaceMarker).Assembly)
             .That()
-            .AreClasses()
+            .AreNotNestedPrivate()   
+            .And()
+            .DoNotHaveNameStartingWith("<")
             .And()
             .DoNotResideInNamespace(CoreNamespace + ".Resources")
             .Should()

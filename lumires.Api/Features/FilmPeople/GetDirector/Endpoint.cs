@@ -1,0 +1,54 @@
+﻿using FastEndpoints;
+using JetBrains.Annotations;
+using lumires.Core.Abstractions.Services;
+using lumires.Core.Mappers;
+using lumires.Domain.Enums;
+
+namespace lumires.Api.Features.FilmPeople.GetDirector;
+
+[UsedImplicitly]
+internal sealed record Query(int Id);
+
+[UsedImplicitly]
+internal sealed record Response(
+    int DirectorId,
+    string Lang,
+    string? Biography,
+    DateOnly? Birthday,
+    DateOnly? Deathday,
+    GenderType Gender,
+    string? PlaceOfBirth,
+    string? ProfilePath);
+
+internal sealed class Endpoint(
+    IPersonResolver personResolver,
+    ICurrentUserService currentUserService,
+    DataAccess db)
+    : Endpoint<Query, Response>
+{
+    public override void Configure()
+    {
+        Get("/directors/{Slug}/{Id:int}");
+        Description(x => x.WithTags("People"));
+        AllowAnonymous();
+    }
+
+    public override async Task HandleAsync(Query query, CancellationToken ct)
+    {
+        var lang = currentUserService.LangCulture;
+
+        var idAndDep = (query.Id, PersonDepartmentMapper.ToString(PersonDepartment.Directing));
+
+        await personResolver.EnsurePersonExistsAsync(idAndDep, lang, ct);
+
+        var response = await db.GetDirectorByIdAsync(query.Id, lang, ct);
+
+        if (response is null)
+        {
+            await Send.NotFoundAsync(ct);
+            return;
+        }
+
+        await Send.OkAsync(response, ct);
+    }
+}

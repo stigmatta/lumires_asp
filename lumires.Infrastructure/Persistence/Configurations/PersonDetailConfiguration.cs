@@ -30,9 +30,14 @@ public sealed class PersonDetailConfiguration : IEntityTypeConfiguration<PersonD
         builder.Property(pd => pd.ProfilePath)
             .HasMaxLength(StringLimits.Url);
 
-        builder.HasOne(pd => pd.Person)
-            .WithOne(p => p.Detail)
-            .HasForeignKey<PersonDetail>(pd => pd.PersonId)
+        builder.HasOne(p => p.Person)
+            .WithMany(p => p.Details)
+            .HasForeignKey(p => p.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Property(x => x.Gender)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(StringLimits.Name);
     }
 }

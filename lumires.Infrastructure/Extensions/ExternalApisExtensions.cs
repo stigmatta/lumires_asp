@@ -33,7 +33,8 @@ internal static class ExternalApiExtensions
                 client.BaseAddress = sp.GetRequiredService<IOptions<TmdbConfig>>().Value.BaseUrl)
             .AddHttpMessageHandler<TmdbAuthHandler>()
             .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
-        services.AddScoped<IExternalFilmService, TmdbService>();
+        services.AddScoped<IExternalFilmService, TmdbFilmService>();
+        services.AddScoped<IExternalPersonService, TmdbPersonService>();
 
         // Watchmode
         services.Configure<WatchmodeOptions>(config.GetSection(WatchmodeOptions.SectionName));

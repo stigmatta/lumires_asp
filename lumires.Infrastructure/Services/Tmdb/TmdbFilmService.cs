@@ -1,20 +1,23 @@
 ﻿using System.Net;
 using Ardalis.Result;
+using Infrastructure.Services.Tmdb.Models;
 using lumires.Core;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
+using lumires.Core.Mappers;
 using lumires.Core.Models;
 using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services.Tmdb;
 
-public sealed class TmdbService(
+public sealed class TmdbFilmService(
     ITmdbApi tmdbApi,
     IAppDbContext db,
     IPersonResolver personResolver,
-    ILogger<TmdbService> logger) : IExternalFilmService
+    ILogger<TmdbFilmService> logger) : IExternalFilmService
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
     private const string EnLang = "en-US";
@@ -334,7 +337,7 @@ public sealed class TmdbService(
         var response = await tmdbApi.GetTotalFilmsCountAsync(ct: ct);
         if (!response.IsSuccessStatusCode || response.Content is null)
             return Result.Error("Failed to fetch total films from TMDB");
-        
+
         long totalFilms = response.Content.TotalResults;
 
         return Result.Success(totalFilms);
@@ -479,8 +482,9 @@ public sealed class TmdbService(
             .ToListAsync(ct);
 
         var personDict = await personResolver.ResolveAsync(
-            topCastData.Select(c => (c.ExternalId, c.Name))
-                .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            topCastData.Select(c => (c.ExternalId, c.Name, PersonDepartmentMapper.ToString(PersonDepartment.Acting)))
+                .Concat(directorsData.Select(d =>
+                    (d.ExternalId, d.Name, PersonDepartmentMapper.ToString(PersonDepartment.Directing)))),
             EnLang,
             ct);
 
@@ -590,8 +594,9 @@ public sealed class TmdbService(
         var directorsData = GetDirectorsData(credits.Crew);
 
         var personDict = await personResolver.ResolveAsync(
-            topCastData.Select(c => (c.ExternalId, c.Name))
-                .Concat(directorsData.Select(d => (d.ExternalId, d.Name))),
+            topCastData.Select(c => (c.ExternalId, c.Name, PersonDepartmentMapper.ToString(PersonDepartment.Acting)))
+                .Concat(directorsData.Select(d =>
+                    (d.ExternalId, d.Name, PersonDepartmentMapper.ToString(PersonDepartment.Directing)))),
             EnLang,
             ct);
 

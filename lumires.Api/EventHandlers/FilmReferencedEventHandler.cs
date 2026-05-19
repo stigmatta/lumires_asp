@@ -5,10 +5,11 @@ using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Events.Films;
+using lumires.Core.Mappers;
 using lumires.Core.Models;
 using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace lumires.Api.EventHandlers;
 
@@ -21,7 +22,8 @@ internal sealed partial class FilmReferencedEventHandler(
 {
     public async Task HandleAsync(FilmReferencedEvent command, CancellationToken ct)
     {
-        if (command.ExternalIds.Count == 0) return;
+        if (command.ExternalIds.Count == 0) 
+            return;
 
         await using var scope = scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
@@ -36,29 +38,16 @@ internal sealed partial class FilmReferencedEventHandler(
 
         var idsToFetch = distinctIds.Except(existingIds).ToList();
 
-        if (idsToFetch.Count == 0) return;
+        if (idsToFetch.Count == 0) 
+            return;
 
-        var semaphore = new SemaphoreSlim(Parallelism.MaxParallelism);
-        var tasks = new List<Task<ExternalFilm?>>(idsToFetch.Count);
+        var filmsData = await FetchFilmsBatch(idsToFetch, command.Language, ct);
 
-        tasks.AddRange(idsToFetch.Select(id => FetchFilm(id, command, semaphore, ct)));
+        if (filmsData.Count == 0) 
+            return;
 
-        ExternalFilm?[] results;
-        try
-        {
-            results = await Task.WhenAll(tasks);
-        }
-        finally
-        {
-            semaphore.Dispose();
-        }
-
-        var filmData = results.OfType<ExternalFilm>().ToList(); // to cut off nullable values
-
-        if (filmData.Count == 0) return;
-
-        var allGenreIds = filmData
-            .SelectMany(m => m.Genres.Items)
+        var allGenreIds = filmsData
+            .SelectMany(f => f.Genres.Items)
             .Select(g => g.ExternalId)
             .Distinct()
             .ToList();
@@ -67,18 +56,22 @@ internal sealed partial class FilmReferencedEventHandler(
             .Where(g => allGenreIds.Contains(g.ExternalId))
             .ToListAsync(ct);
 
-        var genreIdSet = genres.ToDictionary(g => g.ExternalId);
+        var genreDict = genres.ToDictionary(g => g.ExternalId);
 
-        var allPeople = filmData
-            .SelectMany(m =>
-                m.TopCast.Select(c => (c.Id, c.Name))
-                    .Concat(m.Directors.Select(d => (d.Id, d.Name))))
+        var allPeople = filmsData
+            .SelectMany(f => 
+                f.TopCast.Select(c => (c.Id, c.Name, Department: PersonDepartment.Acting))
+                    .Concat(f.Directors.Select(d => (d.Id, d.Name, Department: PersonDepartment.Directing))))
             .Distinct()
             .ToList();
 
-        var personDict = await personResolver.ResolveAsync(allPeople, command.Language, ct);
+        var personDict = await personResolver.ResolveAsync(
+            allPeople.Select(p => (p.Id, p.Name, PersonDepartmentMapper.ToString(p.Department))), 
+            command.Language, 
+            ct);
 
-        foreach (var data in filmData)
+        foreach (var data in filmsData)
+        {
             try
             {
                 var film = new Film(
@@ -91,11 +84,10 @@ internal sealed partial class FilmReferencedEventHandler(
                     data.Runtime,
                     data.ProductionCompany,
                     data.BackdropPath,
-                    data.TrailerUrl
-                );
+                    data.TrailerUrl);
 
                 var filmGenres = data.Genres.Items
-                    .Select(x => genreIdSet.GetValueOrDefault(x.ExternalId))
+                    .Select(x => genreDict.GetValueOrDefault(x.ExternalId))
                     .OfType<Genre>();
 
                 film.AddGenres(filmGenres);
@@ -104,10 +96,7 @@ internal sealed partial class FilmReferencedEventHandler(
                 film.AddSlug(slugifiedTitle);
 
                 foreach (var c in data.TopCast.Where(c => personDict.ContainsKey(c.Id)))
-                    film.AddCast(new FilmCast(
-                        personDict[c.Id].Id,
-                        c.Character,
-                        c.Order));
+                    film.AddCast(new FilmCast(personDict[c.Id].Id, c.Character, c.Order));
 
                 foreach (var d in data.Directors.Where(d => personDict.ContainsKey(d.Id)))
                     film.AddDirector(new FilmDirector(personDict[d.Id].Id));
@@ -119,40 +108,52 @@ internal sealed partial class FilmReferencedEventHandler(
                     data.Tagline));
 
                 db.Films.Add(film);
+                
+                 await db.SaveChangesAsync(ct);
+
+                 
+                await new FilmEnrichmentEvent
+                {
+                    ExternalIds = [data.ExternalId],
+                    SkipLanguage = command.Language
+                }.PublishAsync(Mode.WaitForNone, ct);
             }
             catch (Exception ex)
             {
                 LogFilmProcessingFailed(logger, data.ExternalId, ex.Message);
             }
+        }
+
+    }
+
+    private async Task<List<ExternalFilm>> FetchFilmsBatch(List<int> ids, string language, CancellationToken ct)
+    {
+        using var semaphore = new SemaphoreSlim(Parallelism.MaxParallelism);
+        var tasks = ids.Select(id => FetchSingleFilm(id, language, semaphore, ct))
+            .ToList();   
 
         try
         {
-            await db.SaveChangesAsync(ct);
+            var results = await Task.WhenAll(tasks);
+            return [.. results.OfType<ExternalFilm>()];
         }
-        catch (DbUpdateException ex)
+        catch (Exception ex)
         {
-            var pgEx = ex.InnerException as PostgresException
-                       ?? ex.InnerException?.InnerException as PostgresException;
-
-            if (pgEx?.SqlState != "23505") throw;
-
-            LogFilmAlreadyExistsBatch(logger);
+            LogUnexpectedError(logger, ex);
+            throw;
         }
     }
 
-    private async Task<ExternalFilm?> FetchFilm(
-        int id,
-        FilmReferencedEvent command,
-        SemaphoreSlim semaphore,
-        CancellationToken ct)
+    private async Task<ExternalFilm?> FetchSingleFilm(int id, string language, SemaphoreSlim semaphore, CancellationToken ct)
     {
         await semaphore.WaitAsync(ct);
         try
         {
-            var result = await externalFilmService
-                .GetFilmDetailsAsync(id, command.Language, ct);
-
-            if (result.IsSuccess) return result.Value;
+            var result = await externalFilmService.GetFilmDetailsAsync(id, language, ct);
+            return result.IsSuccess ? result.Value : null;
+        }
+        catch (Exception)
+        {
             LogFailedImport(logger, id);
             return null;
         }
@@ -162,21 +163,13 @@ internal sealed partial class FilmReferencedEventHandler(
         }
     }
 
-    [LoggerMessage(
-        EventId = 2,
-        Level = LogLevel.Warning,
-        Message = "Failed to import movie {ExternalId}")]
+    [LoggerMessage(EventId = 2, Level = LogLevel.Warning, Message = "Failed to import movie {ExternalId}")]
     static partial void LogFailedImport(ILogger logger, int externalId);
 
-    [LoggerMessage(
-        EventId = 3,
-        Level = LogLevel.Warning,
-        Message = "Some movies already exist in batch")]
-    static partial void LogFilmAlreadyExistsBatch(ILogger logger);
-
-    [LoggerMessage(
-        EventId = 4,
-        Level = LogLevel.Warning,
-        Message = "Failed processing movie {ExternalId}: {Error}")]
+    [LoggerMessage(EventId = 4, Level = LogLevel.Warning, Message = "Failed processing movie {ExternalId}: {Error}")]
     static partial void LogFilmProcessingFailed(ILogger logger, int externalId, string error);
+    
+    [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Error while fetching films batch: {Error}")]
+    static partial void LogUnexpectedError(ILogger logger, Exception error);
+    
 }

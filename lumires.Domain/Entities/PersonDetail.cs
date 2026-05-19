@@ -12,7 +12,7 @@ public sealed class PersonDetail
     public PersonDetail(
         Guid personId,
         string languageCode,
-        string biography,
+        string? biography,
         DateOnly? birthday,
         DateOnly? deathday,
         GenderType gender,
@@ -25,7 +25,7 @@ public sealed class PersonDetail
         Id = Guid.CreateVersion7();
         PersonId = personId;
         LanguageCode = languageCode.Trim();
-        Biography = biography?.Trim() ?? string.Empty;
+        Biography = biography?.Trim();
         Birthday = birthday;
         Deathday = deathday;
         Gender = gender;
@@ -35,9 +35,8 @@ public sealed class PersonDetail
 
     public Guid Id { get; private set; }
     public Guid PersonId { get; private set; }
-
     public string LanguageCode { get; private set; }
-    public string Biography { get; private set; } = string.Empty;
+    public string? Biography { get; private set; }
     public DateOnly? Birthday { get; private set; }
     public DateOnly? Deathday { get; private set; }
     public GenderType Gender { get; private set; }
@@ -46,7 +45,7 @@ public sealed class PersonDetail
 
     public Person Person { get; private set; } = null!;
 
-    internal void SetPerson(Person person)
+    public void SetPerson(Person person)
     {
         Person = person ?? throw new ArgumentNullException(nameof(person));
     }

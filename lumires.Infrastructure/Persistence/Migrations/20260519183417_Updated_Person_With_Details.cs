@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Updated_People_With_Details : Migration
+    public partial class Updated_Person_With_Details : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,10 +31,49 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Persons",
                 newName: "People");
 
+            migrationBuilder.AddColumn<int>(
+                name: "LikesCount",
+                table: "FilmsList",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<string>(
+                name: "PersonDepartment",
+                table: "People",
+                type: "character varying(100)",
+                maxLength: 100,
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.AddPrimaryKey(
                 name: "PK_People",
                 table: "People",
                 column: "Id");
+
+            migrationBuilder.CreateTable(
+                name: "FilmsListLikes",
+                columns: table => new
+                {
+                    FilmsListId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FilmsListLikes", x => new { x.FilmsListId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_FilmsListLikes_FilmsList_FilmsListId",
+                        column: x => x.FilmsListId,
+                        principalTable: "FilmsList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FilmsListLikes_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateTable(
                 name: "PersonsDetails",
@@ -43,10 +82,10 @@ namespace Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PersonId = table.Column<Guid>(type: "uuid", nullable: false),
                     LanguageCode = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
-                    Biography = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
+                    Biography = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: true),
                     Deathday = table.Column<DateOnly>(type: "date", nullable: true),
-                    Gender = table.Column<int>(type: "integer", nullable: false),
+                    Gender = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PlaceOfBirth = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     ProfilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
                 },
@@ -94,10 +133,14 @@ namespace Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_FilmsListLikes_UserId",
+                table: "FilmsListLikes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersonsDetails_PersonId",
                 table: "PersonsDetails",
-                column: "PersonId",
-                unique: true);
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersonsLocalizations_PersonId_LanguageCode",
@@ -139,6 +182,9 @@ namespace Infrastructure.Persistence.Migrations
                 table: "FilmDirectors");
 
             migrationBuilder.DropTable(
+                name: "FilmsListLikes");
+
+            migrationBuilder.DropTable(
                 name: "PersonsDetails");
 
             migrationBuilder.DropTable(
@@ -150,6 +196,14 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_People_ExternalId",
+                table: "People");
+
+            migrationBuilder.DropColumn(
+                name: "LikesCount",
+                table: "FilmsList");
+
+            migrationBuilder.DropColumn(
+                name: "PersonDepartment",
                 table: "People");
 
             migrationBuilder.RenameTable(

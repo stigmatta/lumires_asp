@@ -60,14 +60,15 @@ public record ExternalFilmShort(
 );
 
 [UsedImplicitly]
-public class ExternalPerson
-{
-    public int ExternalId { get; init; }
-    public required string Name { get; init; }
-    public string Biography { get; init; } = string.Empty;
-    public DateOnly? Birthday { get; init; }
-    public DateOnly? Deathday { get; init; }
-    public GenderType Gender { get; init; }
-    public string? PlaceOfBirth { get; init; }
-    public string? ProfilePath { get; init; }
-}
+public record ExternalPerson
+(
+     int ExternalId,
+     string Name,
+     string? Biography,
+     DateOnly? Birthday,
+     DateOnly? Deathday,
+     GenderType Gender,
+     string? PlaceOfBirth,
+     string? ProfilePath,
+     string? KnownForDepartment
+);

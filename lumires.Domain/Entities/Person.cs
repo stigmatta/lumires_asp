@@ -1,28 +1,32 @@
-﻿using lumires.Domain.Exceptions;
+﻿using lumires.Domain.Enums;
+using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
 
 public sealed class Person
 {
     private readonly List<PersonLocalization> _localizations = [];
+    private readonly List<PersonDetail> _details = [];
 
     private Person()
     {
     } // EF Core
 
-    public Person(int externalId)
+    public Person(int externalId, PersonDepartment department)
     {
         if (externalId <= 0)
             throw new DomainException("ExternalId must be positive", nameof(externalId));
 
         Id = Guid.CreateVersion7();
         ExternalId = externalId;
+        PersonDepartment = department;
     }
 
     public Guid Id { get; private set; }
     public int ExternalId { get; private set; }
+    public PersonDepartment PersonDepartment { get; private set; }
 
-    public PersonDetail? Detail { get; private set; }
+    public IReadOnlyCollection<PersonDetail> Details => _details.AsReadOnly();
 
     public IReadOnlyCollection<PersonLocalization> Localizations => _localizations.AsReadOnly();
 
@@ -40,9 +44,15 @@ public sealed class Person
         _localizations.Add(localization);
     }
 
-    internal void SetDetail(PersonDetail detail)
+    public void AddDetail(PersonDetail detail)
     {
-        Detail = detail ?? throw new ArgumentNullException(nameof(detail));
+        ArgumentNullException.ThrowIfNull(detail);
+        
+        if (_details.Any(l => l.LanguageCode == detail.LanguageCode))
+            throw new DomainException($"Localization for language '{detail.LanguageCode}' already exists");
+        
+        detail.SetPerson(this);
+        _details.Add(detail);        
     }
 
     public string GetName(string languageCode)

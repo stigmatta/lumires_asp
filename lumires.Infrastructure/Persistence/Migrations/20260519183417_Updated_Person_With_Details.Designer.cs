@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260518190831_Updated_People_With_Details")]
-    partial class Updated_People_With_Details
+    [Migration("20260519183417_Updated_Person_With_Details")]
+    partial class Updated_Person_With_Details
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -337,6 +337,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("ExternalId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("PersonDepartment")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ExternalId")
@@ -351,7 +356,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Biography")
-                        .IsRequired()
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
@@ -361,8 +365,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly?>("Deathday")
                         .HasColumnType("date");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("integer");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("LanguageCode")
                         .IsRequired()
@@ -382,8 +388,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId")
-                        .IsUnique();
+                    b.HasIndex("PersonId");
 
                     b.ToTable("PersonsDetails");
                 });
@@ -723,8 +728,8 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("lumires.Domain.Entities.PersonDetail", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Person", "Person")
-                        .WithOne("Detail")
-                        .HasForeignKey("lumires.Domain.Entities.PersonDetail", "PersonId")
+                        .WithMany("Details")
+                        .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -846,7 +851,7 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("lumires.Domain.Entities.Person", b =>
                 {
-                    b.Navigation("Detail");
+                    b.Navigation("Details");
 
                     b.Navigation("FilmCasts");
 

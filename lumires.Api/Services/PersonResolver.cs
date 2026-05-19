@@ -1,6 +1,10 @@
-﻿using lumires.Core.Abstractions.Data;
+﻿using FastEndpoints;
+using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Events.People;
+using lumires.Core.Mappers;
 using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Services;
@@ -8,7 +12,7 @@ namespace lumires.Api.Services;
 public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResolver> logger) : IPersonResolver, IResolver
 {
     public async Task<Dictionary<int, Person>> ResolveAsync(
-        IEnumerable<(int ExternalId, string Name)> persons,
+        IEnumerable<(int ExternalId, string Name, string department)> persons,
         string languageCode,
         CancellationToken ct = default)
     {
@@ -26,7 +30,7 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
         var result = new Dictionary<int, Person>();
         var personsToAdd = new List<Person>();
 
-        foreach (var (externalId, name) in personData)
+        foreach (var (externalId, name, department) in personData)
             if (existingPersons.TryGetValue(externalId, out var existing))
             {
                 if (existing.Localizations.All(l => l.LanguageCode != languageCode))
@@ -35,7 +39,7 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
             }
             else if (!result.ContainsKey(externalId))
             {
-                var newPerson = new Person(externalId);
+                var newPerson = new Person(externalId, PersonDepartmentMapper.FromString(department));
                 newPerson.AddLocalization(new PersonLocalization(languageCode, name));
 
                 personsToAdd.Add(newPerson);
@@ -48,6 +52,27 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
         LogPersonsAdded(logger, personsToAdd.Count);
 
         return result;
+    }
+    
+    public async Task<bool> EnsurePersonExistsAsync(
+        (int externalId, string Deparment) idAndDep,
+        string language,
+        CancellationToken ct)
+    {
+        var exists = await db.Persons
+            .AnyAsync(m => m.ExternalId == idAndDep.externalId && m.PersonDepartment == PersonDepartment.Directing, ct);
+
+        if (exists)
+            return true;
+
+        await new PersonReferencedEvent
+            {
+                IdsAndDepartments = [idAndDep],
+                Language = language
+            }
+            .PublishAsync(Mode.WaitForAll, ct);
+
+        return false;
     }
 
     [LoggerMessage(

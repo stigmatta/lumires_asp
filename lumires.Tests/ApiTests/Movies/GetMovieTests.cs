@@ -12,7 +12,6 @@ namespace Tests.ApiTests.Movies;
 
 internal sealed class GetMovieTests
 {
-    private FusionCache _cache = null!;
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
@@ -29,8 +28,6 @@ internal sealed class GetMovieTests
             .Setup(x => x.EnsureFilmExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _cache = new FusionCache(new FusionCacheOptions());
-
         _dbContextMock = new Mock<IAppDbContext>();
         _dbContextMock
             .Setup(x => x.Films)
@@ -39,18 +36,12 @@ internal sealed class GetMovieTests
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
-    [After(Test)]
-    public void TearDown()
-    {
-        _cache.Dispose();
-    }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null, IFilmResolver? resolver = null)
     {
         return Factory.Create<Endpoint>(
             _currentUserMock.Object,
             resolver ?? _resolverMock.Object,
-            _cache,
             dataAccess ?? _dataAccess);
     }
 
@@ -116,69 +107,5 @@ internal sealed class GetMovieTests
             x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
-
-    [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20, 105, "HBO")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20, 107, "HBO")]
-    public async Task GetMovie_Should_ReturnCachedResponse_On_SecondCall(
-        int id, string title, string dateStr, string poster,
-        float voteAverage, int voteCount, float popularity, int runtime, string productionCompany)
-    {
-        // Arrange
-        var releaseDate = DateOnly.Parse(dateStr);
-        var movie = new Film(id, releaseDate, poster, voteAverage, voteCount, popularity, runtime, productionCompany);
-        var movies = new List<Film> { movie }.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
-        var dataAccess = new DataAccess(_dbContextMock.Object);
-
-        var ep = CreateEndpoint(dataAccess);
-
-        // Act
-        await ep.HandleAsync(new Query(id), CancellationToken.None);
-        var firstResponse = ep.Response;
-
-        await ep.HandleAsync(new Query(id), CancellationToken.None);
-        var secondResponse = ep.Response;
-
-        // Assert
-        secondResponse.Should().BeEquivalentTo(firstResponse);
-        _resolverMock.Verify(
-            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
-            Times.Once); // второй раз из кэша
-    }
-
-    [Test]
-    [Arguments(2, "Inception", "2010-07-16", "/inc_poster.jpg", 4.5, 200, 20, 105, "HBO")]
-    [Arguments(500, "Interstellar", "2014-11-07", "/int_poster.jpg", 3.8, 350, 20, 107, "HBO")]
-    public async Task GetMovie_Should_CacheSeparately_Per_Language(
-        int id, string title, string dateStr, string poster,
-        float voteAverage, int voteCount, float popularity, int runtime, string productionCompany)
-    {
-        // Arrange
-        var releaseDate = DateOnly.Parse(dateStr);
-        var movie = new Film(id, releaseDate, poster, voteAverage, voteCount, popularity, runtime, productionCompany);
-        var movies = new List<Film> { movie }.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
-        var dataAccess = new DataAccess(_dbContextMock.Object);
-
-        var enUserMock = new Mock<ICurrentUserService>();
-        enUserMock.Setup(x => x.LangCulture).Returns("en");
-
-        var uaUserMock = new Mock<ICurrentUserService>();
-        uaUserMock.Setup(x => x.LangCulture).Returns("uk-UA");
-
-        var ep1 = Factory.Create<Endpoint>(enUserMock.Object, _resolverMock.Object, _cache, dataAccess);
-        var ep2 = Factory.Create<Endpoint>(uaUserMock.Object, _resolverMock.Object, _cache, dataAccess);
-
-        // Act
-        await ep1.HandleAsync(new Query(id), CancellationToken.None);
-        await ep1.HandleAsync(new Query(id), CancellationToken.None);
-        await ep2.HandleAsync(new Query(id), CancellationToken.None);
-        await ep2.HandleAsync(new Query(id), CancellationToken.None);
-
-        // Assert — resolver вызван дважды (по одному на язык)
-        _resolverMock.Verify(
-            x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
-            Times.Exactly(2));
-    }
+    
 }

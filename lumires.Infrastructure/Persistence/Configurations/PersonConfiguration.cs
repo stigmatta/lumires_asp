@@ -1,4 +1,5 @@
-﻿using lumires.Domain.Entities;
+﻿using lumires.Core.Constants;
+using lumires.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -35,10 +36,15 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
             .WithOne(pl => pl.Person)
             .HasForeignKey(pl => pl.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(p => p.Detail)
-            .WithOne(pd => pd.Person)
-            .HasForeignKey<PersonDetail>(pd => pd.PersonId)
+        
+        builder.HasMany(p => p.Details)
+            .WithOne(p => p.Person)
+            .HasForeignKey(p => p.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Property(x => x.PersonDepartment)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(StringLimits.Name);
     }
 }

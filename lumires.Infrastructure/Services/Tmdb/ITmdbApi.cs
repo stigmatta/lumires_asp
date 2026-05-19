@@ -1,4 +1,5 @@
-﻿using lumires.Core.Models;
+﻿using Infrastructure.Services.Tmdb.Models;
+using lumires.Core.Models;
 using Refit;
 
 namespace Infrastructure.Services.Tmdb;
@@ -50,4 +51,8 @@ public interface ITmdbApi
         [Query] string? language = "en-US",
         [Query] string sortBy = "popularity.desc",
         CancellationToken ct = default);
+
+    [Get("/person/{personId}")]
+    Task<ApiResponse<TmdbPersonDetailResponse>> GetPersonDetailsAsync(int personId, [AliasAs("language")] string lang,
+        CancellationToken ct);
 }
