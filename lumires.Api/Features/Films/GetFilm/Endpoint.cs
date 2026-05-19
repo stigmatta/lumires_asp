@@ -57,7 +57,6 @@ internal record PersonShortItem(
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     IFilmResolver filmResolver,
-    IFusionCache cache,
     DataAccess dataAccess)
     : Endpoint<Query, Response>
 {
@@ -71,27 +70,17 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = CacheKeys.FilmKey(query.Id, lang);
 
-        try
-        {
-            Response = await cache.GetOrSetAsync<Response>(
-                cacheKey,
-                async (_, token) =>
-                {
-                    await filmResolver.EnsureFilmExistsAsync(query.Id, lang, token);
+        await filmResolver.EnsureFilmExistsAsync(query.Id, lang, ct);
 
-                    return await dataAccess.GetFilmByIdAsync(query.Id, lang, token)
-                           ?? throw new ResultException(ResultStatus.NotFound, "Film not found");
-                },
-                options => options.SetDuration(CacheDuration.Medium)
-                    .SetFailSafe(true),
-                ct
-            );
-        }
-        catch (ResultException ex)
+        var response = await dataAccess.GetFilmByIdAsync(query.Id, lang, ct);
+
+        if (response is null)
         {
-            await HttpContext.SendErrorAsync(ex.Status, ct);
+            await Send.NotFoundAsync(ct);
+            return;
         }
+
+        await Send.OkAsync(response, ct);
     }
 }
