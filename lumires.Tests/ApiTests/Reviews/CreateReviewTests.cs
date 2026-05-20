@@ -31,7 +31,7 @@ internal sealed class CreateReviewTests
 
         var movies = new List<Film>
         {
-            new(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
+            new(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 200, "HBO")
         }.BuildMockDbSet();
 
         _dbContextMock
@@ -193,7 +193,7 @@ internal sealed class CreateReviewTests
 
     private Film SetupMovieExists()
     {
-        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
+        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 200, "HBO");
         var movies = new List<Film> { movie }.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
 

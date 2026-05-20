@@ -52,11 +52,9 @@ internal sealed partial class PersonReferencedEventHandler(
                 person = new Person(externalId, PersonDepartmentMapper.FromString(expectedDepartment));
                 db.Persons.Add(person);
             }
-        
+
             if (person!.Localizations.All(l => l.LanguageCode != command.Language))
-            {
                 person.AddLocalization(new PersonLocalization(command.Language, external.Name));
-            }
 
             if (person.Details.All(l => l.LanguageCode != command.Language))
             {
@@ -75,14 +73,12 @@ internal sealed partial class PersonReferencedEventHandler(
 
             await db.SaveChangesAsync(ct);
 
-            if (isNewPerson) 
-            {
+            if (isNewPerson)
                 await new PersonEnrichmentEvent
                 {
                     IdsAndDepartments = [(externalId, expectedDepartment)],
                     SkipLanguage = command.Language
                 }.PublishAsync(Mode.WaitForNone, ct);
-            }
         }
     }
 
@@ -97,6 +93,7 @@ internal sealed partial class PersonReferencedEventHandler(
     static partial void LogFailedImport(ILogger logger, int externalId);
 
     [LoggerMessage(EventId = 3, Level = LogLevel.Warning,
-        Message = "Person {ExternalId} has KnownForDepartment '{KnownFor}', but requested as '{Requested}'. Skipping (404 logic)")]
+        Message =
+            "Person {ExternalId} has KnownForDepartment '{KnownFor}', but requested as '{Requested}'. Skipping (404 logic)")]
     static partial void LogSkip(ILogger logger, int externalId, string? knownFor, string requested);
 }

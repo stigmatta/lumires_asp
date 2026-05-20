@@ -6,7 +6,6 @@ using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
 using MockQueryable.Moq;
 using Moq;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace Tests.ApiTests.Movies;
 
@@ -107,5 +106,4 @@ internal sealed class GetMovieTests
             x => x.EnsureFilmExistsAsync(id, It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
-    
 }

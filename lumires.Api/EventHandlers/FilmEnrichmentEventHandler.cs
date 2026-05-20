@@ -34,10 +34,10 @@ internal sealed partial class FilmEnrichmentEventHandler(
         {
             using var semaphore = new SemaphoreSlim(Parallelism.MaxParallelism);
 
-            var tasks = (from id in command.ExternalIds 
-                         from culture in cultures 
-                         select FetchFilmLocalization(id, culture, semaphore, ct))
-                        .ToList();
+            var tasks = (from id in command.ExternalIds
+                    from culture in cultures
+                    select FetchFilmLocalization(id, culture, semaphore, ct))
+                .ToList();
 
             var results = await Task.WhenAll(tasks);
 
@@ -73,25 +73,21 @@ internal sealed partial class FilmEnrichmentEventHandler(
             // 1. Локализации фильмов
             foreach (var (externalId, culture, data) in successful)
             {
-                if (!filmDict.TryGetValue(externalId, out var film)) 
+                if (!filmDict.TryGetValue(externalId, out var film))
                     continue;
 
                 if (film.Localizations.All(l => l.LanguageCode != culture))
-                {
                     film.AddLocalization(new FilmLocalization(
                         culture, data.Title, data.Overview, data.Tagline));
-                }
             }
 
             foreach (var (culture, externalId, name) in allPeople)
             {
-                if (!persons.TryGetValue(externalId, out var person)) 
+                if (!persons.TryGetValue(externalId, out var person))
                     continue;
 
                 if (person.Localizations.All(l => l.LanguageCode != culture))
-                {
                     person.AddLocalization(new PersonLocalization(culture, name));
-                }
             }
 
             await db.SaveChangesAsync(ct);
@@ -117,7 +113,7 @@ internal sealed partial class FilmEnrichmentEventHandler(
         }
     }
 
-    [LoggerMessage(EventId = 5, Level = LogLevel.Error, 
+    [LoggerMessage(EventId = 5, Level = LogLevel.Error,
         Message = "Unexpected error during film enrichment")]
     static partial void LogUnexpectedError(ILogger logger, Exception exception);
 }

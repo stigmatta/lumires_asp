@@ -60,15 +60,14 @@ public record ExternalFilmShort(
 );
 
 [UsedImplicitly]
-public record ExternalPerson
-(
-     int ExternalId,
-     string Name,
-     string? Biography,
-     DateOnly? Birthday,
-     DateOnly? Deathday,
-     GenderType Gender,
-     string? PlaceOfBirth,
-     string? ProfilePath,
-     string? KnownForDepartment
+public record ExternalPerson(
+    int ExternalId,
+    string Name,
+    string? Biography,
+    DateOnly? Birthday,
+    DateOnly? Deathday,
+    GenderType Gender,
+    string? PlaceOfBirth,
+    string? ProfilePath,
+    string? KnownForDepartment
 );

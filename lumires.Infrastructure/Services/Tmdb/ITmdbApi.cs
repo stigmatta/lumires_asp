@@ -44,7 +44,7 @@ public interface ITmdbApi
         [AliasAs("language")] string lang,
         CancellationToken ct,
         [AliasAs("page")] int page = 1);
-    
+
     [Get("/discover/movie")]
     Task<ApiResponse<PagedResponse<TmdbMovieShortResponse>>> GetTotalFilmsCountAsync(
         [Query] int page = 1,

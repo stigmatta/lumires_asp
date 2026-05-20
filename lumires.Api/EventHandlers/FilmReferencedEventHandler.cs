@@ -22,7 +22,7 @@ internal sealed partial class FilmReferencedEventHandler(
 {
     public async Task HandleAsync(FilmReferencedEvent command, CancellationToken ct)
     {
-        if (command.ExternalIds.Count == 0) 
+        if (command.ExternalIds.Count == 0)
             return;
 
         await using var scope = scopeFactory.CreateAsyncScope();
@@ -38,12 +38,12 @@ internal sealed partial class FilmReferencedEventHandler(
 
         var idsToFetch = distinctIds.Except(existingIds).ToList();
 
-        if (idsToFetch.Count == 0) 
+        if (idsToFetch.Count == 0)
             return;
 
         var filmsData = await FetchFilmsBatch(idsToFetch, command.Language, ct);
 
-        if (filmsData.Count == 0) 
+        if (filmsData.Count == 0)
             return;
 
         var allGenreIds = filmsData
@@ -59,26 +59,25 @@ internal sealed partial class FilmReferencedEventHandler(
         var genreDict = genres.ToDictionary(g => g.ExternalId);
 
         var allPeople = filmsData
-            .SelectMany(f => 
+            .SelectMany(f =>
                 f.TopCast.Select(c => (c.Id, c.Name, Department: PersonDepartment.Acting))
                     .Concat(f.Directors.Select(d => (d.Id, d.Name, Department: PersonDepartment.Directing))))
             .Distinct()
             .ToList();
 
         var personDict = await personResolver.ResolveAsync(
-            allPeople.Select(p => (p.Id, p.Name, PersonDepartmentMapper.ToString(p.Department))), 
-            command.Language, 
+            allPeople.Select(p => (p.Id, p.Name, PersonDepartmentMapper.ToString(p.Department))),
+            command.Language,
             ct);
 
         foreach (var data in filmsData)
-        {
             try
             {
                 var film = new Film(
                     data.ExternalId,
                     data.ReleaseDate,
                     data.PosterPath,
-                    data.VoteAverage,
+                    (float)Math.Round(data.VoteAverage / 2.0, 1),
                     data.VoteCount,
                     data.Popularity,
                     data.Runtime,
@@ -108,10 +107,10 @@ internal sealed partial class FilmReferencedEventHandler(
                     data.Tagline));
 
                 db.Films.Add(film);
-                
-                 await db.SaveChangesAsync(ct);
 
-                 
+                await db.SaveChangesAsync(ct);
+
+
                 await new FilmEnrichmentEvent
                 {
                     ExternalIds = [data.ExternalId],
@@ -122,15 +121,13 @@ internal sealed partial class FilmReferencedEventHandler(
             {
                 LogFilmProcessingFailed(logger, data.ExternalId, ex.Message);
             }
-        }
-
     }
 
     private async Task<List<ExternalFilm>> FetchFilmsBatch(List<int> ids, string language, CancellationToken ct)
     {
         using var semaphore = new SemaphoreSlim(Parallelism.MaxParallelism);
         var tasks = ids.Select(id => FetchSingleFilm(id, language, semaphore, ct))
-            .ToList();   
+            .ToList();
 
         try
         {
@@ -144,7 +141,8 @@ internal sealed partial class FilmReferencedEventHandler(
         }
     }
 
-    private async Task<ExternalFilm?> FetchSingleFilm(int id, string language, SemaphoreSlim semaphore, CancellationToken ct)
+    private async Task<ExternalFilm?> FetchSingleFilm(int id, string language, SemaphoreSlim semaphore,
+        CancellationToken ct)
     {
         await semaphore.WaitAsync(ct);
         try
@@ -168,8 +166,10 @@ internal sealed partial class FilmReferencedEventHandler(
 
     [LoggerMessage(EventId = 4, Level = LogLevel.Warning, Message = "Failed processing movie {ExternalId}: {Error}")]
     static partial void LogFilmProcessingFailed(ILogger logger, int externalId, string error);
-    
-    [LoggerMessage(EventId = 3, Level = LogLevel.Error, Message = "Error while fetching films batch: {Error}")]
+
+    [LoggerMessage(
+        EventId = 3,
+        Level = LogLevel.Error,
+        Message = "Error while fetching films batch.")]
     static partial void LogUnexpectedError(ILogger logger, Exception error);
-    
 }

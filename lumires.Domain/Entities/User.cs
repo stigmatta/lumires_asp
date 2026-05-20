@@ -33,8 +33,8 @@ public sealed partial class User
     }
 
     public Guid Id { get; private set; }
-    public string Username { get; private set; }
-    public string Email { get; private set; }
+    public string Username { get; private set; } = null!;
+    public string Email { get; private set; } = null!;
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
 

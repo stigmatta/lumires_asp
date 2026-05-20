@@ -1,7 +1,7 @@
-﻿namespace lumires.Api.Features.FilmPeople.GetDirector;
-
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+
+namespace lumires.Api.Features.FilmPeople.GetDirector;
 
 [UsedImplicitly]
 internal sealed class Summary : Summary<Endpoint>

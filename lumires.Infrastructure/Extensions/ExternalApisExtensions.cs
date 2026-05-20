@@ -61,5 +61,4 @@ internal static class ExternalApiExtensions
 
         return services;
     }
-    
 }

@@ -28,7 +28,7 @@ public sealed class UserNotification
     public Guid Id { get; }
     public Guid UserId { get; }
     public NotificationType Type { get; }
-    public string SenderId { get; }
+    public string SenderId { get; } = null!;
     public string? TargetId { get; }
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset? ReadAt { get; private set; }

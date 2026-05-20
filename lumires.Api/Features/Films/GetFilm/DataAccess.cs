@@ -64,7 +64,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     }
 
     private static string GetPersonNameWithFallback(
-        IReadOnlyCollection<PersonLocalization> localizations, 
+        IReadOnlyCollection<PersonLocalization> localizations,
         string requestedLang)
     {
         if (localizations.Count == 0)

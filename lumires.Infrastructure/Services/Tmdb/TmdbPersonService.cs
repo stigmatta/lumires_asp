@@ -10,9 +10,9 @@ namespace Infrastructure.Services.Tmdb;
 
 public sealed class TmdbPersonService(
     ITmdbApi tmdbApi) : IExternalPersonService
-{ 
+{
     private const string DefLang = LocalizationConstants.DefaultCulture;
-    
+
     public async Task<Result<ExternalPerson>> GetPersonDetailsAsync(int personId, string lang, CancellationToken ct)
     {
         var tmdbResponse = await tmdbApi.GetPersonDetailsAsync(personId, lang, ct);
@@ -39,10 +39,12 @@ public sealed class TmdbPersonService(
 
         return externalPerson with
         {
-            Biography = string.IsNullOrWhiteSpace(externalPerson.Biography) ? fallback.Biography : externalPerson.Biography,
+            Biography = string.IsNullOrWhiteSpace(externalPerson.Biography)
+                ? fallback.Biography
+                : externalPerson.Biography
         };
     }
-    
+
     private static ExternalPerson MapToDomain(TmdbPersonDetailResponse tmdb)
     {
         return new ExternalPerson(
@@ -57,5 +59,4 @@ public sealed class TmdbPersonService(
             tmdb.KnownForDepartment
         );
     }
-    
 }

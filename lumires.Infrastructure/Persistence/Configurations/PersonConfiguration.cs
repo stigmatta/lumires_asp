@@ -36,12 +36,12 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
             .WithOne(pl => pl.Person)
             .HasForeignKey(pl => pl.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasMany(p => p.Details)
             .WithOne(p => p.Person)
             .HasForeignKey(p => p.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.Property(x => x.PersonDepartment)
             .IsRequired()
             .HasConversion<string>()

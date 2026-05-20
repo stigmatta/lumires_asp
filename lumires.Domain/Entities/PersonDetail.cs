@@ -35,7 +35,7 @@ public sealed class PersonDetail
 
     public Guid Id { get; private set; }
     public Guid PersonId { get; private set; }
-    public string LanguageCode { get; private set; }
+    public string LanguageCode { get; private set; } = null!;
     public string? Biography { get; private set; }
     public DateOnly? Birthday { get; private set; }
     public DateOnly? Deathday { get; private set; }

@@ -86,6 +86,7 @@ internal static partial class AuthExtensions
                             LogMetadataParseError(logger, userId, ex);
                         }
 
+
                         return Task.CompletedTask;
                     },
                     OnMessageReceived = context =>
@@ -166,6 +167,7 @@ internal static partial class AuthExtensions
                             Detail = localizer["Error_Forbidden"],
                             Instance = context.Request.Path
                         };
+
 
                         var traceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
                         if (context.HttpContext.RequestServices

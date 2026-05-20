@@ -1,28 +1,12 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Enums.Common;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByFilm;
 
-internal enum FilterEnum
-{
-    All,
-    FiveStars,
-    FourStars,
-    ThreeStars,
-    UnderThree
-}
-
-internal enum SortEnum
-{
-    MostRecent,
-    MostLiked,
-    MostReplies,
-    HighestRated
-}
-
-internal enum CategoryEnum
+internal enum ContentFilterEnum
 {
     All,
     LongForm,
@@ -35,11 +19,9 @@ internal enum CategoryEnum
 internal sealed class Query
 {
     public int FilmId { get; init; }
-
-    public FilterEnum? Filter { get; init; } = FilterEnum.All;
-
-    public CategoryEnum? Category { get; init; } = CategoryEnum.All;
-    public SortEnum? SortBy { get; init; } = SortEnum.MostRecent;
+    public RatingEnum? Filter { get; init; } = RatingEnum.All;
+    public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
+    public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
 
     public int Page { get; init; } = 1;
 

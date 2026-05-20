@@ -1,10 +1,6 @@
-﻿using Ardalis.Result;
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Constants;
-using lumires.Domain.Exceptions;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace lumires.Api.Features.Films.GetFilm;
 

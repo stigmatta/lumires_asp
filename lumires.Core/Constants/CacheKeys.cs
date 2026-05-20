@@ -31,12 +31,12 @@ public static class CacheKeys
     {
         return $"genres:{lang}";
     }
-    
+
     public static string FilmsSummary()
     {
         return "films_summary";
     }
-    
+
     public static string ReviewsSummary()
     {
         return "reviews_summary";

@@ -47,7 +47,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public Film Film { get; private set; } = null!;
     public Guid FilmId { get; private set; }
     public string? Title { get; private set; }
-    public string Text { get; private set; }
+    public string Text { get; private set; } = null!;
     public decimal? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();

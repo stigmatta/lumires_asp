@@ -162,8 +162,8 @@ internal sealed class CreateCollectionTests
         dbContextMock.Setup(x => x.Films)
             .Returns(new List<Film>
             {
-                new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner"),
-                new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 150, "warner-2")
+                new(550, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 150, "warner"),
+                new(551, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 150, "warner-2")
             }.BuildMockDbSet().Object);
         dbContextMock.Setup(x => x.FilmsLists).Returns(collectionsDbSetMock.Object);
         dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);

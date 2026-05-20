@@ -34,7 +34,7 @@ public sealed class PersonDetailConfiguration : IEntityTypeConfiguration<PersonD
             .WithMany(p => p.Details)
             .HasForeignKey(p => p.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.Property(x => x.Gender)
             .IsRequired()
             .HasConversion<string>()

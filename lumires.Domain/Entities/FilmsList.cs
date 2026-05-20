@@ -29,7 +29,7 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
     }
 
     public Guid Id { get; }
-    public string Title { get; private set; }
+    public string Title { get; private set; } = null!;
     public string? Description { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset UpdatedAt { get; private set; }

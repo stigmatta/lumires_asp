@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using lumires.Core.Constants;
 using lumires.Core.Models;
 using lumires.Domain.Entities;
 
@@ -6,6 +7,8 @@ namespace Tests.ApiTests;
 
 internal static class Helpers
 {
+    internal const string DefLang = LocalizationConstants.DefaultCulture;
+
     internal static ExternalGenres CreateExternalGenres()
     {
         return new ExternalGenres(
@@ -26,7 +29,7 @@ internal static class Helpers
     internal static List<Review> CreateReviews(int count = 5, int externalMovieId = 1)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Film(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f,
+        var movie = new Film(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f,
             200, "HBO");
 
         var list = new List<Review>();
@@ -55,7 +58,7 @@ internal static class Helpers
         int commentsPerReview = 3)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO");
+        var movie = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 200, "HBO");
 
         var reviews = new List<Review>();
 
@@ -122,5 +125,64 @@ internal static class Helpers
         }
 
         return reviews;
+    }
+
+    public static List<Film> CreateFilms(int count)
+    {
+        return Enumerable.Range(1, count)
+            .Select(i => CreateFilm(DefLang, i, $"Film {i}", new DateOnly(2020 + i % 5, 1, 1), 5.0f - i * 0.1f, 50f))
+            .ToList();
+    }
+
+    public static List<Film> CreateFilmsWithGenres(IEnumerable<string> genreNames)
+    {
+        var film = CreateFilm(DefLang, 1, "Film 1", new DateOnly(2022, 1, 1), 4.0f, 30f);
+
+        foreach (var name in genreNames)
+        {
+            var genre = new Genre(Random.Shared.Next(1, 9999));
+            genre.AddLocalization(name, DefLang);
+            film.AddGenres([genre]);
+        }
+
+        return [film];
+    }
+
+    public static List<Film> CreateFilmsWithPopularity(IEnumerable<float> popularityValues)
+    {
+        return popularityValues
+            .Select((p, i) => CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), 4.0f, p))
+            .ToList();
+    }
+
+    public static List<Film> CreateFilmsWithPopularityAndRating(
+        IEnumerable<(float popularity, float voteAverage)> values)
+    {
+        return values
+            .Select((v, i) =>
+                CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), v.voteAverage, v.popularity))
+            .ToList();
+    }
+
+    public static List<Film> CreateFilmsWithVoteAverage(IEnumerable<float> ratings)
+    {
+        return ratings
+            .Select((r, i) => CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), r, 30f))
+            .ToList();
+    }
+
+    public static List<Film> CreateFilmsWithReleaseDates(IEnumerable<DateOnly> dates)
+    {
+        return dates
+            .Select((d, i) => CreateFilm(DefLang, i + 1, $"Film {i}", d, 4.0f, 30f))
+            .ToList();
+    }
+
+    private static Film CreateFilm(string lang, int externalId, string title, DateOnly releaseDate, float voteAverage,
+        float popularity)
+    {
+        var film = new Film(externalId, releaseDate, "/poster.jpg", voteAverage, 100, popularity, 120, "Studio");
+        film.AddLocalization(new FilmLocalization(DefLang, title, "Overview", "Tagline"));
+        return film;
     }
 }
