@@ -22,7 +22,7 @@ public sealed class GenreLocalization
     }
 
     public Guid Id { get; }
-    public string LanguageCode { get; }
+    public string LanguageCode { get; } = null!;
     public string Name { get; private set; } = null!;
 
     public Guid GenreId { get; private set; }

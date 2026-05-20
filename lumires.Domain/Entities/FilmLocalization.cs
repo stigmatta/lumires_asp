@@ -24,8 +24,8 @@ public sealed class FilmLocalization
     }
 
     public Guid Id { get; }
-    public string LanguageCode { get; }
-    public string Title { get; private set; }
+    public string LanguageCode { get; } = null!;
+    public string Title { get; private set; } = null!;
     public string? Description { get; private set; }
     public string? Tagline { get; private set; }
 

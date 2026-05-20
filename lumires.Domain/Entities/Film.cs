@@ -33,7 +33,7 @@ public sealed class Film
         if (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31))
             throw new DomainException("Invalid movie release date", nameof(releaseDate));
 
-        if (voteAverage is < 0 or > 10)
+        if (voteAverage is < 0 or > 5)
             throw new DomainException("Invalid average vote rating", nameof(voteAverage));
 
         if (voteCount < 0)
@@ -46,7 +46,7 @@ public sealed class Film
         ExternalId = externalId;
         ReleaseDate = releaseDate;
         PosterPath = posterPath;
-        VoteAverage = (float)Math.Round(voteAverage / 2.0, 1);
+        VoteAverage = voteAverage;
         VoteCount = voteCount;
         Popularity = popularity;
         BackdropPath = backdropPath;

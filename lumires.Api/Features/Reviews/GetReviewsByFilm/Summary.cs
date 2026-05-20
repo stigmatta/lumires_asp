@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Enums.Common;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByFilm;
 
@@ -21,8 +22,8 @@ internal sealed class Summary : Summary<Endpoint>
         ExampleRequest = new Query
         {
             FilmId = 550,
-            Filter = FilterEnum.All,
-            SortBy = SortEnum.MostRecent,
+            Filter = RatingEnum.All,
+            SortBy = ContentOrderEnum.MostRecent,
             Page = 1,
             PageSize = 5
         };

@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
+using lumires.Api.Enums.Common;
 using lumires.Api.Features.Reviews.GetReviewsByFilm;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
@@ -126,11 +127,11 @@ internal sealed class GetReviewsTests
         await ep.HandleAsync(new Query
         {
             FilmId = reviews.First().Film.ExternalId,
-            Filter = FilterEnum.FiveStars
+            Filter = RatingEnum.MoreThanFourHalf
         }, CancellationToken.None);
 
         // Assert
-        ep.Response.Results.Should().OnlyContain(x => x.Rating == 5m);
+        ep.Response.Results.Should().OnlyContain(x => x.Rating >= 4.5m && x.Rating <= 5m);
     }
 
     [Test]
@@ -146,7 +147,7 @@ internal sealed class GetReviewsTests
         await ep.HandleAsync(new Query
         {
             FilmId = reviews.First().Film.ExternalId,
-            SortBy = SortEnum.MostLiked
+            SortBy = ContentOrderEnum.MostLiked
         }, CancellationToken.None);
 
         // Assert
@@ -234,7 +235,7 @@ internal sealed class GetReviewsTests
         _dbContextMock.Setup(x => x.Films)
             .Returns(new List<Film>
             {
-                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 8.0f, 100, 50f, 200, "HBO")
+                new(movieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 200, "HBO")
             }.BuildMockDbSet().Object);
 
         _dataAccess = new DataAccess(_dbContextMock.Object);

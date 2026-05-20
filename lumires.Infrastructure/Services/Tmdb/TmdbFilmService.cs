@@ -492,7 +492,7 @@ public sealed class TmdbFilmService(
             en.Id,
             en.ReleaseDate,
             en.PosterPath,
-            en.VoteAverage,
+            (float)Math.Round(en.VoteAverage / 2.0, 1),
             en.VoteCount,
             en.Popularity,
             en.Runtime,

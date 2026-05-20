@@ -24,8 +24,8 @@ public sealed class PersonLocalization
     public Guid Id { get; private set; }
     public Guid PersonId { get; private set; }
 
-    public string LanguageCode { get; private set; }
-    public string Name { get; private set; }
+    public string LanguageCode { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
 
     public Person Person { get; private set; } = null!;
 

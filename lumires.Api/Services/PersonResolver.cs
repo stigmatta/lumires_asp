@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Services;
 
-public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResolver> logger) : IPersonResolver, IResolver
+public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResolver> logger)
+    : IPersonResolver, IResolver
 {
     public async Task<Dictionary<int, Person>> ResolveAsync(
         IEnumerable<(int ExternalId, string Name, string department)> persons,
@@ -65,7 +66,7 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
 
         return result;
     }
-    
+
     public async Task<bool> EnsurePersonExistsAsync(
         (int externalId, string Deparment) idAndDep,
         string language,

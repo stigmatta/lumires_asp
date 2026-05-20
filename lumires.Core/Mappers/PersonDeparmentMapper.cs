@@ -4,18 +4,23 @@ namespace lumires.Core.Mappers;
 
 public static class PersonDepartmentMapper
 {
-    public static PersonDepartment FromString(string? department) => department switch
+    public static PersonDepartment FromString(string? department)
     {
-        "Acting" => PersonDepartment.Acting,
-        "Directing" => PersonDepartment.Directing,
-        _ => PersonDepartment.Unknown
-    };
-    
-    public static string ToString(PersonDepartment? department) => department switch
-    {
-        PersonDepartment.Acting => "Acting",
-        PersonDepartment.Directing => "Directing",
-        PersonDepartment.Unknown => "Unknown"
-    };
+        return department switch
+        {
+            "Acting" => PersonDepartment.Acting,
+            "Directing" => PersonDepartment.Directing,
+            _ => PersonDepartment.Unknown
+        };
+    }
 
+    public static string ToString(PersonDepartment? department)
+    {
+        return department switch
+        {
+            PersonDepartment.Acting => "Acting",
+            PersonDepartment.Directing => "Directing",
+            _ => "Unknown"
+        };
+    }
 }

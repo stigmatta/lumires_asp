@@ -2,6 +2,7 @@
 using System.Reflection;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using lumires.Api.Features.Films.GetFilms;
 using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
@@ -68,6 +69,8 @@ public static class ApiRegistration
         });
         builder.Services.AddScoped<IFilmResolver, FilmResolver>();
         builder.Services.AddScoped<IPersonResolver, PersonResolver>();
+
+        builder.Services.AddScoped<IGetFilms, DataAccess>();
 
         return builder;
     }

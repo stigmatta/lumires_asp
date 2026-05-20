@@ -1,0 +1,86 @@
+﻿using System.Globalization;
+using System.Linq.Expressions;
+using LinqKit;
+using lumires.Api.Enums.Common;
+using lumires.Core.Constants;
+using lumires.Domain.Entities;
+
+namespace lumires.Api.Features.Films.GetFilms;
+
+internal static class CalcConsts
+{
+    internal const int PopularThreshold = 50;
+    internal const int NewReleaseDays = 30;
+    internal const int HiddenGemPopularity = 20;
+    internal const double HiddenGemVoteAvg = 3.8;
+}
+
+internal static class Specifications
+{
+    public static Expression<Func<Film, bool>> BuildFilter(Query req, string lang)
+    {
+        var filter = PredicateBuilder.New<Film>(true);
+
+        filter = filter.And(BuildRatingFilter(req));
+        filter = filter.And(BuildContentFilter(req));
+
+        if (!(req.Genres?.Length > 0)) return filter;
+
+        var selectedGenres = req.Genres
+            .Where(g => !string.IsNullOrWhiteSpace(g))
+            .Select(g =>
+                char.ToUpper(g[0], CultureInfo.InvariantCulture) + g[1..].ToLower(CultureInfo.InvariantCulture))
+            .ToList();
+
+        filter = filter.And(f =>
+            selectedGenres.All(selected =>
+                f.Genres.Any(g =>
+                    g.Localizations.Any(gl =>
+                        (gl.LanguageCode == lang || gl.LanguageCode == LocalizationConstants.DefaultCulture)
+                        && gl.Name == selected))));
+
+
+        return filter;
+    }
+
+    public static Func<IQueryable<Film>, IOrderedQueryable<Film>>? BuildSort(Query req)
+    {
+        return req.SortBy switch
+        {
+            FilmContentOrder.MostLiked => q => q.OrderByDescending(r => true), //TODO later
+            FilmContentOrder.MostReplies => q => q.OrderByDescending(r => r.Reviews.Count),
+            FilmContentOrder.MostRecent => q => q.OrderByDescending(r => r.ReleaseDate),
+            FilmContentOrder.HighestRated => q => q.OrderByDescending(r => r.VoteAverage),
+            FilmContentOrder.LeastRated => q => q.OrderBy(r => r.VoteAverage),
+            _ => null
+        };
+    }
+
+    private static Expression<Func<Film, bool>> BuildRatingFilter(Query req)
+    {
+        return req.Rating switch
+        {
+            RatingEnum.MoreThanFourHalf => f => f.VoteAverage >= 4.5 && f.VoteAverage < 5,
+            RatingEnum.FourStars => f => f.VoteAverage >= 4 && f.VoteAverage < 4.5,
+            RatingEnum.ThreeStars => f => f.VoteAverage >= 3 && f.VoteAverage < 4,
+            RatingEnum.UnderThree => f => f.VoteAverage < 3,
+            _ => f => true
+        };
+    }
+
+    private static Expression<Func<Film, bool>> BuildContentFilter(Query req)
+    {
+        return req.Content switch // TODO with movie log
+        {
+            FilmContentFilter.FirstWatches => f => f.Id != Guid.Empty, //TODO later
+            FilmContentFilter.Popular => f => f.Popularity >= CalcConsts.PopularThreshold,
+            FilmContentFilter.NewReleases => f =>
+                f.ReleaseDate >= DateOnly.FromDateTime(DateTime.UtcNow)
+                    .AddDays(-CalcConsts.NewReleaseDays),
+            FilmContentFilter.HiddenGems => f =>
+                f.Popularity <= CalcConsts.HiddenGemPopularity && f.VoteAverage > CalcConsts.HiddenGemVoteAvg,
+            FilmContentFilter.TopRated => f => f.VoteAverage > CalcConsts.HiddenGemVoteAvg,
+            _ => f => true
+        };
+    }
+}

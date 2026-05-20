@@ -5,8 +5,8 @@ namespace lumires.Domain.Entities;
 
 public sealed class Person
 {
-    private readonly List<PersonLocalization> _localizations = [];
     private readonly List<PersonDetail> _details = [];
+    private readonly List<PersonLocalization> _localizations = [];
 
     private Person()
     {
@@ -47,12 +47,12 @@ public sealed class Person
     public void AddDetail(PersonDetail detail)
     {
         ArgumentNullException.ThrowIfNull(detail);
-        
+
         if (_details.Any(l => l.LanguageCode == detail.LanguageCode))
             throw new DomainException($"Localization for language '{detail.LanguageCode}' already exists");
-        
+
         detail.SetPerson(this);
-        _details.Add(detail);        
+        _details.Add(detail);
     }
 
     public string GetName(string languageCode)

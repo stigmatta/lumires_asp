@@ -73,12 +73,10 @@ internal sealed partial class PersonEnrichmentEventHandler(
                 var data = item.Data;
 
                 if (person.Localizations.All(l => l.LanguageCode != culture))
-                {
                     person.AddLocalization(new PersonLocalization(culture, data.Name));
-                }
 
                 if (person.Details.Any(d => d.LanguageCode == culture)) continue;
-                
+
                 var detail = new PersonDetail(
                     person.Id,
                     culture,
@@ -125,7 +123,7 @@ internal sealed partial class PersonEnrichmentEventHandler(
                 .Where(x => x != default)
                 .ToList();
 
-            return filtered.Count == 0 ? null : filtered!;
+            return filtered.Count == 0 ? null : filtered;
         }
         catch (Exception)
         {

@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using LinqKit;
+using lumires.Api.Enums.Common;
 using lumires.Domain.Entities;
 
 namespace lumires.Api.Features.Reviews.GetReviewsByFilm;
@@ -9,24 +11,37 @@ internal static class Specifications
 
     public static Expression<Func<Review, bool>> BuildFilter(Query req)
     {
+        var filter = PredicateBuilder.New<Review>(true);
+
+        var ratingFilter = BuildRating(req);
+        filter = filter.And(ratingFilter);
+
+        var contentFilter = BuildCategory(req);
+        filter = filter.And(contentFilter);
+
+        return filter;
+    }
+
+    private static Expression<Func<Review, bool>> BuildRating(Query req)
+    {
         return req.Filter switch
         {
-            FilterEnum.FiveStars => r => r.Rating == 5m,
-            FilterEnum.FourStars => r => r.Rating >= 4m && r.Rating < 5m,
-            FilterEnum.ThreeStars => r => r.Rating >= 3m && r.Rating < 4m,
-            FilterEnum.UnderThree => r => r.Rating < 3m,
+            RatingEnum.MoreThanFourHalf => r => r.Rating >= 4.5m && r.Rating <= 5m,
+            RatingEnum.FourStars => r => r.Rating >= 4m && r.Rating < 4.5m,
+            RatingEnum.ThreeStars => r => r.Rating >= 3m && r.Rating < 4m,
+            RatingEnum.UnderThree => r => r.Rating < 3m,
             _ => r => true
         };
     }
 
-    public static Expression<Func<Review, bool>> BuildCategory(Query req)
+    private static Expression<Func<Review, bool>> BuildCategory(Query req)
     {
         return req.Category switch // TODO with movie log
         {
-            CategoryEnum.FirstWatches => r => r.Id != Guid.Empty, //TODO later
-            CategoryEnum.LongForm => r => r.Text.Length >= LongThreshold,
-            CategoryEnum.SpoilerFree => r => r.IsSpoilerFree == true,
-            CategoryEnum.FromFriends => r => r.Id != Guid.Empty, //TODO later
+            ContentFilterEnum.FirstWatches => r => r.Id != Guid.Empty, //TODO later
+            ContentFilterEnum.LongForm => r => r.Text.Length >= LongThreshold,
+            ContentFilterEnum.SpoilerFree => r => r.IsSpoilerFree == true,
+            ContentFilterEnum.FromFriends => r => r.Id != Guid.Empty, //TODO later
             _ => r => true
         };
     }
@@ -35,10 +50,10 @@ internal static class Specifications
     {
         return req.SortBy switch
         {
-            SortEnum.MostLiked => q => q.OrderByDescending(r => r.LikesCount),
-            SortEnum.MostReplies => q => q.OrderByDescending(r => r.ReviewComments.Count),
-            SortEnum.MostRecent => q => q.OrderByDescending(r => r.CreatedAt),
-            SortEnum.HighestRated => q => q.OrderByDescending(r => r.Rating),
+            ContentOrderEnum.MostLiked => q => q.OrderByDescending(r => r.LikesCount),
+            ContentOrderEnum.MostReplies => q => q.OrderByDescending(r => r.ReviewComments.Count),
+            ContentOrderEnum.MostRecent => q => q.OrderByDescending(r => r.CreatedAt),
+            ContentOrderEnum.HighestRated => q => q.OrderByDescending(r => r.Rating),
             _ => null
         };
     }

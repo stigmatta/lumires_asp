@@ -46,7 +46,8 @@ internal sealed class GetDirectorTests
         string biography, DateOnly birthday, DateOnly? deathday,
         GenderType gender, string placeOfBirth, string profilePath)
     {
-        var detail = new PersonDetail(person.Id, lang, biography, birthday, deathday, gender, placeOfBirth, profilePath);
+        var detail = new PersonDetail(person.Id, lang, biography, birthday, deathday, gender, placeOfBirth,
+            profilePath);
         detail.SetPerson(person);
         return detail;
     }
@@ -136,7 +137,8 @@ internal sealed class GetDirectorTests
         var person = new Person(externalId, PersonDepartment.Directing);
 
         var enDetail = CreateDetail(person, "en", biography + " EN", birthday, null, gender, placeOfBirth, profilePath);
-        var uaDetail = CreateDetail(person, "uk-UA", biography + " UA", birthday, null, gender, placeOfBirth, profilePath);
+        var uaDetail = CreateDetail(person, "uk-UA", biography + " UA", birthday, null, gender, placeOfBirth,
+            profilePath);
 
         _dbContextMock
             .Setup(x => x.PersonsDetails)
