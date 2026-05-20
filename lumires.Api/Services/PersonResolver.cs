@@ -31,20 +31,32 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
         var personsToAdd = new List<Person>();
 
         foreach (var (externalId, name, department) in personData)
+        {
             if (existingPersons.TryGetValue(externalId, out var existing))
             {
                 if (existing.Localizations.All(l => l.LanguageCode != languageCode))
                     existing.AddLocalization(new PersonLocalization(languageCode, name));
                 result[externalId] = existing;
+                continue;
             }
-            else if (!result.ContainsKey(externalId))
-            {
-                var newPerson = new Person(externalId, PersonDepartmentMapper.FromString(department));
-                newPerson.AddLocalization(new PersonLocalization(languageCode, name));
 
-                personsToAdd.Add(newPerson);
-                result[externalId] = newPerson;
+            if (result.ContainsKey(externalId))
+                continue;
+
+            var tracked = db.Persons.Local.FirstOrDefault(p => p.ExternalId == externalId);
+            if (tracked is not null)
+            {
+                if (tracked.Localizations.All(l => l.LanguageCode != languageCode))
+                    tracked.AddLocalization(new PersonLocalization(languageCode, name));
+                result[externalId] = tracked;
+                continue;
             }
+
+            var newPerson = new Person(externalId, PersonDepartmentMapper.FromString(department));
+            newPerson.AddLocalization(new PersonLocalization(languageCode, name));
+            personsToAdd.Add(newPerson);
+            result[externalId] = newPerson;
+        }
 
         if (personsToAdd.Count <= 0) return result;
 

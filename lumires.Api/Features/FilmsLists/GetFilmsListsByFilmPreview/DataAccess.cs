@@ -2,7 +2,7 @@
 using lumires.Core.Abstractions.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilm;
+namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilmPreview;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess

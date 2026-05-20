@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 
-namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilm;
+namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilmPreview;
 
 [UsedImplicitly]
 internal sealed class Summary : Summary<Endpoint>

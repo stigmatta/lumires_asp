@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using System.Text.Json;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
@@ -31,6 +32,12 @@ internal static class ExternalApiExtensions
         services.AddRefitClient<ITmdbApi>(refitSettings)
             .ConfigureHttpClient((sp, client) =>
                 client.BaseAddress = sp.GetRequiredService<IOptions<TmdbConfig>>().Value.BaseUrl)
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All,
+                PooledConnectionLifetime = TimeSpan.FromMinutes(15)
+            })
+            .SetHandlerLifetime(Timeout.InfiniteTimeSpan)
             .AddHttpMessageHandler<TmdbAuthHandler>()
             .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
         services.AddScoped<IExternalFilmService, TmdbFilmService>();
@@ -42,10 +49,17 @@ internal static class ExternalApiExtensions
         services.AddRefitClient<IWatchmodeApi>(refitSettings)
             .ConfigureHttpClient((sp, client) =>
                 client.BaseAddress = sp.GetRequiredService<IOptions<WatchmodeOptions>>().Value.BaseUrl)
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All,
+                PooledConnectionLifetime = TimeSpan.FromMinutes(15)
+            })
+            .SetHandlerLifetime(Timeout.InfiniteTimeSpan)
             .AddHttpMessageHandler<WatchmodeAuthHandler>()
             .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(2, _ => TimeSpan.FromSeconds(1)));
         services.AddScoped<IStreamingService, WatchmodeService>();
 
         return services;
     }
+    
 }

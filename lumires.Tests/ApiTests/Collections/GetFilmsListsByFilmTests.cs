@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using FluentAssertions;
-using lumires.Api.Features.FilmsLists.GetFilmsListsByFilm;
+using lumires.Api.Features.FilmsLists.GetFilmsListsByFilmPreview;
 using lumires.Core.Abstractions.Data;
 using lumires.Domain.Base;
 using lumires.Domain.Entities;

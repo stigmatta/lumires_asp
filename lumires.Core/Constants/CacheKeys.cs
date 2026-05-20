@@ -36,4 +36,9 @@ public static class CacheKeys
     {
         return "films_summary";
     }
+    
+    public static string ReviewsSummary()
+    {
+        return "reviews_summary";
+    }
 }
