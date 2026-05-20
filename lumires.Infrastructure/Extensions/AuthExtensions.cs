@@ -23,35 +23,27 @@ internal static partial class AuthExtensions
     {
         var projectUrl = config["Supabase:Url"]
                          ?? throw new InvalidOperationException("Supabase URL is missing!");
-
         var hubUrl = config["SignalR:HubUrl"];
-
-        var authUrl = $"{projectUrl.TrimEnd('/')}/auth/v1";
-        var jwksUrl = $"{authUrl}/.well-known/jwks.json";
-
-        var httpClient = new HttpClient();
-        var jwksJson = httpClient.GetStringAsync(jwksUrl).Result;
-        var jwks = new JsonWebKeySet(jwksJson);
 
         services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                options.Authority = $"{projectUrl.TrimEnd('/')}/auth/v1";
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = null,
+
                     ValidateIssuer = true,
-                    ValidIssuers = [authUrl, "http://127.0.0.1:54321/auth/v1"],
+                    ValidIssuer = $"{projectUrl.TrimEnd('/')}/auth/v1",
 
                     ValidateAudience = true,
                     ValidAudience = "authenticated",
 
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    RequireExpirationTime = true,
-
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKeys = jwks.GetSigningKeys()
+                    ClockSkew = TimeSpan.Zero
                 };
 
                 options.Events = new JwtBearerEvents
@@ -100,6 +92,7 @@ internal static partial class AuthExtensions
                     OnAuthenticationFailed = async context =>
                     {
                         if (context.Response.HasStarted) return;
+
 
                         var localizer = context.HttpContext.RequestServices
                             .GetRequiredService<IStringLocalizer<SharedResource>>();
@@ -179,6 +172,7 @@ internal static partial class AuthExtensions
                     }
                 };
             });
+
 
         services.AddAuthorizationBuilder()
             .AddPolicy(CustomPolicies.AdminOnly, policy =>
