@@ -27,6 +27,12 @@ public static class CacheKeys
         return $"this_week_recent_films:{lang}";
     }
 
+    public static string ThisWeekMostReviewedFilms(string lang)
+    {
+        return $"this_week_most_reviewed_films:{lang}";
+        
+    }
+
     public static string GenresList(string lang)
     {
         return $"genres:{lang}";

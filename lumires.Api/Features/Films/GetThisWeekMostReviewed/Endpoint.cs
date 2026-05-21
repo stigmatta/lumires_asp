@@ -4,30 +4,31 @@ using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace lumires.Api.Features.Films.GetThisWeekPopular;
+namespace lumires.Api.Features.Films.GetThisWeekMostReviewed;
 
 [UsedImplicitly]
-internal sealed record WeeklyPopularItem(
+internal sealed record WeeklyReviewedItem(
     int ExternalId,
     string Title,
-    int ReleaseYear,
-    int VoteCount,
+    string? Quote,
     string Slug,
-    string? TrailerUrl,
-    string? BackdropPath);
+    string? BackdropPath,
+    Guid ReviewerId,
+    string ReviewerName,
+    decimal? Rating);
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyList<WeeklyPopularItem> Items);
+internal sealed record Response(IReadOnlyList<WeeklyReviewedItem> Items);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     IFusionCache cache,
-    DataAccess dataAccess)
+    DataAccess db)
     : EndpointWithoutRequest<Response>
 {
     public override void Configure()
     {
-        Get("/films/popular/weekly");
+        Get("/films/most-reviewed/weekly");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }
@@ -35,16 +36,17 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        var cacheKey = CacheKeys.ThisWeekPopularFilms(lang);
+        var cacheKey = CacheKeys.ThisWeekMostReviewedFilms(lang);
 
         Response = await cache.GetOrSetAsync<Response>(
             cacheKey,
             async (_, token) =>
             {
-                var result = await dataAccess.GetThisWeekPopular(lang, token);
+                var result = await db.GetThisWeekMostReviewed(lang, token);
                 return result ?? new Response([]);
             },
-            options => options.SetDuration(CacheDuration.Long).SetFailSafe(true),
+            options => options.SetDuration(CacheDuration.Eternal)
+                .SetFailSafe(true),
             ct
         );
     }

@@ -127,12 +127,6 @@ internal static class Helpers
         return reviews;
     }
 
-    public static List<Film> CreateFilms(int count)
-    {
-        return Enumerable.Range(1, count)
-            .Select(i => CreateFilm(DefLang, i, $"Film {i}", new DateOnly(2020 + i % 5, 1, 1), 5.0f - i * 0.1f, 50f))
-            .ToList();
-    }
 
     public static List<Film> CreateFilmsWithGenres(IEnumerable<string> genreNames)
     {
@@ -147,6 +141,51 @@ internal static class Helpers
 
         return [film];
     }
+    
+    public static List<Film> CreateFilmsWithWeeklyReviews(IEnumerable<(int externalId, int reviewCount)> values)
+    {
+        return values
+            .Select(v => CreateFilmWithWeeklyReviews(v.externalId, $"film-{v.externalId}", v.reviewCount))
+            .ToList();
+    }
+
+    public static Film CreateFilmWithWeeklyReviews(int externalId, string slug, int reviewCount, bool thisWeek = true)
+    {
+        var film = CreateFilm(DefLang, externalId, $"Film {externalId}", new DateOnly(2022, 1, 1), 4.0f, 50f);
+
+        typeof(Film)
+            .GetProperty(nameof(Film.Slug))!
+            .SetValue(film, slug);
+
+        var reviews = new List<Review>();
+
+        for (var i = 0; i < reviewCount; i++)
+        {
+            var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+
+            var review = new Review(
+                user.Id,
+                film.Id,
+                $"Review title {i}",
+                $"Review text {i}",
+                4m,
+                false);
+
+            reviews.Add(review);
+            review.SetReviewer(user);
+            review.SetFilm(film);
+        }
+
+        var field = typeof(Film)
+            .GetField("_reviews", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        if (field is not null)
+            field.SetValue(film, reviews);
+        else
+            throw new Exception("Backing field '_reviews' not found");
+
+        return film;
+    }
 
     public static List<Film> CreateFilmsWithPopularity(IEnumerable<float> popularityValues)
     {
@@ -155,14 +194,6 @@ internal static class Helpers
             .ToList();
     }
 
-    public static List<Film> CreateFilmsWithPopularityAndRating(
-        IEnumerable<(float popularity, float voteAverage)> values)
-    {
-        return values
-            .Select((v, i) =>
-                CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), v.voteAverage, v.popularity))
-            .ToList();
-    }
 
     public static List<Film> CreateFilmsWithVoteAverage(IEnumerable<float> ratings)
     {

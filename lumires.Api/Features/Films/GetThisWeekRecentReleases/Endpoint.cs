@@ -19,12 +19,6 @@ internal sealed record WeeklyRecentItem(
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyList<WeeklyRecentItem> Items);
 
-[UsedImplicitly]
-internal sealed record LocalizationResponse(
-    string LanguageCode,
-    string Title
-);
-
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     IFusionCache cache,

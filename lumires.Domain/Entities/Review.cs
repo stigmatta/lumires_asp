@@ -61,4 +61,16 @@ public sealed class Review : LikeableEntity<ReviewLike>
     {
         return new ReviewLike { ReviewId = Id, UserId = userId };
     }
+    
+    public void SetReviewer(User reviewer)
+    {
+        Reviewer = reviewer ?? throw new ArgumentNullException(nameof(reviewer));
+        UserId = reviewer.Id;
+    }
+
+    public void SetFilm(Film film)
+    {
+        Film = film ?? throw new ArgumentNullException(nameof(film));
+        FilmId = film.Id;
+    }
 }
