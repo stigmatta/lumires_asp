@@ -11,7 +11,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
     {
     }
 
-    public Review(Guid userId, Guid filmId, string? title, string text, decimal? rating,
+    public Review(Guid userId, Guid filmId, string? title, string text, float? rating,
         bool isSpoilerFree)
     {
         Id = Guid.NewGuid();
@@ -29,7 +29,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
             if (rating is < 0 or > 5)
                 throw new DomainException("Rating must be between 0 and 5.", nameof(rating));
 
-            var remainder = rating % 0.5m;
+            var remainder = rating % 0.5f;
             if (remainder != 0)
                 throw new DomainException("Rating must be a multiple of 0.5 (e.g. 1, 1.5, 2, 2.5).", nameof(rating));
         }
@@ -48,7 +48,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public Guid FilmId { get; private set; }
     public string? Title { get; private set; }
     public string Text { get; private set; } = null!;
-    public decimal? Rating { get; private set; }
+    public float? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 

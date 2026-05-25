@@ -9,6 +9,7 @@ public sealed class Film
     private readonly List<Genre> _genres = [];
     private readonly List<FilmLocalization> _localizations = [];
     private readonly List<Review> _reviews = [];
+    private readonly List<UserFilmRating> _userRatings = [];
 
 
     private Film()
@@ -73,6 +74,7 @@ public sealed class Film
     public IReadOnlyCollection<FilmCast> Cast => _cast.AsReadOnly();
     public IReadOnlyCollection<FilmDirector> Directors => _directors.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
+    public IReadOnlyCollection<UserFilmRating> UserRatings => _userRatings.AsReadOnly();
 
 
     public void AddLocalization(FilmLocalization localization)

@@ -131,7 +131,7 @@ internal sealed class GetReviewsTests
         }, CancellationToken.None);
 
         // Assert
-        ep.Response.Results.Should().OnlyContain(x => x.Rating >= 4.5m && x.Rating <= 5m);
+        ep.Response.Results.Should().OnlyContain(x => x.Rating >= 4.5f && x.Rating <= 5f);
     }
 
     [Test]

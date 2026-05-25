@@ -64,8 +64,8 @@ internal sealed class GetMovieTests
     }
 
     [Test]
-    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 105, "HBO")]
-    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20, 168, "HBO")]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5f, 200, 20, 105, "HBO")]
+    [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8f, 350, 20, 168, "HBO")]
     public async Task GetMovie_Should_Be_200_When_FoundInDb(
         int externalId, string dateStr, string posterPath,
         float voteAverage, int voteCount, float popularity, int runtime, string productionCompany)

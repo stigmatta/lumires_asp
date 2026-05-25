@@ -28,7 +28,7 @@ internal class DataAccess(IAppDbContext db, IStringLocalizer<SharedResource> loc
                 .ToListAsync(ct);
 
             if (movieIds.Count != command.FilmIds.Count)
-                return Result.Invalid(new ValidationError(localizer["ValidationError_SomeMovies_WereNotFound"]));
+                return Result.Invalid(new ValidationError(localizer["ValidationError_SomeFilms_WereNotFound"]));
 
             foreach (var movie in movieIds)
                 collection.AddFilm(movie.Id);

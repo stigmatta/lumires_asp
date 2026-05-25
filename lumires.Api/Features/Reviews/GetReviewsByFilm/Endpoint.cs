@@ -35,7 +35,7 @@ internal sealed record ReviewItemResponse(
     string Username,
     string? AvatarUrl,
     int RepliesCount,
-    decimal? Rating,
+    float? Rating,
     string? Title,
     string Text,
     int LikesCount,

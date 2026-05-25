@@ -141,6 +141,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Рейтинг має бути від 0 до 5.
+        /// </summary>
+        internal static string RateMovie_ValidationError_Rating_Invalid {
+            get {
+                return ResourceManager.GetString("RateMovie_ValidationError_Rating_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Опис занадто великий.
         /// </summary>
         internal static string ValidationError_Description_TooLong {
@@ -152,9 +161,18 @@ namespace lumires.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Звернення до фільму некоректне.
         /// </summary>
-        internal static string ValidationError_MovieId_Invalid {
+        internal static string ValidationError_FilmId_Invalid {
             get {
-                return ResourceManager.GetString("ValidationError_MovieId_Invalid", resourceCulture);
+                return ResourceManager.GetString("ValidationError_FilmId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Рейтинг має бути від 0 до 5.
+        /// </summary>
+        internal static string ValidationError_Rating_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_Rating_Invalid", resourceCulture);
             }
         }
         
@@ -170,9 +188,9 @@ namespace lumires.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Деякі фільми не було знайдено.
         /// </summary>
-        internal static string ValidationError_SomeMovies_WereNotFound {
+        internal static string ValidationError_SomeFilms_WereNotFound {
             get {
-                return ResourceManager.GetString("ValidationError_SomeMovies_WereNotFound", resourceCulture);
+                return ResourceManager.GetString("ValidationError_SomeFilms_WereNotFound", resourceCulture);
             }
         }
         

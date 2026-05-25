@@ -24,7 +24,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
                 movie.ReleaseDate.Year,
-                movie.VoteCount,
+                movie.VoteCount + movie.UserRatings.Count,
                 movie.Slug,
                 movie.TrailerUrl,
                 movie.BackdropPath

@@ -70,7 +70,7 @@ internal sealed class CreateReviewCommentTests
     [Test]
     public async Task CreateReviewComment_Should_Be_201_When_Successfully_Created()
     {
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -85,7 +85,7 @@ internal sealed class CreateReviewCommentTests
     [Test]
     public async Task CreateReviewComment_Should_Return_Correct_Response()
     {
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -114,7 +114,7 @@ internal sealed class CreateReviewCommentTests
     [Test]
     public async Task CreateReviewComment_Should_Send_Notification_To_ReviewAuthor()
     {
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -132,7 +132,7 @@ internal sealed class CreateReviewCommentTests
     public async Task CreateReviewComment_Should_Send_Notification_To_Both_When_TargetedUserId_Provided()
     {
         var targetedUserId = Guid.NewGuid();
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -149,7 +149,7 @@ internal sealed class CreateReviewCommentTests
     [Test]
     public async Task CreateReviewComment_Should_Work_Without_TargetedUserId()
     {
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -168,7 +168,7 @@ internal sealed class CreateReviewCommentTests
         var expectedUserId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(expectedUserId);
 
-        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0m, false);
+        var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);

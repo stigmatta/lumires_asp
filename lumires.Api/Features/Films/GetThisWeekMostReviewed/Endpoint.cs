@@ -15,7 +15,7 @@ internal sealed record WeeklyReviewedItem(
     string? BackdropPath,
     Guid ReviewerId,
     string ReviewerName,
-    decimal? Rating);
+    float? Rating);
 
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyList<WeeklyReviewedItem> Items);

@@ -26,10 +26,10 @@ internal static class Specifications
     {
         return req.Filter switch
         {
-            RatingEnum.MoreThanFourHalf => r => r.Rating >= 4.5m && r.Rating <= 5m,
-            RatingEnum.FourStars => r => r.Rating >= 4m && r.Rating < 4.5m,
-            RatingEnum.ThreeStars => r => r.Rating >= 3m && r.Rating < 4m,
-            RatingEnum.UnderThree => r => r.Rating < 3m,
+            RatingEnum.MoreThanFourHalf => r => r.Rating >= 4.5f && r.Rating <= 5f,
+            RatingEnum.FourStars => r => r.Rating >= 4f && r.Rating < 4.5f,
+            RatingEnum.ThreeStars => r => r.Rating >= 3f && r.Rating < 4f,
+            RatingEnum.UnderThree => r => r.Rating < 3f,
             _ => r => true
         };
     }

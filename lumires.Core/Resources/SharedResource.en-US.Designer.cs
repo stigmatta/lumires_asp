@@ -159,6 +159,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rating should be from 0 to 5.
+        /// </summary>
+        internal static string ValidationError_Rating_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_Rating_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Review reference is invalid.
         /// </summary>
         internal static string ValidationError_ReviewId_Invalid {

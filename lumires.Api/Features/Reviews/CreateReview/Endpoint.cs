@@ -5,14 +5,14 @@ using lumires.Core.Abstractions.Services;
 namespace lumires.Api.Features.Reviews.CreateReview;
 
 [UsedImplicitly]
-internal sealed record Command(int FilmId, string? Title, string Text, decimal? Rating, bool IsSpoilerFree);
+internal sealed record Command(int FilmId, string? Title, string Text, float? Rating, bool IsSpoilerFree);
 
 [UsedImplicitly]
 internal sealed record Response(
     Guid Id,
     string? Title,
     string Text,
-    decimal? Rating,
+    float? Rating,
     DateOnly CreatedAt
 );
 

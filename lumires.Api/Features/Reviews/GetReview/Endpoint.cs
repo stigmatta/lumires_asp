@@ -13,7 +13,7 @@ internal sealed record Response(
     string Username,
     string? AvatarUrl,
     int RepliesCount,
-    decimal? Rating,
+    float? Rating,
     string? Title,
     string Text,
     int LikesCount,

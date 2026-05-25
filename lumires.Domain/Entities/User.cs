@@ -8,6 +8,7 @@ public sealed partial class User
     private readonly List<FilmsList> _filmsLists = [];
     private readonly List<ReviewComment> _reviewComments = [];
     private readonly List<Review> _reviews = [];
+    private readonly List<UserFilmRating> _filmRatings = [];
 
 
     private User()
@@ -41,7 +42,7 @@ public sealed partial class User
     public IReadOnlyCollection<FilmsList> FilmsLists => _filmsLists.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
-
+    public IReadOnlyCollection<UserFilmRating> FilmRatings => _filmRatings.AsReadOnly();
 
     public void SetAvatarUrl(string avatarUrl)
     {

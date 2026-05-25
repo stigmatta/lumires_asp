@@ -26,6 +26,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<PersonLocalization> PersonsLocalizations => Set<PersonLocalization>();
     public DbSet<PersonDetail> PersonsDetails => Set<PersonDetail>();
     public DbSet<FilmsListLike> FilmsListLikes => Set<FilmsListLike>();
+    public DbSet<UserFilmRating> UserFilmRatings => Set<UserFilmRating>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

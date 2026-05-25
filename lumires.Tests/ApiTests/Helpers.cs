@@ -37,7 +37,7 @@ internal static class Helpers
         for (var i = 0; i < count; i++)
         {
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
-            var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5m : 3.5m, true);
+            var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5f : 3.5f, true);
 
             typeof(Review)
                 .GetProperty(nameof(Review.Reviewer))!
@@ -168,7 +168,7 @@ internal static class Helpers
                 film.Id,
                 $"Review title {i}",
                 $"Review text {i}",
-                4m,
+                4f,
                 false);
 
             reviews.Add(review);

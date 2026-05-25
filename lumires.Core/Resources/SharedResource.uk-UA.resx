@@ -63,9 +63,6 @@
     <data name="ValidationError_Title_TooShort" xml:space="preserve">
         <value>Назва закоротка</value>
     </data>
-    <data name="ValidationError_MovieId_Invalid" xml:space="preserve">
-        <value>Звернення до фільму некоректне</value>
-    </data>
     <data name="ValidationError_ReviewId_Invalid" xml:space="preserve">
         <value>Звернення до відгуку некоректне</value>
     </data>
@@ -75,7 +72,16 @@
     <data name="ValidationError_UserId_Invalid" xml:space="preserve">
         <value>Звернення до користувача некоректне</value>
     </data>
-    <data name="ValidationError_SomeMovies_WereNotFound" xml:space="preserve">
+    <data name="ValidationError_FilmId_Invalid" xml:space="preserve">
+        <value>Звернення до фільму некоректне</value>
+    </data>
+    <data name="ValidationError_SomeFilms_WereNotFound" xml:space="preserve">
         <value>Деякі фільми не було знайдено</value>
+    </data>
+    <data name="RateMovie_ValidationError_Rating_Invalid" xml:space="preserve">
+        <value>Рейтинг має бути від 0 до 5</value>
+    </data>
+    <data name="ValidationError_Rating_Invalid" xml:space="preserve">
+        <value>Рейтинг має бути від 0 до 5</value>
     </data>
 </root>

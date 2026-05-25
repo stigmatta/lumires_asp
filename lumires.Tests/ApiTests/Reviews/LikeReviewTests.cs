@@ -61,7 +61,7 @@ public class LikeReviewTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0m, false);
+        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -80,7 +80,7 @@ public class LikeReviewTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0m, false);
+        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
@@ -100,7 +100,7 @@ public class LikeReviewTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0m, false);
+        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0f, false);
         review.ToggleLike(userId);
         SetupReviews([review]);
 
@@ -121,7 +121,7 @@ public class LikeReviewTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0m, false);
+        var review = new Review(userId, Guid.NewGuid(), null, "Text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
