@@ -366,10 +366,11 @@ public sealed class TmdbFilmService(
                 m.Id,
                 m.Title,
                 m.PosterPath,
-                m.ReleaseDate.Year,
+                m.ReleaseDate?.Year,
                 m.VoteAverage,
                 m.VoteCount,
-                m.Popularity
+                m.Popularity,
+                m.GenreIds
             ))
             .ToList();
 
@@ -504,7 +505,14 @@ public sealed class TmdbFilmService(
         film.AddGenres(genres);
         film.AddLocalization(new FilmLocalization(EnLang, en.Title, en.Overview, en.Tagline));
         film.AddLocalization(new FilmLocalization(UaLang, uk.Title, uk.Overview, uk.Tagline));
-        film.AddSlug(SlugExtensions.Slugify($"{en.Title}-{en.ReleaseDate.Year}"));
+        
+        var releaseYear = en.ReleaseDate?.Year;
+        var slug = SlugExtensions.Slugify(
+            releaseYear.HasValue 
+                ? $"{en.Title}-{releaseYear}" 
+                : en.Title
+        );
+        film.AddSlug(slug);
 
         foreach (var c in topCastData)
             if (personDict.TryGetValue(c.ExternalId, out var person))

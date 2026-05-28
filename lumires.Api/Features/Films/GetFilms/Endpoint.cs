@@ -40,7 +40,7 @@ internal sealed class Query
 internal sealed record FilmItemResponse(
     int Id,
     string Title,
-    int ReleaseYear,
+    int? ReleaseYear,
     string[] Genres,
     float VoteAverage,
     string? PosterPath

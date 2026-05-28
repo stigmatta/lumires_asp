@@ -22,7 +22,8 @@ internal static class ExternalApiExtensions
             ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                WriteIndented = true
+                WriteIndented = true,
+                Converters = { new EmptyStringDateOnlyConverter() }
             })
         };
 

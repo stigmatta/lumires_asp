@@ -90,9 +90,15 @@ internal sealed partial class FilmReferencedEventHandler(
                     .OfType<Genre>();
 
                 film.AddGenres(filmGenres);
+                
 
-                var slugifiedTitle = SlugExtensions.Slugify($"{data.Title}-{data.ReleaseDate.Year}");
-                film.AddSlug(slugifiedTitle);
+                var releaseYear = data.ReleaseDate?.Year;
+                var slug = SlugExtensions.Slugify(
+                    releaseYear.HasValue 
+                        ? $"{data.Title}-{releaseYear}" 
+                        : data.Title
+                );
+                film.AddSlug(slug);
 
                 foreach (var c in data.TopCast.Where(c => personDict.ContainsKey(c.Id)))
                     film.AddCast(new FilmCast(personDict[c.Id].Id, c.Character, c.Order));

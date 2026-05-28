@@ -30,7 +30,7 @@ internal class DataAccess(IAppDbContext db) : IGetFilms, IDataAccess
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
-                f.ReleaseDate.Year,
+                f.ReleaseDate.HasValue ? f.ReleaseDate.Value.Year : null,
                 f.Genres
                     .Select(g => g.Localizations
                         .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == LocalizationConstants.DefaultCulture)

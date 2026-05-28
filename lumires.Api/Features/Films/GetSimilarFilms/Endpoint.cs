@@ -1,8 +1,9 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Events.Films;
-using lumires.Core.Models;
+using lumires.Core.Helpers;
 
 namespace lumires.Api.Features.Films.GetSimilarFilms;
 
@@ -10,7 +11,22 @@ namespace lumires.Api.Features.Films.GetSimilarFilms;
 internal sealed record Query(int Id);
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyCollection<ExternalFilmShort> Films);
+internal sealed record GenreItem(
+    int Id,
+    string Name);
+
+[UsedImplicitly]
+internal sealed record SimilarFilmItem(
+    int ExternalId,
+    string? PosterPath,
+    string Title,
+    string Slug,
+    int? ReleaseYear,
+    GenreItem[] Genres,
+    float Rating);
+
+[UsedImplicitly]
+internal sealed record Response(IReadOnlyCollection<SimilarFilmItem> Films);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
@@ -25,42 +41,95 @@ internal sealed class Endpoint(
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(Query query, CancellationToken ct)
+     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
 
-        var response = await externalFilmService.GetSimilarFilmsAsync(query.Id, lang, ct);
+        var externalResults = await externalFilmService.GetSimilarFilmsAsync(query.Id, lang, ct);
 
-        if (!response.IsSuccess)
+        if (!externalResults.IsSuccess)
         {
-            await HttpContext.SendErrorAsync(response.Status, ct);
+            await HttpContext.SendErrorAsync(externalResults.Status, ct);
             return;
         }
 
-        var similarFilmsIds = response.Value.Select(x => x.ExternalId).ToArray();
-        if (similarFilmsIds.Length == 0)
+        var externalFilms = externalResults.Value;
+
+        if (externalFilms.Count == 0)
         {
             await Send.OkAsync(new Response([]), ct);
             return;
         }
 
-        var existingIds = await db.GetExistingFilms(similarFilmsIds, ct) ?? [];
-        var idsToEnrich = similarFilmsIds.Except(existingIds).ToList();
+        var similarFilmsIds = externalFilms.Select(x => x.ExternalId).ToArray();
 
-        await Send.OkAsync(new Response(response.Value), ct);
+        var existingFilmsDict = (await db.GetExistingFilms(similarFilmsIds, lang, ct))
+            ?.ToDictionary(x => x.Id) 
+            ?? [];
 
-        if (idsToEnrich.Count == 0) return;
+        var allGenresDict = await db.GetGenresDictionaryAsync(lang, ct);
 
-        await new FilmReferencedEvent
+        var films = externalFilms.Select(external =>
         {
-            ExternalIds = [..idsToEnrich],
-            Language = lang
-        }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
+            if (existingFilmsDict.TryGetValue(external.ExternalId, out var local))
+            {
+                var (rating, _) = CalculateFilmRating.Handle(
+                    externalRating: external.VoteAverage,
+                    externalVoteCount: external.VoteCount,
+                    internalRating: local.VoteAverage,
+                    internalVoteCount: local.VoteCount
+                );
 
-        await new FilmEnrichmentEvent
+                return new SimilarFilmItem(
+                    ExternalId: external.ExternalId,
+                    PosterPath: external.PosterPath,
+                    Title: local.Title,
+                    Slug: local.Slug,
+                    ReleaseYear: local.ReleaseYear,
+                    Genres: local.Genres,
+                    Rating: rating
+                );
+            }
+
+            var slug = SlugExtensions.Slugify($"{external.Title}-{external.ReleaseYear}");
+
+            var genres = external.GenreIds.Select(id =>
+                    allGenresDict.TryGetValue(id, out var genre)
+                        ? genre
+                        : new GenreItem(id, $"Unknown ({id})"))
+                .ToArray();
+
+            return new SimilarFilmItem(
+                ExternalId: external.ExternalId,
+                PosterPath: external.PosterPath,
+                Title: external.Title,
+                Slug: slug,
+                ReleaseYear: external.ReleaseYear,
+                Genres: genres,
+                Rating: external.VoteAverage
+            );
+        }).ToList();
+
+        await Send.OkAsync(new Response(films), ct);
+
+        var idsToEnrich = externalFilms
+            .Where(x => !existingFilmsDict.ContainsKey(x.ExternalId))
+            .Select(x => x.ExternalId)
+            .ToList();
+
+        if (idsToEnrich.Count > 0)
         {
-            ExternalIds = [..idsToEnrich],
-            SkipLanguage = lang
-        }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
+            await new FilmReferencedEvent 
+            { 
+                ExternalIds = [..idsToEnrich], 
+                Language = lang 
+            }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
+
+            await new FilmEnrichmentEvent 
+            { 
+                ExternalIds = [..idsToEnrich], 
+                SkipLanguage = lang 
+            }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
+        }
     }
 }

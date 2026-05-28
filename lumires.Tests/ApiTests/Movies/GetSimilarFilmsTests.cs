@@ -30,6 +30,10 @@ internal sealed class GetSimilarFilmsTests
         _dbContextMock
             .Setup(x => x.Films)
             .Returns(new List<Film>().BuildMockDbSet().Object);
+        
+        _dbContextMock
+            .Setup(x => x.Genres)
+            .Returns(new List<Genre>().BuildMockDbSet().Object);
 
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
@@ -99,16 +103,16 @@ internal sealed class GetSimilarFilmsTests
 
 
     [Test]
-    [Arguments(42, 1, "/back1.jpg", "/poster1.jpg", 2020, 7.5f, 351, 25f)]
-    [Arguments(550, 2, "/back2.jpg", "/poster2.jpg", 2018, 8.1f, 228, 21f)]
+    [Arguments(42, 1, "/back1.jpg", "/poster1.jpg", 2020, 7.5f, 351, 25f, 2)]
+    [Arguments(550, 2, "/back2.jpg", "/poster2.jpg", 2018, 8.1f, 228, 21f, 4)]
     public async Task GetSimilarFilms_Should_Be_200_WhenServiceSucceeds(
         int queryId, int externalId, string backdropPath, string posterPath,
-        int releaseYear, float voteAverage, int voteCount, float popularity)
+        int releaseYear, float voteAverage, int voteCount, float popularity, int[] genreIds)
     {
         // Arrange
         var films = new List<ExternalFilmShort>
         {
-            new(externalId, $"Film {externalId}", posterPath, releaseYear, voteAverage, voteCount, popularity)
+            new(externalId, $"Film {externalId}", posterPath, releaseYear, voteAverage, voteCount, popularity, genreIds)
         };
 
         _externalFilmServiceMock
@@ -137,7 +141,7 @@ internal sealed class GetSimilarFilmsTests
     {
         // Arrange
         var films = Enumerable.Range(1, filmCount)
-            .Select(i => new ExternalFilmShort(i, $"Film {i}", null, 1995, 7f, 23, 25))
+            .Select(i => new ExternalFilmShort(i, $"Film {i}", null, 1995, 7f, 23, 25, [2,5]))
             .ToList();
 
         _externalFilmServiceMock
@@ -183,9 +187,9 @@ internal sealed class GetSimilarFilmsTests
         // Arrange
         var films = new List<ExternalFilmShort>
         {
-            new(10, "Film A", null, 2005, 8, 27, 20),
-            new(20, "Film B", null, 1999, 8, 27, 20),
-            new(30, "Film C", null, 2003, 8, 27, 20)
+            new(10, "Film A", null, 2005, 8, 27, 20, [2,5]),
+            new(20, "Film B", null, 1999, 8, 27, 20, [2,5]),
+            new(30, "Film C", null, 2003, 8, 27, 20, [2,5])
         };
 
         _externalFilmServiceMock
@@ -221,12 +225,12 @@ internal sealed class GetSimilarFilmsTests
     [Test]
     public async Task GetSimilarFilms_Should_OnlyEnrich_FilmsNotAlreadyInDb()
     {
-        // Arrange 
+        // Arrange
         var films = new List<ExternalFilmShort>
         {
-            new(10, "Existing A", null, 1952, 8, 25, 20),
-            new(20, "Existing B", null, 1932, 8, 25, 63),
-            new(30, "New Film", null, 2004, 8, 25, 12)
+            new(10, "Existing A", null, 1952, 8, 25, 20, [3,8]),
+            new(20, "Existing B", null, 1932, 8, 25, 63, [3,8]),
+            new(30, "New Film", null, 2004, 8, 25, 12, [3,8])
         };
 
         _externalFilmServiceMock

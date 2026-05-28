@@ -16,7 +16,7 @@ public sealed class Film
     {
     }
 
-    public Film(int externalId, DateOnly releaseDate, string? posterPath, float voteAverage,
+    public Film(int externalId, DateOnly? releaseDate, string? posterPath, float voteAverage,
         int voteCount, float popularity, int runtime, string productionCompany, string? backdropPath = null,
         string? trailerUrl = null)
         : this(Guid.CreateVersion7(), externalId, releaseDate, posterPath, voteAverage, voteCount, popularity,
@@ -24,7 +24,7 @@ public sealed class Film
     {
     }
 
-    public Film(Guid id, int externalId, DateOnly releaseDate, string? posterPath, float voteAverage,
+    public Film(Guid id, int externalId, DateOnly? releaseDate, string? posterPath, float voteAverage,
         int voteCount, float popularity, int runtime, string productionCompany, string? backdropPath = null,
         string? trailerUrl = null)
     {
@@ -59,7 +59,7 @@ public sealed class Film
     public Guid Id { get; }
     public int ExternalId { get; }
     public string Slug { get; private set; } = null!;
-    public DateOnly ReleaseDate { get; private set; }
+    public DateOnly? ReleaseDate { get; private set; }
     public string? PosterPath { get; private set; }
     public string? BackdropPath { get; private set; }
     public string? TrailerUrl { get; private set; }

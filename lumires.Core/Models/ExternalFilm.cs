@@ -15,7 +15,7 @@ public record ExternalFilm(
     int Runtime,
     string ProductionCompany,
     string? BackdropPath,
-    DateOnly ReleaseDate,
+    DateOnly? ReleaseDate,
     string? TrailerUrl,
     string? Tagline,
     ExternalGenres Genres,
@@ -53,10 +53,11 @@ public record ExternalFilmShort(
     int ExternalId,
     string Title,
     string? PosterPath,
-    int ReleaseYear,
+    int? ReleaseYear, // if null = unreleased
     float VoteAverage,
     int VoteCount,
-    float Popularity
+    float Popularity,
+    int[] GenreIds
 );
 
 [UsedImplicitly]

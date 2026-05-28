@@ -13,7 +13,7 @@ public sealed record TmdbMovieResponse
     public int VoteCount { get; init; }
     public float Popularity { get; init; }
     public string? BackdropPath { get; init; }
-    public DateOnly ReleaseDate { get; init; }
+    public DateOnly? ReleaseDate { get; init; }
     public int Runtime { get; init; }
     public string Tagline { get; init; } = string.Empty;
     public VideoResponse? Videos { get; init; }
@@ -43,9 +43,10 @@ public sealed record TmdbMovieShortResponse
     public string Title { get; init; } = string.Empty;
     public float VoteAverage { get; init; }
     public int VoteCount { get; init; }
-    public DateOnly ReleaseDate { get; init; }
+    public DateOnly? ReleaseDate { get; init; }
     public string? PosterPath { get; init; }
     public float Popularity { get; init; }
+    public int[] GenreIds { get; init; } = [];
 }
 
 [UsedImplicitly]

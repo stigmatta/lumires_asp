@@ -30,7 +30,7 @@ internal sealed record GenresResponse(
 [UsedImplicitly]
 internal sealed record Response(
     int Id,
-    DateOnly ReleaseDate,
+    DateOnly? ReleaseDate,
     string? TrailerUrl,
     string? PosterPath,
     string? BackdropPath,

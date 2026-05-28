@@ -11,7 +11,7 @@ internal sealed record WeeklyRecentItem(
     int ExternalId,
     string Title,
     int VoteCount,
-    int ReleaseYear,
+    int? ReleaseYear,
     string Slug,
     string? TrailerUrl,
     string? BackdropPath);
