@@ -11,7 +11,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId, bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
-        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+        CreatedAt = DateTime.UtcNow;
 
         UserId = commentatorId;
         ReviewId = reviewId;
@@ -23,8 +23,8 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
 
 
     public Guid Id { get; }
-    public DateOnly CreatedAt { get; }
-    public DateOnly? UpdatedAt { get; private set; }
+    public DateTime CreatedAt { get; }
+    public DateTime? UpdatedAt { get; private set; }
     public User Commentator { get; private set; } = null!;
     public Guid UserId { get; private set; }
 

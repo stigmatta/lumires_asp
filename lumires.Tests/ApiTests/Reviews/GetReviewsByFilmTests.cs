@@ -13,7 +13,7 @@ using Moq;
 
 namespace Tests.ApiTests.Reviews;
 
-internal sealed class GetReviewsTests
+internal sealed class GetReviewsByFilmTests
 {
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;

@@ -11,6 +11,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     internal async Task<Response?> GetReviewByIdAsync(Query query, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
+        
         return await db.Reviews
             .Where(x => x.Id == query.ReviewId)
             .Select(x => new Response(

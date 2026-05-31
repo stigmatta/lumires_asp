@@ -14,7 +14,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     internal async Task<Response?> GetPopularReviewsBySpan(int daySpan, string lang, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        var startDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-daySpan));
+        var startDate = DateTime.UtcNow.AddDays(-daySpan);
         
         var items = await db.Reviews
             .AsNoTracking()

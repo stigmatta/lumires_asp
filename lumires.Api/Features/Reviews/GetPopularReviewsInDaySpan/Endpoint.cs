@@ -28,7 +28,7 @@ internal sealed record PopularReviewItem(
     string Text,
     Guid UserId,
     string Username,
-    DateOnly CreatedAt,
+    DateTime CreatedAt,
     float? Rating,
     int LikesCount,
     int RepliesCount,

@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Api.Enums.Common;
+using lumires.Api.Features.Reviews.Common;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
 
@@ -22,30 +23,12 @@ internal sealed class Query
     public RatingEnum? Filter { get; init; } = RatingEnum.All;
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
-
     public int Page { get; init; } = 1;
-
     public int PageSize { get; init; } = 5;
 }
 
-[UsedImplicitly]
-internal sealed record ReviewItemResponse(
-    Guid Id,
-    Guid UserId,
-    string Username,
-    string? AvatarUrl,
-    int RepliesCount,
-    float? Rating,
-    string? Title,
-    string Text,
-    int LikesCount,
-    DateOnly CreatedAt,
-    bool IsLikedByMe,
-    bool IsSpoilerFree
-);
-
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService, IFilmResolver filmResolver)
-    : Endpoint<Query, PagedResponse<ReviewItemResponse>>
+    : Endpoint<Query, PagedResponse<CommonReviewResponse>>
 {
     public override void Configure()
     {
@@ -69,7 +52,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
 
         if (!wasExisting)
         {
-            var emptyPaged = new PagedResponse<ReviewItemResponse>([], 0, 1, query.PageSize);
+            var emptyPaged = new PagedResponse<CommonReviewResponse>([], 0, 1, query.PageSize);
             await Send.OkAsync(emptyPaged, ct);
             return;
         }
@@ -77,7 +60,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var response = await db.GetReviewsAsync(query, userId, ct);
         var count = await db.GetReviewsCountAsync(query, ct);
 
-        var paged = new PagedResponse<ReviewItemResponse>(
+        var paged = new PagedResponse<CommonReviewResponse>(
             response,
             count,
             query.Page,

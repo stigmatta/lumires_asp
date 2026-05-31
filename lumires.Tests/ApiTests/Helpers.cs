@@ -130,12 +130,15 @@ internal static class Helpers
     }
 
     internal static List<Review> CreatePopularReviews(
+        int? releaseYear,
         int count = 5,
         int daysOld = 1,
-        bool spoilerFree = true,
-        int? releaseYear = 2026)
+        bool spoilerFree = true)
     {
-        var film = CreatePopularFilm(new DateOnly(releaseYear ?? 2026, 5, 31));
+        var film = CreatePopularFilm(releaseYear.HasValue
+            ? new DateOnly(releaseYear.Value, 5, 31)
+            : null);
+        
         var list = new List<Review>();
 
         for (var i = 0; i < count; i++)
@@ -153,7 +156,7 @@ internal static class Helpers
             review.SetReviewer(user);
             review.SetFilm(film);
         
-            review.SetCreatedAt(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-daysOld)));
+            review.SetCreatedAt(DateTime.UtcNow.AddDays(-daysOld));
         
             review.ToggleLike(user.Id);
 
@@ -162,32 +165,77 @@ internal static class Helpers
 
         return list;
     }
-
-    internal static List<Review> CreatePopularReviewsLikedBy(Guid userId, int count = 3)
+    
+    internal static List<Review> CreateTrendingReviews(
+        int count = 5,
+        int daysOld = 1,
+        bool withTitle = true)
     {
-        var film = CreatePopularFilm(new DateOnly(2020, 1, 1));
+        var film = CreatePopularFilm(new DateOnly(2020, 6, 15));
         var list = new List<Review>();
-
+ 
         for (var i = 0; i < count; i++)
         {
-            var reviewer = new User(Guid.NewGuid(), $"reviewer{i}", $"reviewer{i}@gmail.com");
-
-            var review = new Review(reviewer.Id, film.Id, $"Review Title {i}", $"Review Text {i}", 4f);
-
-            review.SetReviewer(reviewer);
+            var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+ 
+            var review = new Review(
+                user.Id,
+                film.Id,
+                withTitle ? $"Review Title {i}" : null,
+                $"Review Text {i}",
+                4.5f);
+ 
+            review.SetReviewer(user);
             review.SetFilm(film);
-            review.SetCreatedAt(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)));
-            review.ToggleLike(reviewer.Id);
-
-
+            review.SetCreatedAt(DateTime.UtcNow.AddDays(-daysOld));
+ 
             list.Add(review);
         }
+ 
+        return list;
+    }
+    
+    internal static List<Review> CreateTrendingReviewsWithEngagement(
+        IEnumerable<(int likesCount, int commentsCount)> scores)
+    {
+        var film = CreatePopularFilm(new DateOnly(2020, 6, 15));
+        var list = new List<Review>();
+     
+        foreach (var (likesCount, commentsCount) in scores)
+        {
+            var score = likesCount + commentsCount * 2;
+            var user = new User(Guid.NewGuid(), $"user_score{score}", $"user_score{score}@gmail.com");
+     
+            var review = new Review(
+                user.Id,
+                film.Id,
+                $"Title score {score}",
+                $"Text score {score}",
+                4f);
+     
+            review.SetReviewer(user);
+            review.SetFilm(film);
+            review.SetCreatedAt(DateTime.UtcNow.AddDays(-1));
+     
+            var comments = Enumerable
+                .Range(0, commentsCount)
+                .Select(_ => new ReviewComment(Guid.NewGuid(), review.Id, "comment", Guid.NewGuid()))
+                .ToList();
 
+            foreach (var comment in comments)
+            {
+                review.AddComment(comment);
+            }
+     
+            list.Add(review);
+        }
+     
         return list;
     }
 
     private static Film CreatePopularFilm(DateOnly? releaseDate)
     {
+        
         var film = new Film(
             Random.Shared.Next(1, 9999),
             releaseDate,

@@ -31,7 +31,7 @@ public sealed class Film
         if (externalId <= 0)
             throw new DomainException("ExternalId must be positive", nameof(externalId));
 
-        if (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31))
+        if (releaseDate.HasValue && (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31)))
             throw new DomainException("Invalid movie release date", nameof(releaseDate));
 
         if (voteAverage is < 0 or > 5)

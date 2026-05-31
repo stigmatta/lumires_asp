@@ -15,7 +15,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
         bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
-        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+        CreatedAt = DateTime.UtcNow;
 
         UserId = userId;
         FilmId = filmId;
@@ -39,8 +39,8 @@ public sealed class Review : LikeableEntity<ReviewLike>
 
 
     public Guid Id { get; }
-    public DateOnly CreatedAt { get; private set; }
-    public DateOnly? UpdatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
     public User Reviewer { get; private set; } = null!;
     public Guid UserId { get; private set; }
     public Film Film { get; private set; } = null!;
@@ -81,7 +81,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
         _reviewComments.Add(comment);
     }
 
-    public void SetCreatedAt(DateOnly createdAt)
+    public void SetCreatedAt(DateTime createdAt)
     {
         CreatedAt = createdAt;
     } 

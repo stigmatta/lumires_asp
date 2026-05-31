@@ -76,7 +76,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Return_200_With_Data()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(3);
+        var reviews = Helpers.CreatePopularReviews(2025, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -94,7 +94,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Exclude_Reviews_Outside_DaySpan()
     {
         // Arrange
-        var oldReviews = Helpers.CreatePopularReviews(5, 30);
+        var oldReviews = Helpers.CreatePopularReviews(2026, 5, 30);
         SetupReviews(oldReviews);
 
         var ep = CreateEndpoint();
@@ -110,8 +110,8 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Only_Include_Reviews_Within_DaySpan()
     {
         // Arrange
-        var recentReviews = Helpers.CreatePopularReviews(3, 3);
-        var oldReviews = Helpers.CreatePopularReviews(3, 30);
+        var recentReviews = Helpers.CreatePopularReviews(2025,3, 3);
+        var oldReviews = Helpers.CreatePopularReviews(2025, 3, 30);
         SetupReviews([..recentReviews, ..oldReviews]);
 
         var ep = CreateEndpoint();
@@ -120,7 +120,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
         await ep.HandleAsync(new Query(7), CancellationToken.None);
 
         // Assert
-        var cutoff = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7));
+        var cutoff = DateTime.UtcNow.AddDays(-7);
         ep.Response.Items.Should().OnlyContain(x => x.CreatedAt >= cutoff);
     }
 
@@ -129,8 +129,8 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Only_Include_SpoilerFree_Reviews()
     {
         // Arrange
-        var spoilerFree = Helpers.CreatePopularReviews(3, spoilerFree: true);
-        var withSpoilers = Helpers.CreatePopularReviews(3, spoilerFree: false);
+        var spoilerFree = Helpers.CreatePopularReviews(2025, 3, spoilerFree: true);
+        var withSpoilers = Helpers.CreatePopularReviews(2025, 3, spoilerFree: false);
         SetupReviews([..spoilerFree, ..withSpoilers]);
 
         var ep = CreateEndpoint();
@@ -147,7 +147,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Sort_By_LikesCount_Descending()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews();
+        var reviews = Helpers.CreatePopularReviews(2026);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -163,7 +163,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Return_At_Most_Ten_Items()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(20);
+        var reviews = Helpers.CreatePopularReviews(2025, 20);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -180,7 +180,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Map_Response_Correctly()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(1);
+        var reviews = Helpers.CreatePopularReviews(2025, 1);
         SetupReviews(reviews);
 
         var review = reviews.First();
@@ -212,7 +212,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Map_ReleaseYear_Correctly()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(1, 5, releaseYear: 2022);
+        var reviews = Helpers.CreatePopularReviews(2022, 1, 5);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -228,7 +228,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Map_ReleaseYear_As_Null_When_No_ReleaseDate()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(1, 5, releaseYear: null);
+        var reviews = Helpers.CreatePopularReviews(null, 1, 5);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -246,7 +246,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
         // Arrange
         _currentUserMock.Setup(x => x.UserId).Returns(Guid.Empty);
 
-        var reviews = Helpers.CreatePopularReviews(3);
+        var reviews = Helpers.CreatePopularReviews(2025, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -262,7 +262,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Return_CachedResponse_On_SecondCall()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(3);
+        var reviews = Helpers.CreatePopularReviews(2025, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -282,7 +282,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Cache_Separately_Per_DaySpan()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(5, 3);
+        var reviews = Helpers.CreatePopularReviews(2021,5, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -311,7 +311,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
             {
                 callCount++;
                 if (callCount == 1)
-                    return Helpers.CreatePopularReviews(1).BuildMockDbSet().Object;
+                    return Helpers.CreatePopularReviews(2025, 1).BuildMockDbSet().Object;
 
                 throw new Exception("DB недоступна");
             });

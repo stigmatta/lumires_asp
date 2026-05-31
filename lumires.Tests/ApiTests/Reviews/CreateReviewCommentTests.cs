@@ -95,7 +95,8 @@ internal sealed class CreateReviewCommentTests
 
         ep.Response.Text.Should().Be(command.Text);
         ep.Response.Id.Should().NotBe(Guid.Empty);
-        ep.Response.CreatedAt.Should().Be(DateOnly.FromDateTime(DateTime.UtcNow));
+        ep.Response.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        
     }
 
     [Test]

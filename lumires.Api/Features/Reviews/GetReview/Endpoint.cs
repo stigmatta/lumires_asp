@@ -17,7 +17,7 @@ internal sealed record Response(
     string? Title,
     string Text,
     int LikesCount,
-    DateOnly CreatedAt,
+    DateTime CreatedAt,
     bool IsLikedByMe,
     bool IsSpoilerFree,
     IEnumerable<CommentItemResponse> Comments);
@@ -31,7 +31,7 @@ internal sealed record CommentItemResponse(
     int LikesCount,
     bool IsLikedByMe,
     bool IsSpoilerFree,
-    DateOnly CreatedAt,
+    DateTime CreatedAt,
     Guid? TargetedUserId,
     string? TargetedUserUsername);
 

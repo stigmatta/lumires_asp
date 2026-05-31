@@ -10,7 +10,7 @@ internal sealed record Command(Guid ReviewId, string Text, Guid? TargetedUserId,
 internal sealed record Response(
     Guid Id,
     string Text,
-    DateOnly CreatedAt,
+    DateTime CreatedAt,
     bool IsSpoilerFree
 );
 

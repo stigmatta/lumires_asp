@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using lumires.Api.Extensions;
+using lumires.Api.Features.Reviews.Common;
 using lumires.Core.Abstractions.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace lumires.Api.Features.Reviews.GetReviewsByFilm;
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    internal async Task<List<ReviewItemResponse>> GetReviewsAsync(Query query, Guid userId, CancellationToken ct)
+    internal async Task<List<CommonReviewResponse>> GetReviewsAsync(Query query, Guid userId, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query);
         var sort = Specifications.BuildSort(query);
@@ -22,7 +23,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
 
         return await queryable
-            .Select(r => new ReviewItemResponse(
+            .Select(r => new CommonReviewResponse(
                 r.Id,
                 r.UserId,
                 r.Reviewer.Username,
