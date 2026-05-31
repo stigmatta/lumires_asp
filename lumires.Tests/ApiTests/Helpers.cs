@@ -1,13 +1,13 @@
-﻿using System.Reflection;
-using lumires.Core.Constants;
+﻿using lumires.Core.Constants;
 using lumires.Core.Models;
 using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 
 namespace Tests.ApiTests;
 
 internal static class Helpers
 {
-    internal const string DefLang = LocalizationConstants.DefaultCulture;
+    const string DefLang = LocalizationConstants.DefaultCulture;
 
     internal static ExternalGenres CreateExternalGenres()
     {
@@ -25,7 +25,7 @@ internal static class Helpers
         genre.AddLocalization("Бойовик", "uk-UA");
         return [genre];
     }
-    
+
     internal static List<UserThread> CreateThreads(int count = 5)
     {
         var list = new List<UserThread>();
@@ -33,11 +33,9 @@ internal static class Helpers
         for (var i = 0; i < count; i++)
         {
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
-            var thread = new UserThread(user.Id,  $"Title {i}", $"Text {i}", i % 2 == 0 );
+            var thread = new UserThread(user.Id, $"Title {i}", $"Text {i}", i % 2 == 0);
 
-            typeof(UserThread)
-                .GetProperty(nameof(UserThread.User))!
-                .SetValue(thread, user);
+            thread.SetUser(user);
 
             list.Add(thread);
         }
@@ -45,12 +43,11 @@ internal static class Helpers
         return list;
     }
 
-
     internal static List<Review> CreateReviews(int count = 5, int externalMovieId = 1)
     {
         var movieId = Guid.NewGuid();
-        var movie = new Film(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f,
-            200, "HBO");
+        var movie = new Film(externalMovieId, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 
+            4.0f, 100, 50f, 200, "HBO");
 
         var list = new List<Review>();
 
@@ -59,13 +56,8 @@ internal static class Helpers
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
             var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5f : 3.5f);
 
-            typeof(Review)
-                .GetProperty(nameof(Review.Reviewer))!
-                .SetValue(review, user);
-
-            typeof(Review)
-                .GetProperty(nameof(Review.Film))!
-                .SetValue(review, movie);
+            review.SetReviewer(user);
+            review.SetFilm(movie);
 
             list.Add(review);
         }
@@ -86,21 +78,10 @@ internal static class Helpers
         {
             var reviewer = new User(Guid.NewGuid(), $"reviewer{i}", $"reviewer{i}@mail.com");
 
-            var review = new Review(
-                reviewer.Id,
-                movieId,
-                $"Title {i}",
-                $"Text {i}",
-                5,
-                true);
-
-            typeof(Review)
-                .GetProperty(nameof(Review.Reviewer))!
-                .SetValue(review, reviewer);
-
-            typeof(Review)
-                .GetProperty(nameof(Review.Film))!
-                .SetValue(review, movie);
+            var review = new Review(reviewer.Id, movieId, $"Title {i}", $"Text {i}", 5);
+            
+            review.SetReviewer(reviewer);
+            review.SetFilm(movie);
 
             var comments = new List<ReviewComment>();
 
@@ -108,49 +89,130 @@ internal static class Helpers
             {
                 var commentator = new User(Guid.NewGuid(), $"commentator{i}_{j}", $"c{i}{j}@mail.com");
 
-                var comment = new ReviewComment(
-                    Guid.NewGuid(),
-                    review.Id,
-                    $"Comment {j}",
-                    commentator.Id
-                );
-
-                typeof(ReviewComment)
-                    .GetProperty(nameof(ReviewComment.Commentator))!
-                    .SetValue(comment, commentator);
+                var comment = new ReviewComment(Guid.NewGuid(), review.Id, $"Comment {j}", commentator.Id);
+                
+                comment.SetCommentator(commentator);
 
                 if (j % 2 == 0)
                 {
-                    typeof(ReviewComment)
-                        .GetProperty(nameof(ReviewComment.TargetedUser))!
-                        .SetValue(comment, reviewer);
-
-                    typeof(ReviewComment)
-                        .GetProperty(nameof(ReviewComment.TargetedUserId))!
-                        .SetValue(comment, reviewer.Id);
+                    comment.SetTargetedUser(reviewer);
                 }
 
                 comments.Add(comment);
+                review.AddComment(comment);
             }
-
-            var field = typeof(Review)
-                .GetField("_reviewComments", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (field is not null)
-                field.SetValue(review, comments);
-            else
-                throw new Exception("Backing field '_reviewComments' not found");
 
             reviews.Add(review);
         }
 
         return reviews;
     }
+    
+    public static List<Film> CreateFilmsWithPopularity(IEnumerable<float> popularityValues)
+    {
+        return popularityValues
+            .Select((p, i) => CreateFilm(i + 1, $"Film {i}", new DateOnly(2022, 1, 1), 4.0f, p))
+            .ToList();
+    }
+    
+    public static List<Film> CreateFilmsWithReleaseDates(IEnumerable<DateOnly> dates)
+    {
+        return dates
+            .Select((d, i) => CreateFilm( i + 1, $"Film {i}", d, 4.0f, 30f))
+            .ToList();
+    }
+    
+    public static List<Film> CreateFilmsWithVoteAverage(IEnumerable<float> ratings)
+    {
+        return ratings
+            .Select((r, i) => CreateFilm(i + 1, $"Film {i}", new DateOnly(2022, 1, 1), r, 30f))
+            .ToList();
+    }
 
+    internal static List<Review> CreatePopularReviews(
+        int count = 5,
+        int daysOld = 1,
+        bool spoilerFree = true,
+        int? releaseYear = 2026)
+    {
+        var film = CreatePopularFilm(new DateOnly(releaseYear ?? 2026, 5, 31));
+        var list = new List<Review>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+
+            var review = new Review(
+                user.Id,
+                film.Id,
+                $"Review Title {i}",
+                $"Review Text {i}",
+                i % 2 == 0 ? 5f : 3.5f,
+                spoilerFree);
+
+            review.SetReviewer(user);
+            review.SetFilm(film);
+        
+            review.SetCreatedAt(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-daysOld)));
+        
+            review.ToggleLike(user.Id);
+
+            list.Add(review);
+        }
+
+        return list;
+    }
+
+    internal static List<Review> CreatePopularReviewsLikedBy(Guid userId, int count = 3)
+    {
+        var film = CreatePopularFilm(new DateOnly(2020, 1, 1));
+        var list = new List<Review>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var reviewer = new User(Guid.NewGuid(), $"reviewer{i}", $"reviewer{i}@gmail.com");
+
+            var review = new Review(reviewer.Id, film.Id, $"Review Title {i}", $"Review Text {i}", 4f);
+
+            review.SetReviewer(reviewer);
+            review.SetFilm(film);
+            review.SetCreatedAt(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)));
+            review.ToggleLike(reviewer.Id);
+
+
+            list.Add(review);
+        }
+
+        return list;
+    }
+
+    private static Film CreatePopularFilm(DateOnly? releaseDate)
+    {
+        var film = new Film(
+            Random.Shared.Next(1, 9999),
+            releaseDate,
+            "/poster.jpg",
+            4.0f,
+            100,
+            50f,
+            120,
+            "Studio");
+
+        film.AddLocalization(new FilmLocalization(DefLang, "Film Title", "Overview", "Tagline"));
+
+        film.AddSlug($"film-slug-{film.ExternalId}");
+
+        var person = new Person(5, PersonDepartment.Acting);
+        var director = new FilmDirector(person.Id);
+        film.AddDirector(director);
+        director.SetPerson(person);
+        
+        return film;
+    }
 
     public static List<Film> CreateFilmsWithGenres(IEnumerable<string> genreNames)
     {
-        var film = CreateFilm(DefLang, 1, "Film 1", new DateOnly(2022, 1, 1), 4.0f, 30f);
+        var film = CreateFilm(1, "Film 1", new DateOnly(2022, 1, 1), 4.0f, 30f);
 
         foreach (var name in genreNames)
         {
@@ -161,7 +223,7 @@ internal static class Helpers
 
         return [film];
     }
-    
+
     public static List<Film> CreateFilmsWithWeeklyReviews(IEnumerable<(int externalId, int reviewCount)> values)
     {
         return values
@@ -171,66 +233,28 @@ internal static class Helpers
 
     public static Film CreateFilmWithWeeklyReviews(int externalId, string slug, int reviewCount, bool thisWeek = true)
     {
-        var film = CreateFilm(DefLang, externalId, $"Film {externalId}", new DateOnly(2022, 1, 1), 4.0f, 50f);
-
-        typeof(Film)
-            .GetProperty(nameof(Film.Slug))!
-            .SetValue(film, slug);
+        var film = CreateFilm(externalId, $"Film {externalId}", new DateOnly(2022, 1, 1), 4.0f, 50f);
+        film.AddSlug(slug);
 
         var reviews = new List<Review>();
 
         for (var i = 0; i < reviewCount; i++)
         {
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+            var review = new Review(user.Id, film.Id, $"Review title {i}", $"Review text {i}", 4f, false);
 
-            var review = new Review(
-                user.Id,
-                film.Id,
-                $"Review title {i}",
-                $"Review text {i}",
-                4f,
-                false);
-
-            reviews.Add(review);
             review.SetReviewer(user);
             review.SetFilm(film);
+            reviews.Add(review);
+            film.AddReview(review);
         }
-
-        var field = typeof(Film)
-            .GetField("_reviews", BindingFlags.NonPublic | BindingFlags.Instance);
-
-        if (field is not null)
-            field.SetValue(film, reviews);
-        else
-            throw new Exception("Backing field '_reviews' not found");
 
         return film;
     }
 
-    public static List<Film> CreateFilmsWithPopularity(IEnumerable<float> popularityValues)
-    {
-        return popularityValues
-            .Select((p, i) => CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), 4.0f, p))
-            .ToList();
-    }
 
-
-    public static List<Film> CreateFilmsWithVoteAverage(IEnumerable<float> ratings)
-    {
-        return ratings
-            .Select((r, i) => CreateFilm(DefLang, i + 1, $"Film {i}", new DateOnly(2022, 1, 1), r, 30f))
-            .ToList();
-    }
-
-    public static List<Film> CreateFilmsWithReleaseDates(IEnumerable<DateOnly> dates)
-    {
-        return dates
-            .Select((d, i) => CreateFilm(DefLang, i + 1, $"Film {i}", d, 4.0f, 30f))
-            .ToList();
-    }
-
-    private static Film CreateFilm(string lang, int externalId, string title, DateOnly releaseDate, float voteAverage,
-        float popularity)
+    private static Film CreateFilm( int externalId, string title, DateOnly releaseDate, 
+        float voteAverage, float popularity)
     {
         var film = new Film(externalId, releaseDate, "/poster.jpg", voteAverage, 100, popularity, 120, "Studio");
         film.AddLocalization(new FilmLocalization(DefLang, title, "Overview", "Tagline"));

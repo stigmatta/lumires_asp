@@ -19,4 +19,11 @@ public class FilmDirector
 
     public Guid PersonId { get; private set; }
     public Person Person { get; private set; } = null!;
+    
+    public void SetPerson(Person person)
+    {
+        ArgumentNullException.ThrowIfNull(person);
+        Person = person;
+        PersonId = person.Id;
+    }
 }

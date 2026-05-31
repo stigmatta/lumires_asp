@@ -39,8 +39,8 @@ public sealed class Review : LikeableEntity<ReviewLike>
 
 
     public Guid Id { get; }
-    public DateOnly CreatedAt { get; }
-    public DateOnly? UpdatedAt { get; }
+    public DateOnly CreatedAt { get; private set; }
+    public DateOnly? UpdatedAt { get; private set; }
     public User Reviewer { get; private set; } = null!;
     public Guid UserId { get; private set; }
     public Film Film { get; private set; } = null!;
@@ -49,6 +49,8 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public string Text { get; private set; } = null!;
     public float? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
+    public bool IsEditorPick { get; private set; }
+    
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
 
     protected override Guid GetUserId(ReviewLike like)
@@ -72,4 +74,15 @@ public sealed class Review : LikeableEntity<ReviewLike>
         Film = film ?? throw new ArgumentNullException(nameof(film));
         FilmId = film.Id;
     }
+
+    public void AddComment(ReviewComment comment)
+    {
+        ArgumentNullException.ThrowIfNull(comment);
+        _reviewComments.Add(comment);
+    }
+
+    public void SetCreatedAt(DateOnly createdAt)
+    {
+        CreatedAt = createdAt;
+    } 
 }

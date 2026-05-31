@@ -24,7 +24,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
 
     public Guid Id { get; }
     public DateOnly CreatedAt { get; }
-    public DateOnly? UpdatedAt { get; }
+    public DateOnly? UpdatedAt { get; private set; }
     public User Commentator { get; private set; } = null!;
     public Guid UserId { get; private set; }
 
@@ -44,5 +44,17 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     protected override ReviewCommentLike CreateLike(Guid userId)
     {
         return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId };
+    }
+
+    public void SetCommentator(User user)
+    {
+        Commentator = user;
+    }
+
+    public void SetTargetedUser(User user)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        TargetedUser = user;
+        TargetedUserId = user.Id;
     }
 }

@@ -22,7 +22,7 @@ public sealed class UserThread: LikeableEntity<UserThreadLike>
     
     public Guid Id { get; }
     public User User { get; private set; } = null!;
-    public Guid UserId { get; }
+    public Guid UserId { get; private set; }
     public string? Title { get; private set; }
     public string Text { get; private set; } = null!;
     public DateOnly CreatedAt { get; private set; }
@@ -40,5 +40,12 @@ public sealed class UserThread: LikeableEntity<UserThreadLike>
     protected override UserThreadLike CreateLike(Guid userId)
     {
         return new UserThreadLike { ThreadId = Id, UserId = userId };
+    }
+    
+    public void SetUser(User user)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        User = user;
+        UserId = user.Id;
     }
 }

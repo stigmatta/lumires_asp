@@ -2,10 +2,6 @@
 
 public static class CacheKeys
 {
-    public static string FilmKey(int id, string lang)
-    {
-        return $"film:{id}:{lang}";
-    }
 
     public static string FilmSources(int id, string region)
     {
@@ -51,5 +47,10 @@ public static class CacheKeys
     public static string ThreadsSummary()
     {
         return "threads_summary";
+    }
+    
+    public static string PopularReviewsBySpan(int daySpan)
+    {
+        return $"popular_reviews_{daySpan}";
     }
 }
