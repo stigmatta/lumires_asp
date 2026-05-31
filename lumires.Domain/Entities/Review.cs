@@ -75,6 +75,14 @@ public sealed class Review : LikeableEntity<ReviewLike>
         FilmId = film.Id;
     }
 
+    public void SetText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            ArgumentNullException.ThrowIfNull(text);
+        
+        Text = text;
+    }
+
     public void AddComment(ReviewComment comment)
     {
         ArgumentNullException.ThrowIfNull(comment);
