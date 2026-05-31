@@ -5,7 +5,7 @@ using lumires.Core.Abstractions.Services;
 namespace lumires.Api.Features.Reviews.CreateReview;
 
 [UsedImplicitly]
-internal sealed record Command(int FilmId, string? Title, string Text, float? Rating, bool IsSpoilerFree);
+internal sealed record Command(int FilmId, string? Title, string Text, float? Rating, bool IsSpoilerFree = true);
 
 [UsedImplicitly]
 internal sealed record Response(
@@ -13,7 +13,8 @@ internal sealed record Response(
     string? Title,
     string Text,
     float? Rating,
-    DateOnly CreatedAt
+    DateOnly CreatedAt,
+    bool IsSpoilerFree
 );
 
 internal sealed class Endpoint(
@@ -43,7 +44,8 @@ internal sealed class Endpoint(
             command.Title,
             command.Text,
             command.Rating,
-            DateOnly.FromDateTime(DateTime.UtcNow)
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            command.IsSpoilerFree
         );
         await Send.CreatedAtAsync<GetReview.Endpoint>(
             new { id = response.Id },

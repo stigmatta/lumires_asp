@@ -33,7 +33,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 r.Text,
                 r.LikesCount,
                 r.CreatedAt,
-                userId != Guid.Empty && r.Likes.Any(l => l.UserId == userId)
+                userId != Guid.Empty && r.Likes.Any(l => l.UserId == userId),
+                r.IsSpoilerFree
             ))
             .ToListAsync(ct);
     }

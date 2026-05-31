@@ -47,4 +47,9 @@ public static class CacheKeys
     {
         return "reviews_summary";
     }
+    
+    public static string ThreadsSummary()
+    {
+        return "threads_summary";
+    }
 }

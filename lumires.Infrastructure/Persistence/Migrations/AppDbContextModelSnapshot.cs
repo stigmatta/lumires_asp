@@ -451,7 +451,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateOnly>("UpdatedAt")
+                    b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
                     b.Property<Guid>("UserId")
@@ -474,6 +474,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<bool>("IsSpoilerFree")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
 
@@ -488,7 +491,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<DateOnly>("UpdatedAt")
+                    b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
                     b.Property<Guid>("UserId")
@@ -631,6 +634,114 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId", "ReadAt");
 
                     b.ToTable("UserNotifications");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThread", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsSpoilerFree")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateOnly?>("UpdatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Threads");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsSpoilerFree")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("TargetedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("ThreadId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("UpdatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetedUserId");
+
+                    b.HasIndex("ThreadId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ThreadComments");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadCommentLike", b =>
+                {
+                    b.Property<Guid>("UserThreadCommentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserThreadCommentId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ThreadCommentLikes");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadLike", b =>
+                {
+                    b.Property<Guid>("ThreadId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ThreadId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ThreadLikes");
                 });
 
             modelBuilder.Entity("FilmGenres", b =>
@@ -790,7 +901,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasOne("lumires.Domain.Entities.User", "Reviewer")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Film");
@@ -873,6 +984,73 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.UserThread", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.User", "User")
+                        .WithMany("UserThreads")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadComment", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.User", "TargetedUser")
+                        .WithMany()
+                        .HasForeignKey("TargetedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("lumires.Domain.Entities.UserThread", "Thread")
+                        .WithMany("UserThreadComments")
+                        .HasForeignKey("ThreadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", "Commentator")
+                        .WithMany("UserThreadsComments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Commentator");
+
+                    b.Navigation("TargetedUser");
+
+                    b.Navigation("Thread");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadCommentLike", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.UserThreadComment", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("UserThreadCommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadLike", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.UserThread", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("ThreadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.Film", b =>
                 {
                     b.Navigation("Cast");
@@ -930,6 +1108,22 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("ReviewComments");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("UserThreads");
+
+                    b.Navigation("UserThreadsComments");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThread", b =>
+                {
+                    b.Navigation("Likes");
+
+                    b.Navigation("UserThreadComments");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserThreadComment", b =>
+                {
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,6 +19,7 @@ internal sealed record Response(
     int LikesCount,
     DateOnly CreatedAt,
     bool IsLikedByMe,
+    bool IsSpoilerFree,
     IEnumerable<CommentItemResponse> Comments);
 
 [UsedImplicitly]
@@ -29,6 +30,7 @@ internal sealed record CommentItemResponse(
     string? AvatarUrl,
     int LikesCount,
     bool IsLikedByMe,
+    bool IsSpoilerFree,
     DateOnly CreatedAt,
     Guid? TargetedUserId,
     string? TargetedUserUsername);

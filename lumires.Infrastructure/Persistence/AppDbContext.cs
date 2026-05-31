@@ -27,6 +27,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<PersonDetail> PersonsDetails => Set<PersonDetail>();
     public DbSet<FilmsListLike> FilmsListLikes => Set<FilmsListLike>();
     public DbSet<UserFilmRating> UserFilmRatings => Set<UserFilmRating>();
+    public DbSet<UserThread> Threads => Set<UserThread>();
+    public DbSet<UserThreadComment> ThreadComments => Set<UserThreadComment>();
+    public DbSet<UserThreadLike> ThreadLikes => Set<UserThreadLike>();
+    public DbSet<UserThreadCommentLike> ThreadCommentLikes => Set<UserThreadCommentLike>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

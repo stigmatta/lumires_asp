@@ -76,7 +76,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Great review!", null),
+            new Command(review.Id, "Great review!", null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -89,7 +89,7 @@ internal sealed class CreateReviewCommentTests
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
-        var command = new Command(review.Id, "Great review!", null);
+        var command = new Command(review.Id, "Great review!", null, true);
 
         await ep.HandleAsync(command, CancellationToken.None);
 
@@ -105,7 +105,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(Guid.NewGuid(), "Some comment", null),
+            new Command(Guid.NewGuid(), "Some comment", null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(404);
@@ -120,7 +120,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Nice review!", null),
+            new Command(review.Id, "Nice review!", null, true),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -138,7 +138,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Replying to your comment!", targetedUserId),
+            new Command(review.Id, "Replying to your comment!", targetedUserId, true),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -155,7 +155,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Just a comment", null),
+            new Command(review.Id, "Just a comment", null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -175,7 +175,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint(dataAccess);
 
         await ep.HandleAsync(
-            new Command(review.Id, "Comment text", null),
+            new Command(review.Id, "Comment text", null, true),
             CancellationToken.None);
 
         _notificationMock.Verify(

@@ -23,7 +23,8 @@ internal class DataAccess(
         var review = await db.Reviews.FirstOrDefaultAsync(m => m.Id == command.ReviewId, ct);
         if (review is null) return Result.NotFound();
 
-        var reviewComment = new ReviewComment(review.UserId, command.ReviewId, command.Text, command.TargetedUserId);
+        var reviewComment = new ReviewComment(review.UserId, command.ReviewId, command.Text, command.TargetedUserId,
+            command.IsSpoilerFree);
 
         await db.ReviewComments.AddAsync(reviewComment, ct);
 
@@ -35,6 +36,6 @@ internal class DataAccess(
 
         await db.SaveChangesAsync(ct);
 
-        return new Response(reviewComment.Id, reviewComment.Text, reviewComment.CreatedAt);
+        return new Response(reviewComment.Id, reviewComment.Text, reviewComment.CreatedAt, reviewComment.IsSpoilerFree);
     }
 }

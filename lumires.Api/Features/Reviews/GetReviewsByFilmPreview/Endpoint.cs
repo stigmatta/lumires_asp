@@ -12,6 +12,7 @@ internal sealed record Response(IReadOnlyCollection<ReviewPreviewItem> Reviews);
 
 [UsedImplicitly]
 internal sealed record ReviewPreviewItem(
+    Guid Id,
     Guid UserId,
     string Username,
     string? AvatarUrl,
@@ -22,6 +23,7 @@ internal sealed record ReviewPreviewItem(
 
 [UsedImplicitly]
 internal sealed record ReviewCommentPreview(
+    Guid Id,
     Guid UserId,
     string Username,
     string? AvatarUrl,

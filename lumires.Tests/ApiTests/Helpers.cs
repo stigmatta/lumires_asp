@@ -25,6 +25,26 @@ internal static class Helpers
         genre.AddLocalization("Бойовик", "uk-UA");
         return [genre];
     }
+    
+    internal static List<UserThread> CreateThreads(int count = 5)
+    {
+        var list = new List<UserThread>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
+            var thread = new UserThread(user.Id,  $"Title {i}", $"Text {i}", i % 2 == 0 );
+
+            typeof(UserThread)
+                .GetProperty(nameof(UserThread.User))!
+                .SetValue(thread, user);
+
+            list.Add(thread);
+        }
+
+        return list;
+    }
+
 
     internal static List<Review> CreateReviews(int count = 5, int externalMovieId = 1)
     {
@@ -37,7 +57,7 @@ internal static class Helpers
         for (var i = 0; i < count; i++)
         {
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
-            var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5f : 3.5f, true);
+            var review = new Review(user.Id, movieId, $"Title {i}", $"Text {i}", i % 2 == 0 ? 5f : 3.5f);
 
             typeof(Review)
                 .GetProperty(nameof(Review.Reviewer))!

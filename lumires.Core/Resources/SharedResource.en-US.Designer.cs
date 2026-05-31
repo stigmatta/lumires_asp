@@ -195,6 +195,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Thread reference is invalid.
+        /// </summary>
+        internal static string ValidationError_ThreadId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_ThreadId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title cannot be empty.
         /// </summary>
         internal static string ValidationError_Title_Empty {

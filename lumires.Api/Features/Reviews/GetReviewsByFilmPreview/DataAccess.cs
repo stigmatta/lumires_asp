@@ -11,13 +11,14 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var items = await db.Reviews
             .AsNoTracking()
-            .Where(r => r.Film.ExternalId == movieId)
+            .Where(r => r.Film.ExternalId == movieId && r.IsSpoilerFree)
             .OrderByDescending(r => r.LikesCount)
-            .Select(r => new ReviewPreviewItem(r.UserId, r.Reviewer.Username, r.Reviewer.AvatarUrl, r.Text,
+            .Select(r => new ReviewPreviewItem(r.Id, r.UserId, r.Reviewer.Username, r.Reviewer.AvatarUrl, r.Text,
                 r.ReviewComments.Count, r.LikesCount, r.ReviewComments
                     .Where(c => c.TargetedUserId == r.UserId || c.TargetedUserId == null)
                     .OrderByDescending(c => c.LikesCount)
                     .Select(c => new ReviewCommentPreview(
+                        c.Id,
                         c.UserId,
                         c.Commentator.Username,
                         c.Commentator.AvatarUrl,

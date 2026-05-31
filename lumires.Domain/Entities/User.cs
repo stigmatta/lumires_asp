@@ -9,6 +9,9 @@ public sealed partial class User
     private readonly List<ReviewComment> _reviewComments = [];
     private readonly List<Review> _reviews = [];
     private readonly List<UserFilmRating> _filmRatings = [];
+    private readonly List<UserThread> _userThreads = [];
+    private readonly List<UserThreadComment> _userThreadComments = [];
+    
 
 
     private User()
@@ -43,6 +46,9 @@ public sealed partial class User
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
     public IReadOnlyCollection<UserFilmRating> FilmRatings => _filmRatings.AsReadOnly();
+    public IReadOnlyCollection<UserThread> UserThreads => _userThreads.AsReadOnly();
+    public IReadOnlyCollection<UserThreadComment> UserThreadsComments => _userThreadComments.AsReadOnly();
+    
 
     public void SetAvatarUrl(string avatarUrl)
     {

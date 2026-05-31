@@ -13,7 +13,7 @@ internal sealed class ReviewCommentConfiguration : IEntityTypeConfiguration<Revi
         builder.Property(m => m.Id).ValueGeneratedNever();
 
         builder.Property(x => x.CreatedAt).IsRequired();
-        builder.Property(x => x.UpdatedAt).IsRequired();
+        builder.Property(x => x.UpdatedAt).IsRequired(false);
 
         builder.Property(x => x.Text).IsRequired().HasMaxLength(StringLimits.Description);
 

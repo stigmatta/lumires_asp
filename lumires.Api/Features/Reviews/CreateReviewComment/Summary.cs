@@ -27,7 +27,8 @@ internal sealed class Summary : Summary<Endpoint>
         ExampleRequest = new Command(
             new Guid("a3f1c9e2-7b4a-4c1f-9d2a-123456789abc"),
             "Totally agree with your take on the third act.",
-            null
+            null,
+            true
         );
 
         Response(201, "Comment is successfully created");

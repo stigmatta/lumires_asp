@@ -223,6 +223,7 @@ internal sealed class GetReviewsTests
         item.Title.Should().Be(review.Title);
         item.Text.Should().Be(review.Text);
         item.LikesCount.Should().Be(review.LikesCount);
+        item.IsSpoilerFree.Should().Be(review.IsSpoilerFree);
         item.CreatedAt.Should().Be(review.CreatedAt);
     }
 

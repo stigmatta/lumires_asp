@@ -4,13 +4,14 @@ using JetBrains.Annotations;
 namespace lumires.Api.Features.Reviews.CreateReviewComment;
 
 [UsedImplicitly]
-internal sealed record Command(Guid ReviewId, string Text, Guid? TargetedUserId);
+internal sealed record Command(Guid ReviewId, string Text, Guid? TargetedUserId, bool IsSpoilerFree);
 
 [UsedImplicitly]
 internal sealed record Response(
     Guid Id,
     string Text,
-    DateOnly CreatedAt
+    DateOnly CreatedAt,
+    bool IsSpoilerFree
 );
 
 internal sealed class Endpoint(

@@ -13,7 +13,7 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(m => m.Id).ValueGeneratedNever();
 
         builder.Property(x => x.CreatedAt).IsRequired();
-        builder.Property(x => x.UpdatedAt).IsRequired();
+        builder.Property(x => x.UpdatedAt).IsRequired(false);
 
         builder.Property(x => x.Title).IsRequired(false)
             .HasMaxLength(StringLimits.Name);
@@ -29,7 +29,7 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasOne(r => r.Reviewer)
             .WithMany(u => u.Reviews)
             .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(r => r.Film)
             .WithMany(m => m.Reviews)

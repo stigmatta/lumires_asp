@@ -40,7 +40,8 @@ internal sealed record ReviewItemResponse(
     string Text,
     int LikesCount,
     DateOnly CreatedAt,
-    bool IsLikedByMe
+    bool IsLikedByMe,
+    bool IsSpoilerFree
 );
 
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService, IFilmResolver filmResolver)

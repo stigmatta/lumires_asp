@@ -141,15 +141,6 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Рейтинг має бути від 0 до 5.
-        /// </summary>
-        internal static string RateMovie_ValidationError_Rating_Invalid {
-            get {
-                return ResourceManager.GetString("RateMovie_ValidationError_Rating_Invalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Опис занадто великий.
         /// </summary>
         internal static string ValidationError_Description_TooLong {
@@ -200,6 +191,15 @@ namespace lumires.Core.Resources {
         internal static string ValidationError_Text_CannotBeNull {
             get {
                 return ResourceManager.GetString("ValidationError_Text_CannotBeNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Звернення до треду некоректне.
+        /// </summary>
+        internal static string ValidationError_ThreadId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_ThreadId_Invalid", resourceCulture);
             }
         }
         

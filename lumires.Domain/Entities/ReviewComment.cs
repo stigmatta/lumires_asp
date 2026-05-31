@@ -8,23 +8,23 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     {
     }
 
-    public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId)
+    public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId, bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
         CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
-        UpdatedAt = CreatedAt;
 
         UserId = commentatorId;
         ReviewId = reviewId;
         TargetedUserId = targetedUserId;
 
         Text = text ?? throw new ArgumentNullException(nameof(text));
+        IsSpoilerFree = isSpoilerFree;
     }
 
 
     public Guid Id { get; }
     public DateOnly CreatedAt { get; }
-    public DateOnly UpdatedAt { get; }
+    public DateOnly? UpdatedAt { get; }
     public User Commentator { get; private set; } = null!;
     public Guid UserId { get; private set; }
 
@@ -33,6 +33,8 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     public Guid? TargetedUserId { get; private set; }
     public User? TargetedUser { get; private set; }
     public string Text { get; private set; } = null!;
+    public bool IsSpoilerFree { get; private set; }
+    
 
     protected override Guid GetUserId(ReviewCommentLike like)
     {
