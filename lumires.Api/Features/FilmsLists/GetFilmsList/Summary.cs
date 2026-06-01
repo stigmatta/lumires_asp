@@ -8,7 +8,7 @@ internal sealed class Summary : Summary<Endpoint>
 {
     public Summary()
     {
-        Summary = "GetCollection";
+        Summary = "GetFilmsList";
         Description = """
                       Returns a collection with its movies and localized details.
 

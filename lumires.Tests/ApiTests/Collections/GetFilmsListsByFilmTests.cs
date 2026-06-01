@@ -42,7 +42,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().BeEmpty();
+        result.FilmsLists.Should().BeEmpty();
     }
 
     [Test]
@@ -59,7 +59,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().ContainSingle()
+        result.FilmsLists.Should().ContainSingle()
             .Which.Name.Should().Be("Low");
     }
 
@@ -77,7 +77,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().ContainSingle()
+        result.FilmsLists.Should().ContainSingle()
             .Which.Films.Should().ContainSingle()
             .Which.BackdropPath.Should().Be("/l.jpg");
     }
@@ -97,7 +97,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().ContainSingle()
+        result.FilmsLists.Should().ContainSingle()
             .Which.Name.Should().Be("Low");
     }
 
@@ -115,7 +115,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Select(x => x.Name)
+        result.FilmsLists.Select(x => x.Name)
             .Should().ContainInOrder("High", "Medium", "Low");
     }
 
@@ -137,7 +137,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().HaveCount(4,
+        result.FilmsLists.Should().HaveCount(4,
             "the query applies Take(4)");
     }
 
@@ -153,7 +153,7 @@ internal sealed class GetFilmsListsByFilmTests
         var result = await _dataAccess.GetFilmListsByFilmIdAsync(42, CancellationToken.None);
 
         // Assert
-        result.FilmLists.Should().ContainSingle()
+        result.FilmsLists.Should().ContainSingle()
             .Which.Films.Should().ContainSingle()
             .Which.BackdropPath.Should().BeNull();
     }

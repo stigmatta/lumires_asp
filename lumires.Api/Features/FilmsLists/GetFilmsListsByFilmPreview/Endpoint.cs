@@ -7,10 +7,10 @@ namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilmPreview;
 internal sealed record Query(int Id);
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyCollection<FilmsListsItems> FilmLists);
+internal sealed record Response(IReadOnlyCollection<FilmsListsItems> FilmsLists);
 
 [UsedImplicitly]
-internal sealed record FilmsListsItems(IReadOnlyCollection<FilmListItem> Films, string Name);
+internal sealed record FilmsListsItems(Guid Id, IReadOnlyCollection<FilmListItem> Films, string Name);
 
 [UsedImplicitly]
 internal sealed record FilmListItem(string? BackdropPath);

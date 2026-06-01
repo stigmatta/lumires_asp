@@ -16,10 +16,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 .Any(f => f.Film.ExternalId == filmId))
             .OrderByDescending(fl => fl.LikesCount)
             .Select(fl => new FilmsListsItems(
+                fl.Id,
                 fl.Films
                     .Where(f => f.Film.ExternalId == filmId)
                     .Select(f => new FilmListItem(f.Film.BackdropPath))
-                    .Take(1)
+                    .Take(6)
                     .ToList(),
                 fl.Title
             ))

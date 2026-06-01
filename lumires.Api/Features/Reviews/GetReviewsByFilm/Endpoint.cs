@@ -19,6 +19,7 @@ internal enum ContentFilterEnum
 [UsedImplicitly]
 internal sealed class Query
 {
+    public Guid Id { get; init; }
     public int FilmId { get; init; }
     public RatingEnum? Filter { get; init; } = RatingEnum.All;
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;

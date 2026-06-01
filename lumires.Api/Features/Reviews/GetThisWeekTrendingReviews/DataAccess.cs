@@ -22,12 +22,14 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 x.ReviewComments.Count * 2)
             .Take(6)
             .Select(x => new TrendingReviewItem(
+                x.Id,
                 x.Film.ExternalId,
                 x.Film.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
+                x.Film.Slug,
                 x.Title!,
                 x.Rating,
                 x.UserId,

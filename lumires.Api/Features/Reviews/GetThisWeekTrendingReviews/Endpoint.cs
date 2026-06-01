@@ -9,8 +9,10 @@ internal sealed record Response(IReadOnlyList<TrendingReviewItem> Items);
 
 [UsedImplicitly]
 internal sealed record TrendingReviewItem(
+    Guid Id,
     int FilmId,
     string FilmTitle,
+    string FilmSlug,
     string ReviewTitle,
     float? Rating,
     Guid UserId,

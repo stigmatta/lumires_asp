@@ -8,5 +8,6 @@ public enum NotificationType
     LikedReviewComment,
     ThreadReplied,
     LikedThread,
-    LikedThreadComment
+    LikedThreadComment,
+    LikedFilmsList
 }
