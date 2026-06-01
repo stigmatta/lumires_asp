@@ -28,6 +28,7 @@ public sealed class UserThread: LikeableEntity<UserThreadLike>
     public DateOnly CreatedAt { get; private set; }
     public DateOnly? UpdatedAt { get; private set; }
     public bool IsSpoilerFree { get; private set; }
+    public bool IsEditorPick { get; private set; }
     
     
     public IReadOnlyCollection<UserThreadComment> UserThreadComments => _userThreadComments.AsReadOnly();
@@ -47,5 +48,10 @@ public sealed class UserThread: LikeableEntity<UserThreadLike>
         ArgumentNullException.ThrowIfNull(user);
         User = user;
         UserId = user.Id;
+    }
+    
+    public void SetEditorPick(bool editorPick)
+    {
+        IsEditorPick = editorPick;
     }
 }

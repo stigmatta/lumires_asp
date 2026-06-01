@@ -49,6 +49,11 @@ public static class CacheKeys
         return "threads_summary";
     }
     
+    public static string ListsSummary()
+    {
+        return "lists_summary";
+    }
+    
     public static string PopularReviewsBySpan(int daySpan)
     {
         return $"popular_reviews_{daySpan}";

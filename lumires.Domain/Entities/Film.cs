@@ -68,6 +68,9 @@ public sealed class Film
     public float Popularity { get; private set; }
     public int Runtime { get; private set; }
     public string ProductionCompany { get; private set; } = null!;
+    public bool IsEditorPick { get; private set; }
+    
+    
 
     public IReadOnlyCollection<Genre> Genres => _genres.AsReadOnly();
     public IReadOnlyCollection<FilmLocalization> Localizations => _localizations.AsReadOnly();
@@ -137,5 +140,10 @@ public sealed class Film
             throw new DomainException($"Director '{director.Id}' already added to this movie");
 
         _directors.Add(director);
+    }
+    
+    public void SetEditorPick(bool editorPick)
+    {
+        IsEditorPick = editorPick;
     }
 }

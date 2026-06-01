@@ -37,7 +37,7 @@ internal sealed class Endpoint(
 
                     return new Response(totalFilmsCount, totalGenresCount);
                 },
-                options => options.SetDuration(CacheDuration.Eternal)
+                options => options.SetDuration(CacheDuration.Medium)
                     .SetFailSafe(true),
                 ct
             );

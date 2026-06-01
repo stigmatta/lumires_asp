@@ -93,4 +93,9 @@ public sealed class Review : LikeableEntity<ReviewLike>
     {
         CreatedAt = createdAt;
     } 
+    
+    public void SetEditorPick(bool editorPick)
+    {
+        IsEditorPick = editorPick;
+    }
 }

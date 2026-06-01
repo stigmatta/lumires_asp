@@ -34,6 +34,7 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset UpdatedAt { get; private set; }
     public bool IsPrivate { get; private set; }
+    public bool IsEditorPick { get; private set; }
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
     public IReadOnlyCollection<ListFilm> Films => _films.AsReadOnly();
@@ -62,5 +63,10 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
     protected override FilmsListLike CreateLike(Guid userId)
     {
         return new FilmsListLike { FilmsListId = Id, UserId = userId };
+    }
+
+    public void SetEditorPick(bool editorPick)
+    {
+        IsEditorPick = editorPick;
     }
 }

@@ -2,16 +2,16 @@
 using JetBrains.Annotations;
 using lumires.Api.Enums.Common;
 
-namespace lumires.Api.Features.Reviews.GetReviews;
+namespace lumires.Api.Features.FilmsLists.GetFilmsLists;
 
 [UsedImplicitly]
 internal sealed class Summary : Summary<Endpoint>
 {
     public Summary()
     {
-        Summary = "GetReviews";
+        Summary = "GetFilmsLists";
         Description = """
-                      Get reviews sorted & filtered & paginated.
+                      Get lists sorted & filtered & paginated.
 
                       Returns the reviews DTO and pagination info.
 
@@ -19,8 +19,8 @@ internal sealed class Summary : Summary<Endpoint>
 
         ExampleRequest = new Query
         {
-            Filter = RatingEnum.All,
-            SortBy = ContentOrderEnum.MostRecent,
+            Category = ContentFilterEnum.All,
+            SortBy = ListContentOrderEnum.MostRecent,
             Page = 1,
             PageSize = 5
         };
