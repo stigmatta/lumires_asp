@@ -21,6 +21,21 @@ public sealed class ListFilm
         Order = order;
         AddedAt = DateTimeOffset.UtcNow;
     }
+    
+    public ListFilm(Guid filmsListId, Film film, int order)
+    {
+        if (filmsListId == Guid.Empty) throw new DomainException("Collection ID is invalid", nameof(filmsListId));
+
+        if (film is null) throw new DomainException("Movie cannot be null", nameof(film));
+
+        if (order < 0) throw new DomainException("Order cannot be negative", nameof(order));
+
+        FilmsListId = filmsListId;
+        FilmId = film.Id;
+        Film = film;
+        Order = order;
+        AddedAt = DateTimeOffset.UtcNow;
+    }
 
     public Guid FilmsListId { get; private set; }
     public Guid FilmId { get; private set; }
@@ -29,4 +44,11 @@ public sealed class ListFilm
 
     public FilmsList FilmsList { get; private set; } = null!;
     public Film Film { get; private set; } = null!;
+
+    public void SetFilm(Film film)
+    {
+        ArgumentNullException.ThrowIfNull(film);
+
+        Film = film;
+    }
 }

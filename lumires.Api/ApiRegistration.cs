@@ -70,8 +70,6 @@ public static class ApiRegistration
         builder.Services.AddScoped<IFilmResolver, FilmResolver>();
         builder.Services.AddScoped<IPersonResolver, PersonResolver>();
 
-        builder.Services.AddScoped<IGetFilms, DataAccess>();
-
         return builder;
     }
 

@@ -25,7 +25,8 @@ internal sealed class Summary : Summary<Endpoint>
         Response(200, "Collections retrieved successfully.", example: new Response(
         [
             new FilmsListsItems(Guid.CreateVersion7(),
-                [new FilmListItem("some-backdrop"), new FilmListItem("some-other-backdrop")],
+                true,
+                [new FilmInListItem("some-backdrop"), new FilmInListItem("some-other-backdrop")],
                 "My favourite movies")
         ]));
     }

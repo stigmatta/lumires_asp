@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace lumires.Api.Features.Films.GetFilms;
 
 [UsedImplicitly]
-internal class DataAccess(IAppDbContext db) : IGetFilms, IDataAccess
+internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     public async Task<List<FilmItemResponse>> GetFilmsAsync(Query query, string lang, CancellationToken ct)
     {
@@ -16,7 +16,6 @@ internal class DataAccess(IAppDbContext db) : IGetFilms, IDataAccess
         var sort = Specifications.BuildSort(query);
 
         var queryable = db.Films
-            .AsExpandable()
             .ApplyFilter(filter)
             .ApplySorting(sort)
             .ApplyPaging(query.Page, query.PageSize);
@@ -48,7 +47,6 @@ internal class DataAccess(IAppDbContext db) : IGetFilms, IDataAccess
     {
         var filter = Specifications.BuildFilter(query, lang);
         return await db.Films
-            .AsExpandable()
             .ApplyFilter(filter)
             .CountAsync(ct);
     }

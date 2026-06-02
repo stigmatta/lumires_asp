@@ -19,6 +19,7 @@ internal sealed record ReviewPreviewItem(
     string Text,
     int ReplyCount,
     int LikeCount,
+    DateTime CreatedAt,
     ReviewCommentPreview? Comment);
 
 [UsedImplicitly]

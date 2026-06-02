@@ -1,12 +1,10 @@
 ﻿using System.Net;
 using Ardalis.Result;
-using Infrastructure.Services.Tmdb.Models;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Models;
-using lumires.Domain.Enums;
 
-namespace Infrastructure.Services.Tmdb;
+namespace Infrastructure.Services.Tmdb.TmdbPerson;
 
 public sealed class TmdbPersonService(
     ITmdbApi tmdbApi) : IExternalPersonService
@@ -27,7 +25,7 @@ public sealed class TmdbPersonService(
 
         if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content == null) return Result.Error();
 
-        var externalPerson = MapToDomain(tmdbResponse.Content);
+        var externalPerson = TmdbPersonMapper.ToDomain(tmdbResponse.Content);
 
         if (!string.IsNullOrWhiteSpace(externalPerson.Biography) || lang == DefLang)
             return externalPerson;
@@ -35,7 +33,7 @@ public sealed class TmdbPersonService(
         var fallbackResponse = await tmdbApi.GetPersonDetailsAsync(personId, DefLang, ct);
         if (fallbackResponse.Content == null) return externalPerson;
 
-        var fallback = MapToDomain(fallbackResponse.Content);
+        var fallback = TmdbPersonMapper.ToDomain(fallbackResponse.Content);
 
         return externalPerson with
         {
@@ -43,20 +41,5 @@ public sealed class TmdbPersonService(
                 ? fallback.Biography
                 : externalPerson.Biography
         };
-    }
-
-    private static ExternalPerson MapToDomain(TmdbPersonDetailResponse tmdb)
-    {
-        return new ExternalPerson(
-            tmdb.Id,
-            tmdb.Name,
-            tmdb.Biography,
-            tmdb.Birthday,
-            tmdb.Deathday,
-            (GenderType)tmdb.Gender,
-            tmdb.PlaceOfBirth,
-            tmdb.ProfilePath,
-            tmdb.KnownForDepartment
-        );
     }
 }

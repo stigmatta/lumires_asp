@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using LinqKit;
 using lumires.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.FilmsLists.GetFilmsLists;
 
@@ -12,6 +13,18 @@ internal static class Specifications
 
         var contentFilter = BuildCategory(req);
         filter = filter.And(contentFilter);
+
+        if (string.IsNullOrWhiteSpace(req.SearchTerm)) return filter;
+
+        var search = req.SearchTerm.Trim().ToLowerInvariant(); 
+
+        filter = filter.And(fl =>
+            fl.Films.Any(f =>
+                f.Film.Localizations.Any(l =>
+                    EF.Functions.Like(l.Title.ToLower(), $"%{search}%")
+                )
+            )
+        );
 
         return filter;
     }

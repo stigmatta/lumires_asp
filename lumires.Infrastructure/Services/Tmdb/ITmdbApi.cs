@@ -55,4 +55,25 @@ public interface ITmdbApi
     [Get("/person/{personId}")]
     Task<ApiResponse<TmdbPersonDetailResponse>> GetPersonDetailsAsync(int personId, [AliasAs("language")] string lang,
         CancellationToken ct);
+    
+    [Get("/search/multi")]
+    Task<ApiResponse<TmdbMultiSearchResponse>> SearchMultiAsync(
+        [AliasAs("query")] string query,
+        [AliasAs("language")] string lang,
+        [AliasAs("page")] int page,
+        CancellationToken ct);
+
+    [Get("/search/movie")]
+    Task<ApiResponse<TmdbMovieSearchResponse>> SearchMoviesAsync(
+        [AliasAs("query")] string query,
+        [AliasAs("language")] string lang,
+        [AliasAs("page")] int page,
+        CancellationToken ct);
+
+    [Get("/search/person")]
+    Task<ApiResponse<TmdbPersonSearchResponse>> SearchPersonAsync(
+        [AliasAs("query")] string query,
+        [AliasAs("language")] string lang,
+        [AliasAs("page")] int page,
+        CancellationToken ct);
 }

@@ -233,7 +233,7 @@ internal static class Helpers
         return list;
     }
 
-    private static Film CreatePopularFilm(DateOnly? releaseDate)
+    internal static Film CreatePopularFilm(DateOnly? releaseDate, string? title = null)
     {
         
         var film = new Film(
@@ -246,7 +246,7 @@ internal static class Helpers
             120,
             "Studio");
 
-        film.AddLocalization(new FilmLocalization(DefLang, "Film Title", "Overview", "Tagline"));
+        film.AddLocalization(new FilmLocalization(DefLang, title ?? "Film Title", "Overview", "Tagline"));
 
         film.AddSlug($"film-slug-{film.ExternalId}");
 
@@ -301,11 +301,59 @@ internal static class Helpers
     }
 
 
-    private static Film CreateFilm( int externalId, string title, DateOnly releaseDate, 
+    internal static Film CreateFilm( int externalId, string title, DateOnly releaseDate, 
         float voteAverage, float popularity)
     {
         var film = new Film(externalId, releaseDate, "/poster.jpg", voteAverage, 100, popularity, 120, "Studio");
         film.AddLocalization(new FilmLocalization(DefLang, title, "Overview", "Tagline"));
         return film;
+    }
+    
+    
+    internal static FilmsList CreateFilmsList(
+        string title = "My Films List",
+        Guid? userId = null,
+        string? description = "Test description",
+        bool isPrivate = false,
+        List<Film>? films = null)
+    {
+        var uid = userId ?? Guid.NewGuid();
+        var user = new User(uid, "username", "emailuser@gmail.com");
+        var list = new FilmsList(title, uid, description, isPrivate);
+        list.SetUser(user);
+        
+        if (films is null)
+            return list;
+        
+        foreach (var film in films)
+        {
+            list.AddFilm(film);
+        }
+
+        return list;
+    }
+
+    internal static List<FilmsList> CreateFilmsLists(
+        int count = 3,
+        bool isPrivate = false)
+    {
+        var lists = new List<FilmsList>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var userId = Guid.NewGuid();
+            var user = new User(userId, "testuser", "test@mail.com");
+            
+            var list = new FilmsList(
+                $"List {i}",
+                userId,
+                $"Description {i}",
+                isPrivate);
+            
+            list.SetUser(user);
+            lists.Add(list);
+        }
+
+        return lists;
     }
 }

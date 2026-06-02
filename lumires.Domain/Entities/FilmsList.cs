@@ -50,10 +50,30 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
         UpdateTimestamp();
     }
 
+    public void AddFilm(Film film)
+    {
+        if (_films.Any(m => m.FilmId == film.Id))
+            return;
+        
+        var nextOrder = _films.Count > 0 ? _films.Max(m => m.Order) + 1 : 1;
+        _films.Add(new ListFilm(Id, film, nextOrder));
+
+        UpdateTimestamp();
+    }
+
+    public void SetUser(User user)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+
+        User = user;
+        UserId = user.Id;
+    }
+
     private void UpdateTimestamp()
     {
         UpdatedAt = DateTimeOffset.UtcNow;
     }
+    
 
     protected override Guid GetUserId(FilmsListLike like)
     {

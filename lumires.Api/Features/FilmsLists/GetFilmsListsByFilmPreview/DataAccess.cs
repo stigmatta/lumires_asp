@@ -9,6 +9,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     public async Task<Response> GetFilmListsByFilmIdAsync(
         int filmId,
+        Guid userId,
         CancellationToken ct)
     {
         var items = await db.FilmsLists
@@ -17,9 +18,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .OrderByDescending(fl => fl.LikesCount)
             .Select(fl => new FilmsListsItems(
                 fl.Id,
+                fl.Likes.Any(x => x.UserId == userId),
                 fl.Films
                     .Where(f => f.Film.ExternalId == filmId)
-                    .Select(f => new FilmListItem(f.Film.BackdropPath))
+                    .Select(f => new FilmInListItem(f.Film.BackdropPath))
                     .Take(6)
                     .ToList(),
                 fl.Title

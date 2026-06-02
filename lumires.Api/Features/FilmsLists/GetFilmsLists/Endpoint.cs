@@ -41,9 +41,10 @@ internal sealed record ListItemResponse(
     Guid UserId,
     string Username,
     int FilmsCount,
+    bool IsLikedByMe,
     IReadOnlyCollection<FilmListItem> Films
 );
-    
+
 [UsedImplicitly]
 internal sealed record FilmListItem(string? BackdropPath);
 

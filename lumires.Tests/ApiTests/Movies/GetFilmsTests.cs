@@ -2,9 +2,12 @@
 using FluentAssertions;
 using lumires.Api.Enums.Common;
 using lumires.Api.Features.Films.GetFilms;
+using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using MockQueryable.Moq;
 using Moq;
 
 namespace Tests.ApiTests.Movies;
@@ -13,7 +16,8 @@ internal sealed class GetFilmsTests
 {
     private const string Lang = "en-US";
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IGetFilms> _dataAccessMock = null!;
+    private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -21,7 +25,13 @@ internal sealed class GetFilmsTests
         _currentUserMock = new Mock<ICurrentUserService>();
         _currentUserMock.Setup(x => x.LangCulture).Returns(Lang);
 
-        _dataAccessMock = new Mock<IGetFilms>();
+
+        _dbContextMock = new Mock<IAppDbContext>();
+        _dbContextMock
+            .Setup(x => x.Reviews)
+            .Returns(new List<Review>().BuildMockDbSet().Object);
+
+        _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
     private Endpoint CreateEndpoint()
@@ -30,48 +40,29 @@ internal sealed class GetFilmsTests
             ctx =>
             {
                 var services = new ServiceCollection();
-                services.AddSingleton(_dataAccessMock.Object);
                 services.AddSingleton(_currentUserMock.Object);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
                 services.AddRouting();
 
                 ctx.RequestServices = services.BuildServiceProvider();
             },
-            _dataAccessMock.Object,
+            _dataAccess,
             _currentUserMock.Object);
     }
-
-    private void SetupFilms(List<FilmItemResponse> results, int? totalCount = null)
+    
+    private void SetupFilms(List<Film> films)
     {
-        _dataAccessMock
-            .Setup(x => x.GetFilmsAsync(
-                It.IsAny<Query>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(results);
-
-        _dataAccessMock
-            .Setup(x => x.GetFilmsCountAsync(
-                It.IsAny<Query>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(totalCount ?? results.Count);
+        _dbContextMock
+            .Setup(x => x.Films)
+            .Returns(films.BuildMockDbSet().Object);
     }
 
-    private static List<FilmItemResponse> CreateResponses()
-    {
-        return
-        [
-            new FilmItemResponse(1, "Action Movie", 2023, ["Action", "Thriller"], 7.8f, null),
-            new FilmItemResponse(2, "Drama Movie", 2023, ["Drama"], 8.2f, null),
-            new FilmItemResponse(3, "Comedy Movie", 2023, ["Comedy"], 7.0f, null)
-        ];
-    }
+
 
     [Test]
     public async Task Should_Return_200_With_Films()
     {
-        SetupFilms(CreateResponses());
+        SetupFilms(Helpers.CreateFilmsWithPopularity([4.5f, 4f, 3f]));
 
         var ep = CreateEndpoint();
 
@@ -96,15 +87,8 @@ internal sealed class GetFilmsTests
     [Test]
     public async Task Should_Map_Film_Correctly()
     {
-        SetupFilms([
-            new FilmItemResponse(
-                1,
-                "Inception",
-                2010,
-                ["Action", "Sci-Fi"],
-                8.8f,
-                "/poster.jpg")
-        ]);
+        SetupFilms(Helpers.CreateFilmsWithPopularity([4.5f]));
+
 
         var ep = CreateEndpoint();
 
@@ -112,16 +96,15 @@ internal sealed class GetFilmsTests
 
         var item = ep.Response.Results.First();
 
-        item.Title.Should().Be("Inception");
-        item.ReleaseYear.Should().Be(2010);
-        item.VoteAverage.Should().Be(8.8f);
-        item.PosterPath.Should().Be("/poster.jpg");
+        item.Title.Should().Be("Film 0");
+        item.ReleaseYear.Should().Be(2022);
+        item.VoteAverage.Should().Be(4.0f);
     }
 
     [Test]
     public async Task Should_Return_Correct_Paging_Metadata()
     {
-        SetupFilms(CreateResponses(), 20);
+        SetupFilms(Helpers.CreateFilmsWithPopularity([4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f]));
 
         var ep = CreateEndpoint();
 
@@ -129,7 +112,7 @@ internal sealed class GetFilmsTests
 
         ep.Response.Page.Should().Be(2);
         ep.Response.PageSize.Should().Be(5);
-        ep.Response.TotalResults.Should().Be(20);
+        ep.Response.TotalResults.Should().Be(10);
     }
 
 

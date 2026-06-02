@@ -26,6 +26,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 l.UserId,
                 l.User.Username,
                 l.Films.Count,
+                l.Likes.Any(x => x.UserId == userId),
                 l.Films
                     .Select(f => new FilmListItem(f.Film.BackdropPath))
                     .Take(6)

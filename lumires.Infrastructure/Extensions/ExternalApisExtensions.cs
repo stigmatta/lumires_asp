@@ -3,6 +3,9 @@ using System.Net;
 using System.Text.Json;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
+using Infrastructure.Services.Tmdb.TmdbFilms;
+using Infrastructure.Services.Tmdb.TmdbPerson;
+using Infrastructure.Services.Tmdb.TmdbSearch;
 using Infrastructure.Services.Watchmode;
 using lumires.Core.Abstractions.Services;
 using Microsoft.Extensions.Options;
@@ -43,6 +46,7 @@ internal static class ExternalApiExtensions
             .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
         services.AddScoped<IExternalFilmService, TmdbFilmService>();
         services.AddScoped<IExternalPersonService, TmdbPersonService>();
+        services.AddScoped<ISearchService, TmdbSearchService>();
 
         // Watchmode
         services.Configure<WatchmodeOptions>(config.GetSection(WatchmodeOptions.SectionName));
