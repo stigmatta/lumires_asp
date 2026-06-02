@@ -46,7 +46,7 @@ internal sealed record FilmItemResponse(
     string? PosterPath
 );
 
-internal sealed class Endpoint(IGetFilms db, ICurrentUserService currentUserService)
+internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService)
     : Endpoint<Query, PagedResponse<FilmItemResponse>>
 {
     public override void Configure()

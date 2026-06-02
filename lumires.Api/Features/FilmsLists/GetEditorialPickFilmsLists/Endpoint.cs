@@ -2,13 +2,13 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
-namespace lumires.Api.Features.FilmsLists.GetThisWeekTrendingFilmsLists;
+namespace lumires.Api.Features.FilmsLists.GetEditorialPickFilmsLists;
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyList<TrendingListItem> Items);
+internal sealed record Response(IReadOnlyList<EditorialListItem> Items);
 
 [UsedImplicitly]
-internal sealed record TrendingListItem(
+internal sealed record EditorialListItem(
     Guid Id,
     string Title,
     Guid UserId,
@@ -19,14 +19,14 @@ internal sealed record TrendingListItem(
 );
 
 [UsedImplicitly]
-internal sealed record FilmListItem(string? PosterPath);
+internal sealed record FilmListItem(string? BackdropPath);
 
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService)
     : EndpointWithoutRequest<Response>
 {
     public override void Configure()
     {
-        Get("/lists/trending/weekly");
+        Get("/lists/editorial");
         Description(x => x.WithTags("Lists"));
         AllowAnonymous();
     }
@@ -35,7 +35,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
     {
         var currentUserId = currentUserService.UserId;
         
-        var response = await db.GetTrendingFilmListsWeekly(currentUserId, ct);
+        var response = await db.GetEditorialListsAsync(currentUserId, ct);
         await Send.OkAsync(response, ct);
     }
 }

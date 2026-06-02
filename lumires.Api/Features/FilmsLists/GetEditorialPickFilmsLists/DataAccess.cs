@@ -2,28 +2,27 @@
 using lumires.Core.Abstractions.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.FilmsLists.GetThisWeekTrendingFilmsLists;
+namespace lumires.Api.Features.FilmsLists.GetEditorialPickFilmsLists;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    public async Task<Response> GetTrendingFilmListsWeekly(Guid currentUserId, CancellationToken ct)
+    public async Task<Response> GetEditorialListsAsync(Guid userId, CancellationToken ct)
     {
-        var weekAgo = DateTime.UtcNow.AddDays(-7);
-
         var items = await db.FilmsLists
             .AsNoTracking()
-            .Where(x => x.CreatedAt >= weekAgo)
-            .OrderByDescending(x => x.LikesCount) //TODO if we`d have listcomments - change strategy of calculation
-            .Take(6)
-            .Select(x => new TrendingListItem(
+            .Where(x => x.IsEditorPick)
+            .OrderByDescending(x => x.LikesCount) 
+            .Take(3)
+            .Select(x => new EditorialListItem(
                 x.Id,
                 x.Title,
                 x.UserId,
                 x.User.Username,
                 x.Films.Count,
-                x.Likes.Any(l => l.UserId == currentUserId),
+                x.Likes.Any(l => l.UserId == userId),
                 x.Films.Select(f => new FilmListItem(f.Film.PosterPath))
+                    .Take(11)
                     .ToArray()))
             .ToArrayAsync(ct);
 

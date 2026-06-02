@@ -72,3 +72,22 @@ public record ExternalPerson(
     string? ProfilePath,
     string? KnownForDepartment
 );
+
+[UsedImplicitly]
+public record SearchResults(
+    IReadOnlyList<ExternalFilmShort>?  Films,
+    IReadOnlyList<ExternalPersonShort>? Directors,
+    IReadOnlyList<ExternalPersonShort>? Actors,
+    int Page,
+    int TotalPages
+);
+
+[UsedImplicitly]
+public record ExternalPersonShort(
+    int ExternalId,
+    string Name,
+    string? ProfilePath,
+    string? KnownForDepartment,
+    float Popularity,
+    IReadOnlyList<ExternalFilmShort> KnownFor
+);

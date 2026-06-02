@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Core.Abstractions.Services;
 
 namespace lumires.Api.Features.FilmsLists.GetFilmsListsByFilmPreview;
 
@@ -10,13 +11,13 @@ internal sealed record Query(int Id);
 internal sealed record Response(IReadOnlyCollection<FilmsListsItems> FilmsLists);
 
 [UsedImplicitly]
-internal sealed record FilmsListsItems(Guid Id, IReadOnlyCollection<FilmListItem> Films, string Name);
+internal sealed record FilmsListsItems(Guid Id, bool IsLikedByMe, IReadOnlyCollection<FilmInListItem> Films, string Name);
 
 [UsedImplicitly]
-internal sealed record FilmListItem(string? BackdropPath);
+internal sealed record FilmInListItem(string? BackdropPath);
 
 internal sealed class Endpoint(
-    DataAccess db) : Endpoint<Query, Response>
+    DataAccess db, ICurrentUserService currentUserService) : Endpoint<Query, Response>
 {
     public override void Configure()
     {
@@ -28,8 +29,9 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var filmId = query.Id;
+        var currentUserId = currentUserService.UserId;
 
-        var response = await db.GetFilmListsByFilmIdAsync(filmId, ct);
+        var response = await db.GetFilmListsByFilmIdAsync(filmId, currentUserId, ct);
 
         await Send.OkAsync(response, ct);
     }

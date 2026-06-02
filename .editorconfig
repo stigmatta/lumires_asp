@@ -8,6 +8,9 @@ dotnet_diagnostic.CA1812.severity = none
 dotnet_diagnostic.CA1040.severity = none
 #CA1031: More concrete types of exceptions
 dotnet_diagnostic.CA1031.severity = none
+# CA1304, CA1311: ToLower without culture info
+dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1311.severity = none
 
 
 [**Migrations/*.cs]

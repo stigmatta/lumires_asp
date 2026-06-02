@@ -2,19 +2,17 @@
 using lumires.Core.Abstractions.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Reviews.GetReviewsByFilmPreview;
+namespace lumires.Api.Features.Reviews.GetReviewsPreview;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    internal async Task<Response> GetReviewsPreviewAsync(int movieId, CancellationToken ct)
+    internal async Task<Response> GetReviewsPreviewAsync(CancellationToken ct)
     {
         var items = await db.Reviews
             .AsNoTracking()
-            .Where(r => r.Film.ExternalId == movieId && r.IsSpoilerFree)
             .OrderByDescending(r => r.LikesCount)
-            .Select(r => new ReviewPreviewItem(
-                r.Id,
+            .Select(r => new ReviewPreviewItem(r.Id,
                 r.UserId,
                 r.Reviewer.Username,
                 r.Reviewer.AvatarUrl,
@@ -36,10 +34,5 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .ToListAsync(ct);
 
         return new Response(items);
-    }
-
-    internal async Task<bool> FilmExistsAsync(int externalId, CancellationToken ct)
-    {
-        return await db.Films.AnyAsync(m => m.ExternalId == externalId, ct);
     }
 }

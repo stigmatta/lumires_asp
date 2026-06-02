@@ -14,6 +14,7 @@ internal sealed record Response(
     string? Description,
     string AuthorName,
     DateTimeOffset CreatedAt,
+    bool IsLikedByMe,
     IReadOnlyCollection<ListFilmItem> Films);
 
 [UsedImplicitly]
@@ -38,6 +39,7 @@ internal sealed class Endpoint(
     {
         var id = query.Id;
         var lang = currentUserService.LangCulture;
+        var currentUserId = currentUserService.UserId;
 
         if (id == Guid.Empty)
         {
@@ -45,7 +47,7 @@ internal sealed class Endpoint(
             return;
         }
 
-        var result = await dataAccess.GetFilmsListAsync(id, lang, ct);
+        var result = await dataAccess.GetFilmsListAsync(id, lang, currentUserId, ct);
 
         if (result is null)
         {

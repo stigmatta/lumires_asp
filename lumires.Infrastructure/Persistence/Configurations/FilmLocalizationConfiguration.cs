@@ -15,6 +15,7 @@ internal sealed class FilmLocalizationConfiguration : IEntityTypeConfiguration<F
         builder.Property(m => m.Description).HasMaxLength(StringLimits.Description);
 
         builder.Property(m => m.Title).IsRequired().HasMaxLength(StringLimits.Default);
+        builder.HasIndex(m => m.Title);
 
         builder.Property(m => m.LanguageCode).IsRequired().HasMaxLength(StringLimits.Code);
 

@@ -11,7 +11,7 @@ using lumires.Domain.Entities;
 using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Services.Tmdb;
+namespace Infrastructure.Services.Tmdb.TmdbFilms;
 
 public sealed class TmdbFilmService(
     ITmdbApi tmdbApi,
@@ -38,7 +38,7 @@ public sealed class TmdbFilmService(
 
         if (!tmdbResponse.IsSuccessStatusCode || tmdbResponse.Content == null) return Result.Error();
 
-        var externalFilm = MapToDomain(tmdbResponse.Content);
+        var externalFilm = TmdbFilmMapper.ToDomain(tmdbResponse.Content);
 
         if ((!string.IsNullOrWhiteSpace(externalFilm.Overview) && externalFilm.TrailerUrl != null) || lang == DefLang)
             return externalFilm;
@@ -46,7 +46,7 @@ public sealed class TmdbFilmService(
         var fallbackResponse = await tmdbApi.GetFilmShortenedAsync(movieId, DefLang, ct);
         if (fallbackResponse.Content == null) return externalFilm;
 
-        var fallback = MapToDomain(fallbackResponse.Content);
+        var fallback = TmdbFilmMapper.ToDomain(fallbackResponse.Content);
 
         return externalFilm with
         {
@@ -362,16 +362,7 @@ public sealed class TmdbFilmService(
             return Result.Error("Failed to fetch similar films from TMDB");
 
         var items = response.Content.Results
-            .Select(m => new ExternalFilmShort(
-                m.Id,
-                m.Title,
-                m.PosterPath,
-                m.ReleaseDate?.Year,
-                m.VoteAverage,
-                m.VoteCount,
-                m.Popularity,
-                m.GenreIds
-            ))
+            .Select(TmdbFilmMapper.ToShort)
             .ToList();
 
         return Result.Success<IReadOnlyCollection<ExternalFilmShort>>(items);
@@ -435,48 +426,15 @@ public sealed class TmdbFilmService(
         }
     }
 
-    private static ExternalFilm MapToDomain(TmdbMovieResponse tmdb)
-    {
-        var trailerKey = tmdb.Videos?.Results
-            .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
-
-        var topCast = GetTopExternalCast(tmdb.Credits?.Cast);
-        var directors = GetExternalDirectors(tmdb.Credits?.Crew);
-        var company = GetProductionCompany(tmdb.ProductionCompanies);
-
-        var genres = new ExternalGenres(
-            tmdb.Genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
-        );
-
-        return new ExternalFilm(
-            tmdb.Id,
-            tmdb.Title,
-            tmdb.Overview,
-            tmdb.PosterPath,
-            tmdb.VoteAverage,
-            tmdb.VoteCount,
-            tmdb.Popularity,
-            tmdb.Runtime,
-            company,
-            tmdb.BackdropPath,
-            tmdb.ReleaseDate,
-            trailerKey,
-            tmdb.Tagline,
-            genres,
-            topCast,
-            directors
-        );
-    }
 
     private async Task<Film> ToFilmAsync(TmdbMovieResponse en, TmdbMovieResponse uk, CancellationToken ct)
     {
-        var trailerKey = en.Videos?.Results
-            .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })?.Key;
+        var trailerKey = TmdbFilmMapper.GetTrailerKey(en);
+        var topCastData = TmdbFilmMapper.GetTopCastData(en.Credits?.Cast);
+        var directorsData = TmdbFilmMapper.GetDirectorsData(en.Credits?.Crew);
+        var companyData = TmdbFilmMapper.GetProductionCompany(en.ProductionCompanies);
 
         var genreIds = en.Genres.Select(g => g.Id).ToList();
-        var topCastData = GetTopCastData(en.Credits?.Cast);
-        var directorsData = GetDirectorsData(en.Credits?.Crew);
-        var companyData = GetProductionCompany(en.ProductionCompanies);
 
         var genres = await db.Genres
             .Where(g => genreIds.Contains(g.ExternalId))
@@ -505,11 +463,11 @@ public sealed class TmdbFilmService(
         film.AddGenres(genres);
         film.AddLocalization(new FilmLocalization(EnLang, en.Title, en.Overview, en.Tagline));
         film.AddLocalization(new FilmLocalization(UaLang, uk.Title, uk.Overview, uk.Tagline));
-        
+
         var releaseYear = en.ReleaseDate?.Year;
         var slug = SlugExtensions.Slugify(
-            releaseYear.HasValue 
-                ? $"{en.Title}-{releaseYear}" 
+            releaseYear.HasValue
+                ? $"{en.Title}-{releaseYear}"
                 : en.Title
         );
         film.AddSlug(slug);
@@ -525,69 +483,6 @@ public sealed class TmdbFilmService(
         return film;
     }
 
-    private static IReadOnlyCollection<ExternalCastMember> GetTopExternalCast(IReadOnlyList<CastMember>? cast)
-    {
-        if (cast is null || cast.Count == 0)
-            return [];
-
-        return cast
-            .OrderBy(x => x.Order)
-            .Take(6)
-            .Select(x => new ExternalCastMember(
-                x.Id,
-                x.Name,
-                x.Character ?? string.Empty,
-                x.Order
-            ))
-            .ToList();
-    }
-
-    private static IReadOnlyCollection<ExternalDirector> GetExternalDirectors(IReadOnlyList<CrewMember>? crew)
-    {
-        if (crew is null || crew.Count == 0)
-            return [];
-
-        return crew
-            .Where(x => x.Job == "Director")
-            .Take(2)
-            .Select(x => new ExternalDirector(x.Id, x.Name))
-            .ToList();
-    }
-
-    private static string GetProductionCompany(IReadOnlyCollection<TmdbProductionCompanyItem> companies)
-    {
-        if (companies.Count == 0)
-            return string.Empty;
-
-        return companies
-            .Select(c => c.Name)
-            .FirstOrDefault() ?? string.Empty;
-    }
-
-    private static List<(int ExternalId, string Name, string Character, int Order)>
-        GetTopCastData(IReadOnlyList<CastMember>? cast)
-    {
-        if (cast is null || cast.Count == 0) return [];
-
-        return cast
-            .OrderBy(x => x.Order)
-            .Take(6)
-            .Select(x => (x.Id, x.Name, x.Character ?? "", x.Order))
-            .ToList();
-    }
-
-    private static List<(int ExternalId, string Name)>
-        GetDirectorsData(IReadOnlyList<CrewMember>? crew)
-    {
-        if (crew is null || crew.Count == 0) return [];
-
-        return crew
-            .Where(x => x.Job == "Director")
-            .Take(2)
-            .Select(x => (x.Id, x.Name))
-            .ToList();
-    }
-
     private async Task AddCreditsToExistingFilmAsync(int movieId, CreditsResponse credits, CancellationToken ct)
     {
         var movie = await db.Films
@@ -598,8 +493,8 @@ public sealed class TmdbFilmService(
         if (movie is null || movie.Cast.Count > 0 || movie.Directors.Count > 0)
             return;
 
-        var topCastData = GetTopCastData(credits.Cast);
-        var directorsData = GetDirectorsData(credits.Crew);
+        var topCastData = TmdbFilmMapper.GetTopCastData(credits.Cast);
+        var directorsData = TmdbFilmMapper.GetDirectorsData(credits.Crew);
 
         var personDict = await personResolver.ResolveAsync(
             topCastData.Select(c => (c.ExternalId, c.Name, PersonDepartmentMapper.ToString(PersonDepartment.Acting)))

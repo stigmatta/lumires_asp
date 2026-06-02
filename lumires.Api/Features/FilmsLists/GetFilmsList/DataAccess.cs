@@ -10,7 +10,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    public async Task<Response?> GetFilmsListAsync(Guid id, string lang, CancellationToken ct)
+    public async Task<Response?> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
     {
         return await db.FilmsLists
             .AsNoTracking()
@@ -21,6 +21,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 c.Description,
                 c.User.Username,
                 c.CreatedAt,
+                c.Likes.Any(l => l.UserId == userId),
                 c.Films
                     .OrderBy(m => m.Order)
                     .Select(m => new ListFilmItem(
