@@ -11,8 +11,8 @@ public sealed partial class User
     private readonly List<UserFilmRating> _filmRatings = [];
     private readonly List<UserThread> _userThreads = [];
     private readonly List<UserThreadComment> _userThreadComments = [];
-    
-
+    private readonly List<UsersRelationship> _outgoingRelationships = [];
+    private readonly List<UsersRelationship> _incomingRelationships = [];
 
     private User()
     {
@@ -48,6 +48,12 @@ public sealed partial class User
     public IReadOnlyCollection<UserFilmRating> FilmRatings => _filmRatings.AsReadOnly();
     public IReadOnlyCollection<UserThread> UserThreads => _userThreads.AsReadOnly();
     public IReadOnlyCollection<UserThreadComment> UserThreadsComments => _userThreadComments.AsReadOnly();
+    
+    public IReadOnlyCollection<UsersRelationship> OutgoingRelationships =>
+        _outgoingRelationships.AsReadOnly();
+
+    public IReadOnlyCollection<UsersRelationship> IncomingRelationships =>
+        _incomingRelationships.AsReadOnly();
     
 
     public void SetAvatarUrl(string avatarUrl)

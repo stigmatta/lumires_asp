@@ -38,7 +38,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 l.Id,
                 l.Username,
                 l.AvatarUrl,
-                0 // TODO when friends will be available
+                l.IncomingRelationships.Count 
             ))
             .ToListAsync(ct);
 
@@ -71,7 +71,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 l.Id,
                 l.Username,
                 l.AvatarUrl,
-                0 // TODO when friends will be available
+                l.IncomingRelationships.Count 
             ))
             .ToListAsync(ct);
         

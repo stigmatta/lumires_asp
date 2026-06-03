@@ -30,6 +30,16 @@ public static class ResultHttpMapper
             case ResultStatus.Forbidden:
                 await httpContext.Response.SendForbiddenAsync(ct);
                 break;
+            case ResultStatus.Conflict:
+                await httpContext.Response.SendAsync(
+                    new ProblemDetails
+                    {
+                        Status = 409,
+                        Detail = string.Join(", ", result.Errors)
+                    },
+                    409,
+                    cancellation: ct);
+                break;
             default:
                 await httpContext.Response.SendAsync(
                     new ProblemDetails
@@ -61,6 +71,15 @@ public static class ResultHttpMapper
                 break;
             case ResultStatus.Forbidden:
                 await httpContext.Response.SendForbiddenAsync(ct);
+                break;
+            case ResultStatus.Conflict:
+                await httpContext.Response.SendAsync(
+                    new ProblemDetails
+                    {
+                        Status = 409
+                    },
+                    409,
+                    cancellation: ct);
                 break;
             default:
                 await httpContext.Response.SendAsync(

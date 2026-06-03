@@ -31,7 +31,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<UserThreadComment> ThreadComments => Set<UserThreadComment>();
     public DbSet<UserThreadLike> ThreadLikes => Set<UserThreadLike>();
     public DbSet<UserThreadCommentLike> ThreadCommentLikes => Set<UserThreadCommentLike>();
-
+    public DbSet<UsersRelationship> Relationships => Set<UsersRelationship>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

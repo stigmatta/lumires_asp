@@ -37,6 +37,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
 
         builder.Metadata
             .FindNavigation(nameof(User.FilmsLists))?

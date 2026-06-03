@@ -8,9 +8,9 @@ internal sealed class Summary : Summary<Endpoint>
 {
     public Summary()
     {
-        Summary = "Search for films and reviews";
+        Summary = "Search";
         Description = """
-                      Provides search functionality across films, reviews, and lists.
+                      Provides search functionality across films, lists, directors, actors, members.
                       Returns paged results with metadata for client-side navigation.
                       """;
 
