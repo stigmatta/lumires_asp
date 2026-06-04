@@ -416,12 +416,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PersonId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonId1");
 
                     b.HasIndex("PersonId", "LanguageCode")
                         .IsUnique();
@@ -571,10 +566,15 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<Guid?>("WatchedFilmId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Username")
                         .IsUnique();
+
+                    b.HasIndex("WatchedFilmId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -792,6 +792,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Relationships");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.WatchedFilm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("UserId", "FilmId")
+                        .IsUnique();
+
+                    b.ToTable("WatchedFilms");
+                });
+
             modelBuilder.Entity("FilmGenres", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Film", null)
@@ -926,14 +950,10 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("lumires.Domain.Entities.PersonLocalization", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Person", "Person")
-                        .WithMany()
+                        .WithMany("Localizations")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("lumires.Domain.Entities.Person", null)
-                        .WithMany("Localizations")
-                        .HasForeignKey("PersonId1");
 
                     b.Navigation("Person");
                 });
@@ -1011,6 +1031,13 @@ namespace Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.User", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.WatchedFilm", null)
+                        .WithMany("Users")
+                        .HasForeignKey("WatchedFilmId");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.UserFilmRating", b =>
@@ -1118,6 +1145,25 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("TargetUser");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.WatchedFilm", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany()
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", "User")
+                        .WithMany("WatchedFilms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.Film", b =>
                 {
                     b.Navigation("Cast");
@@ -1183,6 +1229,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("UserThreads");
 
                     b.Navigation("UserThreadsComments");
+
+                    b.Navigation("WatchedFilms");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.UserThread", b =>
@@ -1195,6 +1243,11 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("lumires.Domain.Entities.UserThreadComment", b =>
                 {
                     b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.WatchedFilm", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

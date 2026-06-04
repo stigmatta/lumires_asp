@@ -34,7 +34,7 @@ internal class DataAccess(
                 reviewComment.Id.ToString(),
                 DateTime.UtcNow);
 
-            await notificationService.SendToUserAsync(reviewComment.UserId, message);
+             notificationService.SendToUser(reviewComment.UserId, message);
         }
 
 

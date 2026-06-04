@@ -12,7 +12,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var thread = new UserThread(userId, command.Title, command.Text, command.IsSpoilerFree);
 
-        await db.Threads.AddAsync(thread, ct);
+        db.Threads.Add(thread);
         await db.SaveChangesAsync(ct);
 
         return thread.Id;

@@ -37,8 +37,7 @@ internal sealed class CreateReviewCommentTests
             .ReturnsAsync(1);
 
         _notificationMock
-            .Setup(x => x.SendToUsersAsync(It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<NotificationMessage>()))
-            .Returns(Task.CompletedTask);
+            .Setup(x => x.SendToUsers(It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<NotificationMessage>()));
 
         _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);
     }
@@ -125,7 +124,7 @@ internal sealed class CreateReviewCommentTests
             CancellationToken.None);
 
         _notificationMock.Verify(
-            x => x.SendToUsersAsync(review.UserId, null, It.IsAny<NotificationMessage>()),
+            x => x.SendToUsers(review.UserId, null, It.IsAny<NotificationMessage>()),
             Times.Once);
     }
 
@@ -143,7 +142,7 @@ internal sealed class CreateReviewCommentTests
             CancellationToken.None);
 
         _notificationMock.Verify(
-            x => x.SendToUsersAsync(review.UserId, targetedUserId, It.IsAny<NotificationMessage>()),
+            x => x.SendToUsers(review.UserId, targetedUserId, It.IsAny<NotificationMessage>()),
             Times.Once);
     }
 
@@ -180,7 +179,7 @@ internal sealed class CreateReviewCommentTests
             CancellationToken.None);
 
         _notificationMock.Verify(
-            x => x.SendToUsersAsync(
+            x => x.SendToUsers(
                 It.IsAny<Guid>(),
                 It.IsAny<Guid?>(),
                 It.Is<NotificationMessage>(m => m.SenderId == expectedUserId.ToString())),

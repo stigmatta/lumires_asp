@@ -1,6 +1,17 @@
-﻿namespace lumires.Api.Features.Reviews.GetReviewsPreview;
+﻿using FastEndpoints;
+using JetBrains.Annotations;
 
-public class Summary
+namespace lumires.Api.Features.Reviews.GetReviewsPreview;
+
+[UsedImplicitly]
+internal sealed class Summary : Summary<Endpoint>
 {
-    
+    public Summary()
+    {
+        Summary = "GetReviewsPreview";
+        Description = "Get reviews preview for a main page.";
+
+
+        Response(200, "Reviews are successfully retrieved");
+    }
 }

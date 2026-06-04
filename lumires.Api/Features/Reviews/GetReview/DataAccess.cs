@@ -11,7 +11,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     internal async Task<Response?> GetReviewByIdAsync(Query query, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        
+
         return await db.Reviews
             .Where(x => x.Id == query.ReviewId)
             .Select(x => new Response(
@@ -27,18 +27,22 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 x.CreatedAt,
                 currentUserId != Guid.Empty && x.Likes.Any(l => l.UserId == currentUserId),
                 x.IsSpoilerFree,
-                x.ReviewComments.Select(c => new CommentItemResponse(
-                    c.Id,
-                    c.UserId,
-                    c.Commentator.Username,
-                    c.Commentator.AvatarUrl,
-                    c.LikesCount,
-                    currentUserId != Guid.Empty && c.Likes.Any(l => l.UserId == currentUserId),
-                    c.IsSpoilerFree,
-                    c.CreatedAt,
-                    c.TargetedUserId,
-                    c.TargetedUser != null ? c.TargetedUser.Username : null
-                )).ToList()
+                x.ReviewComments
+                    .OrderByDescending(rc => rc.CreatedAt)
+                    .Select(c => new CommentItemResponse(
+                        c.Id,
+                        c.UserId,
+                        c.Commentator.Username,
+                        c.Commentator.AvatarUrl,
+                        c.LikesCount,
+                        currentUserId != Guid.Empty && c.Likes.Any(l => l.UserId == currentUserId),
+                        c.IsSpoilerFree,
+                        c.CreatedAt,
+                        c.TargetedUserId,
+                        c.TargetedUser != null ? c.TargetedUser.Username : null
+                    ))
+                    .Take(7)
+                    .ToList()
             ))
             .FirstOrDefaultAsync(ct);
     }

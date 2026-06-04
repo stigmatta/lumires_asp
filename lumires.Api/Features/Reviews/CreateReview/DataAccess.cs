@@ -21,7 +21,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var review = new Review(userId, movieId, command.Title, command.Text, command.Rating,
             command.IsSpoilerFree); //TODO When MovieLogs table will be created - change isFirstWatch
 
-        await db.Reviews.AddAsync(review, ct);
+        db.Reviews.Add(review);
         await db.SaveChangesAsync(ct);
 
         return review.Id;

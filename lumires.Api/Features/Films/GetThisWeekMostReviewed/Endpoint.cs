@@ -8,7 +8,8 @@ namespace lumires.Api.Features.Films.GetThisWeekMostReviewed;
 
 [UsedImplicitly]
 internal sealed record WeeklyReviewedItem(
-    int ExternalId,
+    int FilmId,
+    Guid Id,
     string Title,
     string? Quote,
     string Slug,

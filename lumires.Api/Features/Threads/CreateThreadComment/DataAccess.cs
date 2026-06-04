@@ -26,13 +26,13 @@ internal class DataAccess(
         var threadComment = new UserThreadComment(thread.UserId, command.ThreadId, command.Text, command.TargetedUserId,
             command.IsSpoilerFree);
 
-        await db.ThreadComments.AddAsync(threadComment, ct);
+        db.ThreadComments.Add(threadComment);
 
         var message = new NotificationMessage(NotificationType.ThreadReplied, currentUserId.ToString(), currentUsername,
             threadComment.Id.ToString(), //TODO or thread.Id ?
             DateTime.UtcNow);
 
-        await notificationService.SendToUsersAsync(thread.UserId, command.TargetedUserId, message);
+         notificationService.SendToUsers(thread.UserId, command.TargetedUserId, message);
 
         await db.SaveChangesAsync(ct);
 

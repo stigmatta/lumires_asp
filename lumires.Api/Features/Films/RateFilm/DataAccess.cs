@@ -32,13 +32,12 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         else
         {
             newRating = new UserFilmRating(userId, filmId, command.Rating);
-            await db.UserFilmRatings.AddAsync(newRating, ct);
+            db.UserFilmRatings.Add(newRating);
         }
 
         await db.SaveChangesAsync(ct);
 
         return userRating?.FilmId ?? newRating.FilmId;
     }
-    
     
 }
