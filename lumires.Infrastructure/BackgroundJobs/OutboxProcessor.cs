@@ -46,7 +46,7 @@ public sealed class OutboxProcessor(
                     payload.Message.SenderId,
                     payload.Message.TargetId
                 );
-                await db.UserNotifications.AddAsync(primary, ct);
+                db.UserNotifications.Add(primary);
 
                 if (payload.SecondaryUserId.HasValue && payload.SecondaryUserId != payload.PrimaryUserId)
                 {
@@ -56,7 +56,7 @@ public sealed class OutboxProcessor(
                         payload.Message.SenderId,
                         payload.Message.TargetId
                     );
-                    await db.UserNotifications.AddAsync(secondary, ct);
+                    db.UserNotifications.Add(secondary);
                 }
 
                 message.MarkProcessed();

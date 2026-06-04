@@ -100,9 +100,8 @@ public class RateMovieTests
         ep.HttpContext.Response.StatusCode.Should().Be(204);
 
         _dbContextMock.Verify(
-            x => x.UserFilmRatings.AddAsync(
-                It.IsAny<UserFilmRating>(),
-                It.IsAny<CancellationToken>()),
+            x => x.UserFilmRatings.Add(
+                It.IsAny<UserFilmRating>()),
             Times.Once);
     }
 
@@ -139,9 +138,8 @@ public class RateMovieTests
         rating.UpdatedAt.Should().NotBeNull();
 
         _dbContextMock.Verify(
-            x => x.UserFilmRatings.AddAsync(
-                It.IsAny<UserFilmRating>(),
-                It.IsAny<CancellationToken>()),
+            x => x.UserFilmRatings.Add(
+                It.IsAny<UserFilmRating>()),
             Times.Never);
     }
 
@@ -197,9 +195,8 @@ public class RateMovieTests
         existingRating.Rating.Should().Be(4.5f);
 
         _dbContextMock.Verify(
-            x => x.UserFilmRatings.AddAsync(
-                It.IsAny<UserFilmRating>(),
-                It.IsAny<CancellationToken>()),
+            x => x.UserFilmRatings.Add(
+                It.IsAny<UserFilmRating>()),
             Times.Never);
     }
 }

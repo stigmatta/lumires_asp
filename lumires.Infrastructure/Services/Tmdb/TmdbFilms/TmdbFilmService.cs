@@ -97,7 +97,7 @@ public sealed class TmdbFilmService(
 
             foreach (var (_, film, isExisting) in results)
                 if (!isExisting && film is not null)
-                    await db.Films.AddAsync(film, ct);
+                    db.Films.Add(film);
 
             await db.SaveChangesAsync(ct);
         }
@@ -145,7 +145,7 @@ public sealed class TmdbFilmService(
 
                 foreach (var film in films.OfType<Film>())
                 {
-                    await db.Films.AddAsync(film, ct);
+                    db.Films.Add(film);
                     newFilmsCount++;
                 }
 
@@ -216,7 +216,7 @@ public sealed class TmdbFilmService(
 
             foreach (var (_, film, isExisting) in results)
                 if (!isExisting && film is not null)
-                    await db.Films.AddAsync(film, ct);
+                    db.Films.Add(film);
 
             await db.SaveChangesAsync(ct);
         }

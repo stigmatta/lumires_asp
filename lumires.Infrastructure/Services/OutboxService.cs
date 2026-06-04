@@ -8,24 +8,24 @@ namespace Infrastructure.Services;
 
 public sealed class OutboxService(IAppDbContext db) : INotificationService
 {
-    public async Task SendToUserAsync(Guid userId, NotificationMessage message)
+    public void SendToUsers(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message)
     {
-        await SaveOutboxAsync(userId, null, message);
+        SaveOutbox(primaryUserId, secondaryUserId, message);
     }
 
-    public async Task SendToUsersAsync(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message)
+    public void SendToUser(Guid userId, NotificationMessage message)
     {
-        await SaveOutboxAsync(primaryUserId, secondaryUserId, message);
+        SaveOutbox(userId, null, message);
     }
 
-    private async Task SaveOutboxAsync(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message)
+    private void SaveOutbox(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message)
     {
         var outbox = new OutboxMessage(
             message.Type.ToString(),
             JsonSerializer.Serialize(new OutboxPayload(primaryUserId, secondaryUserId, message))
         );
 
-        await db.OutboxMessages.AddAsync(outbox);
+        db.OutboxMessages.Add(outbox);
     }
 }
 

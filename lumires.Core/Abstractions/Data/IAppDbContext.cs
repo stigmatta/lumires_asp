@@ -32,6 +32,8 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<UserThreadLike> ThreadLikes { get; }
     DbSet<UserThreadCommentLike> ThreadCommentLikes { get; }
     DbSet<UsersRelationship> Relationships { get; }
+    DbSet<WatchedFilm> WatchedFilms { get; }
+    
 
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

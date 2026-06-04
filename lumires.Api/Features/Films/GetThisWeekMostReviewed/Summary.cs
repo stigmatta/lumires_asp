@@ -20,6 +20,7 @@ internal sealed class Summary : Summary<Endpoint>
         [
             new WeeklyReviewedItem(
                 550,
+                Guid.CreateVersion7(),
                 "Fight Club",
                 "Loved this so much",
                 "fight-club-1999",
@@ -30,6 +31,7 @@ internal sealed class Summary : Summary<Endpoint>
             ),
             new WeeklyReviewedItem(
                 550,
+                Guid.CreateVersion7(),
                 "The Godfather",
                 "Loved this even more",
                 "the-godfather-1972",

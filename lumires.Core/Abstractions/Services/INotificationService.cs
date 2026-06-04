@@ -4,6 +4,6 @@ namespace lumires.Core.Abstractions.Services;
 
 public interface INotificationService
 {
-    Task SendToUserAsync(Guid userId, NotificationMessage message);
-    Task SendToUsersAsync(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message);
+    void SendToUser(Guid userId, NotificationMessage message);
+    void SendToUsers(Guid primaryUserId, Guid? secondaryUserId, NotificationMessage message);
 }

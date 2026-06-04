@@ -14,43 +14,39 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var startOfWeek = DateTime.UtcNow.AddDays(-7);
 
-        var items = await db.Films
+        var raw = await db.Films
             .AsNoTracking()
             .Where(movie => movie.Reviews.Any(r => r.CreatedAt >= startOfWeek))
-            .OrderByDescending(movie => movie.Reviews
-                .Count(r => r.CreatedAt >= startOfWeek))
+            .OrderByDescending(movie => movie.Reviews.Count(r => r.CreatedAt >= startOfWeek))
             .Take(6)
-            .Select(m => new WeeklyReviewedItem(
+            .Select(m => new {
                 m.ExternalId,
-                m.Localizations
+                m.Slug,
+                m.BackdropPath,
+                Title = m.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
-                m.Reviews
+                TopReview = m.Reviews
                     .Where(r => r.CreatedAt >= startOfWeek && r.Title != null)
                     .OrderByDescending(r => r.Likes.Count)
-                    .Select(r => r.Title)
-                    .FirstOrDefault(),
-                m.Slug,
-                m.BackdropPath,
-                m.Reviews
-                    .Where(r => r.CreatedAt >= startOfWeek && r.Title != null)
-                    .OrderByDescending(r => r.Likes.Count)
-                    .Select(r => r.Reviewer.Id)
-                    .FirstOrDefault(),
-                m.Reviews
-                    .Where(r => r.CreatedAt >= startOfWeek && r.Title != null)
-                    .OrderByDescending(r => r.Likes.Count)
-                    .Select(r => r.Reviewer.Username)
-                    .FirstOrDefault() ?? string.Empty,
-                m.Reviews
-                    .Where(r => r.CreatedAt >= startOfWeek && r.Title != null)
-                    .OrderByDescending(r => r.Likes.Count)
-                    .Select(r => r.Rating)
+                    .Select(r => new { ReviewId = r.Id, r.Title, r.Rating, ReviewerId = r.Reviewer.Id , ReviewerName = r.Reviewer.Username})
                     .FirstOrDefault()
-            ))
+            })
             .ToListAsync(ct);
+
+        var items = raw.Select(x => new WeeklyReviewedItem(
+            x.ExternalId,
+            x.TopReview?.ReviewId ?? Guid.Empty,
+            x.Title,
+            x.TopReview?.Title,
+            x.Slug,
+            x.BackdropPath,
+            x.TopReview?.ReviewerId ?? Guid.Empty,
+            x.TopReview?.ReviewerName ?? string.Empty,
+            x.TopReview?.Rating
+        )).ToList();
 
         return new Response(items);
     }

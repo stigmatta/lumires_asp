@@ -47,7 +47,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 UserRelationshipStatus.Accepted // TODO if we`d have private accounts
             );
 
-            await db.Relationships.AddAsync(relationship, ct);
+             db.Relationships.Add(relationship);
         }
 
 

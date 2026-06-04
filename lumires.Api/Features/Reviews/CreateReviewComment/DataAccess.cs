@@ -26,13 +26,13 @@ internal class DataAccess(
         var reviewComment = new ReviewComment(review.UserId, command.ReviewId, command.Text, command.TargetedUserId,
             command.IsSpoilerFree);
 
-        await db.ReviewComments.AddAsync(reviewComment, ct);
+        db.ReviewComments.Add(reviewComment);
 
         var message = new NotificationMessage(NotificationType.ReviewReplied, currentUserId.ToString(), currentUsername,
             reviewComment.Id.ToString(), //TODO or review.Id ?
             DateTime.UtcNow);
 
-        await notificationService.SendToUsersAsync(review.UserId, command.TargetedUserId, message);
+         notificationService.SendToUsers(review.UserId, command.TargetedUserId, message);
 
         await db.SaveChangesAsync(ct);
 

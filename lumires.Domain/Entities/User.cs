@@ -13,6 +13,7 @@ public sealed partial class User
     private readonly List<UserThreadComment> _userThreadComments = [];
     private readonly List<UsersRelationship> _outgoingRelationships = [];
     private readonly List<UsersRelationship> _incomingRelationships = [];
+    private readonly List<WatchedFilm> _watchedFilms = [];
 
     private User()
     {
@@ -54,6 +55,9 @@ public sealed partial class User
 
     public IReadOnlyCollection<UsersRelationship> IncomingRelationships =>
         _incomingRelationships.AsReadOnly();
+    
+    public IReadOnlyCollection<WatchedFilm> WatchedFilms =>
+        _watchedFilms.AsReadOnly();
     
 
     public void SetAvatarUrl(string avatarUrl)

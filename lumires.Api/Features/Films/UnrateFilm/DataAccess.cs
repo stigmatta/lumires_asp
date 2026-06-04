@@ -10,16 +10,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     internal async Task<Result> UnrateFilmAsync(Command command, Guid userId, CancellationToken ct)
     {
-        var filmId = await db.Films
-            .Where(m => m.ExternalId == command.FilmId)
-            .Select(m => m.Id)
-            .FirstOrDefaultAsync(ct);
-
-        if (filmId == Guid.Empty) return Result.NotFound();
-
-
         var userRating = await db.UserFilmRatings
-            .Where(fr => fr.FilmId == filmId && fr.UserId == userId)
+            .Where(fr => fr.Film.ExternalId == command.FilmId && fr.UserId == userId)
             .FirstOrDefaultAsync(ct);
 
         if (userRating is null) return Result.NoContent();

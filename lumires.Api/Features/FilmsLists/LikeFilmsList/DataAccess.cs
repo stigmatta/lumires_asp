@@ -34,7 +34,7 @@ internal class DataAccess(
                 list.Id.ToString(),
                 DateTime.UtcNow);
 
-            await notificationService.SendToUserAsync(list.UserId, message);
+            notificationService.SendToUser(list.UserId, message);
         }
 
 

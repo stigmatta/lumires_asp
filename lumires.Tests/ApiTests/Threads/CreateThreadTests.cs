@@ -103,9 +103,9 @@ internal sealed class CreateThreadTests
         UserThread? savedThread = null;
         var threadsDbSetMock = new Mock<DbSet<UserThread>>();
         threadsDbSetMock
-            .Setup(x => x.AddAsync(It.IsAny<UserThread>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.Add(It.IsAny<UserThread>()))
             .Callback<UserThread, CancellationToken>((r, _) => savedThread = r)
-            .ReturnsAsync((EntityEntry<UserThread>)null!);
+            .Returns((EntityEntry<UserThread>)null!);
 
         _dbContextMock.Setup(x => x.Threads).Returns(threadsDbSetMock.Object);
 

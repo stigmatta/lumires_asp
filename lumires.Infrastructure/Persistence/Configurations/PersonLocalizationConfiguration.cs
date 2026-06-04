@@ -27,9 +27,5 @@ public sealed class PersonLocalizationConfiguration : IEntityTypeConfiguration<P
 
         builder.HasIndex(pl => new { pl.PersonId, pl.LanguageCode })
             .IsUnique();
-
-        builder.HasOne(pl => pl.Person)
-            .WithMany()
-            .HasForeignKey(pl => pl.PersonId);
     }
 }
