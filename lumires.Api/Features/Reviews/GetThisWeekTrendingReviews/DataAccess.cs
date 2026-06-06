@@ -10,7 +10,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    internal async Task<Response?> GetTrendingReviewsWeeklyAsync(string lang, CancellationToken ct)
+    internal async Task<Response> GetTrendingReviewsWeeklyAsync(string lang, CancellationToken ct)
     {
         var weekAgo = DateTime.UtcNow.AddDays(-7);
 
@@ -29,7 +29,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
                 x.Film.Slug,
-                x.Title!,
+                x.Title ?? string.Empty,
                 x.Rating,
                 x.UserId,
                 x.Reviewer.Username

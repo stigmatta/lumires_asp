@@ -43,7 +43,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/directors/{actorId:int}/films/most-reviewed");
+        Get("/actors/{Slug}/{actorId:int}/films/most-reviewed");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }

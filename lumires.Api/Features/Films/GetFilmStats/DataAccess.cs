@@ -49,6 +49,11 @@ internal class DataAccess(
             })
             .FirstOrDefaultAsync(ct);
 
+        if (rawStat is null)
+        {
+            return Result.NoContent();
+        }
+
         var friendsAverage = await GetFriendsAverage(rawStat.Id, currentUserId, ct);
 
         var (rating, _) = CalculateFilmRating.Handle(

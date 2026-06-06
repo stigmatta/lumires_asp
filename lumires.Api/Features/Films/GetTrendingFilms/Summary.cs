@@ -1,5 +1,14 @@
-﻿namespace lumires.Api.Features.Films.GetTrendingFilms;
+﻿using FastEndpoints;
+using JetBrains.Annotations;
 
-public class Summary
+namespace lumires.Api.Features.Films.GetTrendingFilms;
+
+[UsedImplicitly]
+internal sealed class Summary : Summary<Endpoint>
 {
+    public Summary()
+    {
+        Summary = "GetTrendingFilms";
+        Response(200, "Trending  movies retrieved successfully.");
+    }
 }

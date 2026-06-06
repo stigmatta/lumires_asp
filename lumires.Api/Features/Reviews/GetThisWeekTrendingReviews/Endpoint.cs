@@ -35,12 +35,6 @@ internal sealed class Endpoint(ICurrentUserService currentUserService, DataAcces
 
         var response = await db.GetTrendingReviewsWeeklyAsync(lang, ct);
 
-        if (response is null)
-        {
-            await Send.OkAsync(new Response([]), ct);
-            return;
-        }
-
         await Send.OkAsync(response, ct);
     }
 }

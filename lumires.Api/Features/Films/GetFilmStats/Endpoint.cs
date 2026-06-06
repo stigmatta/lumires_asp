@@ -1,18 +1,18 @@
-﻿using FastEndpoints;
+﻿using Ardalis.Result;
+using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
 namespace lumires.Api.Features.Films.GetFilmStats;
 
 [UsedImplicitly]
-internal sealed record Query(int FilmId);
+internal sealed record Query(int Id);
 
 [UsedImplicitly]
 internal sealed record Response(float VoteAverage, int TotalReviews, int ReviewsThisWeek, float? FriendsAverage);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
-    IFilmResolver filmResolver,
     DataAccess db)
     : Endpoint<Query, Response>
 {
@@ -32,7 +32,13 @@ internal sealed class Endpoint(
         //
         // await filmResolver.EnsureFilmExistsAsync(query.FilmId, lang, ct);
 
-        var response = await db.GetFilmStats(query.FilmId, currentUserId, ct);
+        var response = await db.GetFilmStats(query.Id, currentUserId, ct);
+
+        if (response.Status == ResultStatus.NoContent)
+        {
+            await Send.NoContentAsync(ct);
+            return;
+        }
 
         await Send.OkAsync(response, ct);
     }
