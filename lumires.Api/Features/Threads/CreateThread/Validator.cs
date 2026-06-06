@@ -20,5 +20,9 @@ internal sealed class Validator : Validator<Command>
         RuleFor(x => x.Text)
             .MaximumLength(StringLimits.Description)
             .WithMessage(localizer["ValidationError_Description_TooLong"]);
+
+        RuleFor(x => x.Image)
+            .MaximumLength(StringLimits.Url)
+            .When(x => x.Image is not null);
     }
 }

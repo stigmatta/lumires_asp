@@ -19,7 +19,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         if (movieId == Guid.Empty) return Result.NotFound();
 
         var review = new Review(userId, movieId, command.Title, command.Text, command.Rating,
-            command.IsSpoilerFree); //TODO When MovieLogs table will be created - change isFirstWatch
+            command.IsSpoilerFree);
 
         db.Reviews.Add(review);
         await db.SaveChangesAsync(ct);

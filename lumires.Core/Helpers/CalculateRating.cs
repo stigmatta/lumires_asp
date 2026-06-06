@@ -1,6 +1,6 @@
 ﻿namespace lumires.Core.Helpers;
 
-public static class CalculateFilmRating  
+public static class CalculateFilmRating
 {
     public static (float Rating, int TotalVotes) Handle(
         float externalRating,

@@ -70,9 +70,8 @@ internal static class Specifications
 
     private static Expression<Func<Film, bool>> BuildContentFilter(Query req)
     {
-        return req.Content switch // TODO with movie log
+        return req.Content switch
         {
-            FilmContentFilter.FirstWatches => f => f.Id != Guid.Empty, //TODO later
             FilmContentFilter.Popular => f => f.Popularity >= CalcConsts.PopularThreshold,
             FilmContentFilter.NewReleases => f =>
                 f.ReleaseDate >= DateOnly.FromDateTime(DateTime.UtcNow)

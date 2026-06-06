@@ -4,4 +4,5 @@ public class UserThreadLike
 {
     public Guid ThreadId { get; init; }
     public Guid UserId { get; init; }
+    public DateTimeOffset LikedAt { get; init; }
 }

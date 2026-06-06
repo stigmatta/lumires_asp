@@ -12,7 +12,6 @@ internal enum ContentFilterEnum
     All,
     LongForm,
     SpoilerFree,
-    FirstWatches,
     FromFriends
 }
 

@@ -12,7 +12,6 @@ internal enum FilmContentFilter
     Popular,
     TopRated,
     NewReleases,
-    FirstWatches,
     HiddenGems
 }
 

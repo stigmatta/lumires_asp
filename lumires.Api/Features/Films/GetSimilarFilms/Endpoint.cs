@@ -41,7 +41,7 @@ internal sealed class Endpoint(
         AllowAnonymous();
     }
 
-     public override async Task HandleAsync(Query query, CancellationToken ct)
+    public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
 
@@ -64,8 +64,7 @@ internal sealed class Endpoint(
         var similarFilmsIds = externalFilms.Select(x => x.ExternalId).ToArray();
 
         var existingFilmsDict = (await db.GetExistingFilms(similarFilmsIds, lang, ct))
-            ?.ToDictionary(x => x.Id) 
-            ?? [];
+            .ToDictionary(x => x.Id);
 
         var allGenresDict = await db.GetGenresDictionaryAsync(lang, ct);
 
@@ -74,20 +73,20 @@ internal sealed class Endpoint(
             if (existingFilmsDict.TryGetValue(external.ExternalId, out var local))
             {
                 var (rating, _) = CalculateFilmRating.Handle(
-                    externalRating: external.VoteAverage,
-                    externalVoteCount: external.VoteCount,
-                    internalRating: local.VoteAverage,
-                    internalVoteCount: local.VoteCount
+                    external.VoteAverage,
+                    external.VoteCount,
+                    local.VoteAverage,
+                    local.VoteCount
                 );
 
                 return new SimilarFilmItem(
-                    ExternalId: external.ExternalId,
-                    PosterPath: external.PosterPath,
-                    Title: local.Title,
-                    Slug: local.Slug,
-                    ReleaseYear: local.ReleaseYear,
-                    Genres: local.Genres,
-                    Rating: rating
+                    external.ExternalId,
+                    external.PosterPath,
+                    local.Title,
+                    local.Slug,
+                    local.ReleaseYear,
+                    local.Genres,
+                    rating
                 );
             }
 
@@ -100,13 +99,13 @@ internal sealed class Endpoint(
                 .ToArray();
 
             return new SimilarFilmItem(
-                ExternalId: external.ExternalId,
-                PosterPath: external.PosterPath,
-                Title: external.Title,
-                Slug: slug,
-                ReleaseYear: external.ReleaseYear,
-                Genres: genres,
-                Rating: external.VoteAverage
+                external.ExternalId,
+                external.PosterPath,
+                external.Title,
+                slug,
+                external.ReleaseYear,
+                genres,
+                external.VoteAverage
             );
         }).ToList();
 
@@ -119,16 +118,16 @@ internal sealed class Endpoint(
 
         if (idsToEnrich.Count > 0)
         {
-            await new FilmReferencedEvent 
-            { 
-                ExternalIds = [..idsToEnrich], 
-                Language = lang 
+            await new FilmReferencedEvent
+            {
+                ExternalIds = [..idsToEnrich],
+                Language = lang
             }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
 
-            await new FilmEnrichmentEvent 
-            { 
-                ExternalIds = [..idsToEnrich], 
-                SkipLanguage = lang 
+            await new FilmEnrichmentEvent
+            {
+                ExternalIds = [..idsToEnrich],
+                SkipLanguage = lang
             }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
         }
     }

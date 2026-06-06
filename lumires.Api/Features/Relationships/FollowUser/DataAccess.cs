@@ -65,8 +65,7 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
         await db.SaveChangesAsync(ct);
 
         if (reversedFollow)
-        {
-             notificationService.SendToUser(
+            notificationService.SendToUser(
                 targetId,
                 new NotificationMessage(
                     NotificationType.FollowedBack,
@@ -74,11 +73,8 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
                     username,
                     targetId.ToString(),
                     DateTime.UtcNow));
-            
-        }
         else
-        {
-             notificationService.SendToUser(
+            notificationService.SendToUser(
                 targetId,
                 new NotificationMessage(
                     NotificationType.Followed,
@@ -86,7 +82,6 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
                     username,
                     targetId.ToString(),
                     DateTime.UtcNow));
-        }
 
         return Result.Created(relationship.Id);
     }

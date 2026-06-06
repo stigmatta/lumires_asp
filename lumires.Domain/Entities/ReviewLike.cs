@@ -4,4 +4,5 @@ public sealed class ReviewLike
 {
     public Guid ReviewId { get; init; }
     public Guid UserId { get; init; }
+    public DateTimeOffset LikedAt { get; init; }
 }

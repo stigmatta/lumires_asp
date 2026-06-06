@@ -9,17 +9,16 @@ namespace lumires.Api.Features.Reviews.GetThisWeekTrendingReviews;
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
-    
+
     internal async Task<Response?> GetTrendingReviewsWeeklyAsync(string lang, CancellationToken ct)
     {
         var weekAgo = DateTime.UtcNow.AddDays(-7);
 
         var items = await db.Reviews
             .AsNoTracking()
-            .Where(x => x.CreatedAt >= weekAgo && !string.IsNullOrWhiteSpace(x.Title))
             .OrderByDescending(x =>
-                x.LikesCount +
-                x.ReviewComments.Count * 2)
+                x.Likes.Count(l => l.LikedAt >= weekAgo) +
+                x.ReviewComments.Count(c => c.CreatedAt >= weekAgo) * 2)
             .Take(6)
             .Select(x => new TrendingReviewItem(
                 x.Id,

@@ -5,45 +5,54 @@ namespace Infrastructure.Services.Tmdb.TmdbFilms;
 
 internal static class TmdbFilmMapper
 {
+    public static ExternalFilm ToDomain(TmdbMovieResponse tmdb)
+    {
+        return new ExternalFilm(
+            tmdb.Id,
+            tmdb.Title,
+            tmdb.Overview,
+            tmdb.PosterPath,
+            tmdb.VoteAverage,
+            tmdb.VoteCount,
+            tmdb.Popularity,
+            tmdb.Runtime,
+            GetProductionCompany(tmdb.ProductionCompanies),
+            tmdb.BackdropPath,
+            tmdb.ReleaseDate,
+            GetTrailerKey(tmdb),
+            tmdb.Tagline,
+            ToExternalGenres(tmdb.Genres),
+            GetTopExternalCast(tmdb.Credits?.Cast),
+            GetExternalDirectors(tmdb.Credits?.Crew)
+        );
+    }
 
-    public static ExternalFilm ToDomain(TmdbMovieResponse tmdb) => new(
-        tmdb.Id,
-        tmdb.Title,
-        tmdb.Overview,
-        tmdb.PosterPath,
-        tmdb.VoteAverage,
-        tmdb.VoteCount,
-        tmdb.Popularity,
-        tmdb.Runtime,
-        GetProductionCompany(tmdb.ProductionCompanies),
-        tmdb.BackdropPath,
-        tmdb.ReleaseDate,
-        GetTrailerKey(tmdb),
-        tmdb.Tagline,
-        ToExternalGenres(tmdb.Genres),
-        GetTopExternalCast(tmdb.Credits?.Cast),
-        GetExternalDirectors(tmdb.Credits?.Crew)
-    );
-
-    public static ExternalFilmShort ToShort(TmdbMovieShortResponse tmdb) => new(
-        tmdb.Id,
-        tmdb.Title,
-        tmdb.PosterPath,
-        tmdb.ReleaseDate?.Year,
-        tmdb.VoteAverage,
-        tmdb.VoteCount,
-        tmdb.Popularity,
-        tmdb.GenreIds
-    );
+    public static ExternalFilmShort ToShort(TmdbMovieShortResponse tmdb)
+    {
+        return new ExternalFilmShort(
+            tmdb.Id,
+            tmdb.Title,
+            tmdb.PosterPath,
+            tmdb.ReleaseDate?.Year,
+            tmdb.VoteAverage,
+            tmdb.VoteCount,
+            tmdb.Popularity,
+            tmdb.GenreIds
+        );
+    }
 
 
-    public static string? GetTrailerKey(TmdbMovieResponse tmdb) =>
-        tmdb.Videos?.Results
+    public static string? GetTrailerKey(TmdbMovieResponse tmdb)
+    {
+        return tmdb.Videos?.Results
             .FirstOrDefault(v => v is { Type: "Trailer", Site: "YouTube" })
             ?.Key;
+    }
 
-    public static string GetProductionCompany(IReadOnlyCollection<TmdbProductionCompanyItem> companies) =>
-        companies.Select(c => c.Name).FirstOrDefault() ?? string.Empty;
+    public static string GetProductionCompany(IReadOnlyCollection<TmdbProductionCompanyItem> companies)
+    {
+        return companies.Select(c => c.Name).FirstOrDefault() ?? string.Empty;
+    }
 
     public static List<CastData> GetTopCastData(IReadOnlyList<CastMember>? cast)
     {
@@ -68,21 +77,28 @@ internal static class TmdbFilmMapper
     }
 
 
-    private static ExternalGenres ToExternalGenres(IEnumerable<GenreResponse> genres) => new(
-        genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
-    );
+    private static ExternalGenres ToExternalGenres(IEnumerable<GenreResponse> genres)
+    {
+        return new ExternalGenres(
+            genres.Select(g => new ExternalGenreItem(g.Id, g.Name)).ToList()
+        );
+    }
 
-    private static IReadOnlyCollection<ExternalCastMember> GetTopExternalCast(IReadOnlyList<CastMember>? cast) =>
-        GetTopCastData(cast)
+    private static IReadOnlyCollection<ExternalCastMember> GetTopExternalCast(IReadOnlyList<CastMember>? cast)
+    {
+        return GetTopCastData(cast)
             .Select(x => new ExternalCastMember(x.ExternalId, x.Name, x.Character, x.Order))
             .ToList();
+    }
 
-    private static IReadOnlyCollection<ExternalDirector> GetExternalDirectors(IReadOnlyList<CrewMember>? crew) =>
-        GetDirectorsData(crew)
+    private static IReadOnlyCollection<ExternalDirector> GetExternalDirectors(IReadOnlyList<CrewMember>? crew)
+    {
+        return GetDirectorsData(crew)
             .Select(x => new ExternalDirector(x.ExternalId, x.Name))
             .ToList();
+    }
 }
 
-
 internal sealed record CastData(int ExternalId, string Name, string Character, int Order);
+
 internal sealed record DirectorData(int ExternalId, string Name);

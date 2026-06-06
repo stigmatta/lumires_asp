@@ -27,6 +27,7 @@ internal sealed class Summary : Summary<Endpoint>
                 "username",
                 2,
                 true,
+                false,
                 [new FilmListItem("some-backdrop"), new FilmListItem("some-other-backdrop")])
         ]));
     }

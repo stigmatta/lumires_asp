@@ -15,6 +15,7 @@ internal sealed record TrendingListItem(
     string Username,
     int FilmCount,
     bool IsLikedByMe,
+    bool IsSavedByMe,
     IReadOnlyCollection<FilmListItem> Films
 );
 
@@ -34,7 +35,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
     public override async Task HandleAsync(CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        
+
         var response = await db.GetTrendingFilmListsWeekly(currentUserId, ct);
         await Send.OkAsync(response, ct);
     }

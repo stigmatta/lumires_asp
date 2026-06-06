@@ -65,7 +65,7 @@ internal sealed class CreateThreadTests
 
         // Act
         await ep.HandleAsync(
-            new Command("Great film", "Really enjoyed it",  true),
+            new Command("Great film", null, "Really enjoyed it"),
             CancellationToken.None);
 
         // Assert
@@ -78,7 +78,7 @@ internal sealed class CreateThreadTests
         // Arrange
 
         var ep = CreateEndpoint();
-        var command = new Command("Great film", "Really enjoyed it", true);
+        var command = new Command("Great film", null, "Really enjoyed it");
 
         // Act
         await ep.HandleAsync(command, CancellationToken.None);
@@ -114,7 +114,7 @@ internal sealed class CreateThreadTests
 
         // Act
         await ep.HandleAsync(
-            new Command("Title", "Text", false),
+            new Command("Title", null, "Text", false),
             CancellationToken.None);
 
         // Assert
@@ -130,12 +130,11 @@ internal sealed class CreateThreadTests
 
         // Act
         await ep.HandleAsync(
-            new Command(null, "Just some thoughts",  false),
+            new Command(null, null, "Just some thoughts", false),
             CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(201);
         ep.Response.Title.Should().BeNull();
     }
-
 }

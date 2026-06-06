@@ -23,6 +23,7 @@ internal sealed class Summary : Summary<Endpoint>
 
         ExampleRequest = new Command(
             "My thoughts on Inception",
+            "some-image",
             "A mind-bending masterpiece that challenges the boundaries of reality."
         );
         Response(201, "Thread is successfully created");

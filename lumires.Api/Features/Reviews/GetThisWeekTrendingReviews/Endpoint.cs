@@ -32,7 +32,7 @@ internal sealed class Endpoint(ICurrentUserService currentUserService, DataAcces
     public override async Task HandleAsync(CancellationToken ct)
     {
         var lang = currentUserService.LangCulture;
-        
+
         var response = await db.GetTrendingReviewsWeeklyAsync(lang, ct);
 
         if (response is null)

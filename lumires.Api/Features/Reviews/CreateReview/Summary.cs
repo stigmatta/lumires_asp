@@ -27,8 +27,7 @@ internal sealed class Summary : Summary<Endpoint>
             550,
             "My thoughts on Inception",
             "A mind-bending masterpiece that challenges the boundaries of reality.",
-            5f,
-            true
+            5f
         );
         Response(201, "Review is successfully created");
         Response(400);

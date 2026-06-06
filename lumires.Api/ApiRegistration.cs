@@ -2,7 +2,7 @@
 using System.Reflection;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using lumires.Api.Features.Films.GetFilms;
+using lumires.Api.Middleware;
 using lumires.Api.Services;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
@@ -88,6 +88,7 @@ public static class ApiRegistration
 
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<LastActiveMiddleware>();
 
         app.UseExceptionHandler();
 

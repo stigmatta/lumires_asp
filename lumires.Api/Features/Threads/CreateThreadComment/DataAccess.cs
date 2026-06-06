@@ -32,7 +32,7 @@ internal class DataAccess(
             threadComment.Id.ToString(), //TODO or thread.Id ?
             DateTime.UtcNow);
 
-         notificationService.SendToUsers(thread.UserId, command.TargetedUserId, message);
+        notificationService.SendToUsers(thread.UserId, command.TargetedUserId, message);
 
         await db.SaveChangesAsync(ct);
 

@@ -8,7 +8,8 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     {
     }
 
-    public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId, bool isSpoilerFree = true)
+    public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId,
+        bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
@@ -34,7 +35,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     public User? TargetedUser { get; private set; }
     public string Text { get; private set; } = null!;
     public bool IsSpoilerFree { get; private set; }
-    
+
 
     protected override Guid GetUserId(ReviewCommentLike like)
     {
@@ -43,7 +44,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
 
     protected override ReviewCommentLike CreateLike(Guid userId)
     {
-        return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId };
+        return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
     }
 
     public void SetCommentator(User user)

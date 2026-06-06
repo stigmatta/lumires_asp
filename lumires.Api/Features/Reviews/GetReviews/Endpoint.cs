@@ -13,7 +13,6 @@ internal enum ContentFilterEnum
     All,
     FromFriends,
     LongForm,
-    FirstWatches,
     SpoilerFree
 }
 
@@ -23,7 +22,8 @@ internal sealed class Query
     public RatingEnum? Filter { get; init; } = RatingEnum.All;
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
-    public string? SearchTerm { get; init; } = string.Empty;
+    public int? FilmId { get; init; }
+    public Guid[]? TagIds { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
 }

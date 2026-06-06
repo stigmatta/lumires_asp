@@ -159,6 +159,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Звернення до списку некоректне.
+        /// </summary>
+        internal static string ValidationError_ListId_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_ListId_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Рейтинг має бути від 0 до 5.
         /// </summary>
         internal static string ValidationError_Rating_Invalid {

@@ -19,7 +19,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Where(movie => movie.Reviews.Any(r => r.CreatedAt >= startOfWeek))
             .OrderByDescending(movie => movie.Reviews.Count(r => r.CreatedAt >= startOfWeek))
             .Take(6)
-            .Select(m => new {
+            .Select(m => new
+            {
                 m.ExternalId,
                 m.Slug,
                 m.BackdropPath,
@@ -31,7 +32,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 TopReview = m.Reviews
                     .Where(r => r.CreatedAt >= startOfWeek && r.Title != null)
                     .OrderByDescending(r => r.Likes.Count)
-                    .Select(r => new { ReviewId = r.Id, r.Title, r.Rating, ReviewerId = r.Reviewer.Id , ReviewerName = r.Reviewer.Username})
+                    .Select(r => new
+                    {
+                        ReviewId = r.Id, r.Title, r.Rating, ReviewerId = r.Reviewer.Id,
+                        ReviewerName = r.Reviewer.Username
+                    })
                     .FirstOrDefault()
             })
             .ToListAsync(ct);

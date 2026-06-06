@@ -8,7 +8,6 @@ namespace lumires.Api.Features.Relationships.FollowUser;
 [UsedImplicitly]
 internal sealed record Command(Guid TargetUserId);
 
-
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     DataAccess db)
@@ -24,13 +23,13 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        
+
         if (currentUserId == command.TargetUserId)
         {
             await Send.NoContentAsync(ct);
             return;
         }
-        
+
         var currentUsername = await currentUserService.GetUsernameAsync(ct);
 
         var result = await db.FollowUserAsync(command, currentUserId, currentUsername, ct);

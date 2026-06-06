@@ -49,5 +49,4 @@ internal sealed class Endpoint(DataAccess db)
 
         await Send.OkAsync(paged, ct);
     }
-
 }

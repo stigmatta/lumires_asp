@@ -10,7 +10,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     internal async Task<Result<Guid>> CreateThreadAsync(Command command, Guid userId, CancellationToken ct)
     {
-        var thread = new UserThread(userId, command.Title, command.Text, command.IsSpoilerFree);
+        var thread = new UserThread(userId, command.Title, command.Image, command.Text, command.IsSpoilerFree);
 
         db.Threads.Add(thread);
         await db.SaveChangesAsync(ct);

@@ -1,7 +1,10 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq.Expressions;
+using JetBrains.Annotations;
 using lumires.Api.Extensions;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
+using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.Reviews.GetReviews;
@@ -14,7 +17,24 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     internal async Task<List<ReviewItemResponse>> GetReviewsAsync(Query query, string lang, Guid userId,
         CancellationToken ct)
     {
-        var filter = Specifications.BuildFilter(query);
+        Expression<Func<Review, bool>> filter;
+
+        if (query.Category == ContentFilterEnum.FromFriends)
+        {
+            var friendIds = await db.Relationships
+                .Where(f => f.SourceUserId == userId
+                            && f.Type == UserRelationshipType.Follow
+                            && f.Status == UserRelationshipStatus.Accepted)
+                .Select(f => f.TargetUserId)
+                .ToListAsync(ct);
+
+            filter = Specifications.BuildFilter(query, friendIds);
+        }
+        else
+        {
+            filter = Specifications.BuildFilter(query);
+        }
+
         var sort = Specifications.BuildSort(query);
 
         var queryable = db.Reviews

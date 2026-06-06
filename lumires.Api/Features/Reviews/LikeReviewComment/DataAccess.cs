@@ -34,7 +34,7 @@ internal class DataAccess(
                 reviewComment.Id.ToString(),
                 DateTime.UtcNow);
 
-             notificationService.SendToUser(reviewComment.UserId, message);
+            notificationService.SendToUser(reviewComment.UserId, message);
         }
 
 

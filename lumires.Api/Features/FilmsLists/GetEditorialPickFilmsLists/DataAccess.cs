@@ -12,7 +12,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var items = await db.FilmsLists
             .AsNoTracking()
             .Where(x => x.IsEditorPick)
-            .OrderByDescending(x => x.LikesCount) 
+            .OrderByDescending(x => x.LikesCount)
             .Take(3)
             .Select(x => new EditorialListItem(
                 x.Id,
@@ -21,6 +21,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 x.User.Username,
                 x.Films.Count,
                 x.Likes.Any(l => l.UserId == userId),
+                x.SavedLists.Any(l => l.UserId == userId),
                 x.Films.Select(f => new FilmListItem(f.Film.PosterPath))
                     .Take(11)
                     .ToArray()))

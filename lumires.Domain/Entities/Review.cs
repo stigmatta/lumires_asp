@@ -6,6 +6,7 @@ namespace lumires.Domain.Entities;
 public sealed class Review : LikeableEntity<ReviewLike>
 {
     private readonly List<ReviewComment> _reviewComments = [];
+    private readonly List<ReviewTag> _tags = [];
 
     private Review()
     {
@@ -50,8 +51,10 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public float? Rating { get; private set; }
     public bool IsSpoilerFree { get; private set; }
     public bool IsEditorPick { get; private set; }
-    
+
     public IReadOnlyCollection<ReviewComment> ReviewComments => _reviewComments.AsReadOnly();
+    public IReadOnlyCollection<ReviewTag> Tags => _tags.AsReadOnly();
+
 
     protected override Guid GetUserId(ReviewLike like)
     {
@@ -60,9 +63,9 @@ public sealed class Review : LikeableEntity<ReviewLike>
 
     protected override ReviewLike CreateLike(Guid userId)
     {
-        return new ReviewLike { ReviewId = Id, UserId = userId };
+        return new ReviewLike { ReviewId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
     }
-    
+
     public void SetReviewer(User reviewer)
     {
         Reviewer = reviewer ?? throw new ArgumentNullException(nameof(reviewer));
@@ -79,7 +82,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
     {
         if (string.IsNullOrWhiteSpace(text))
             ArgumentNullException.ThrowIfNull(text);
-        
+
         Text = text;
     }
 
@@ -92,10 +95,16 @@ public sealed class Review : LikeableEntity<ReviewLike>
     public void SetCreatedAt(DateTime createdAt)
     {
         CreatedAt = createdAt;
-    } 
-    
+    }
+
     public void SetEditorPick(bool editorPick)
     {
         IsEditorPick = editorPick;
+    }
+
+    public void AddTag(Tag tag)
+    {
+        if (_tags.Any(t => t.TagId == tag.Id)) return;
+        _tags.Add(new ReviewTag { ReviewId = Id, TagId = tag.Id });
     }
 }

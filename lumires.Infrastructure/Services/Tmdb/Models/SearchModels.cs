@@ -15,14 +15,14 @@ public sealed record TmdbMultiSearchResponse
 public sealed record TmdbMultiSearchItem
 {
     public int Id { get; init; }
-    public string MediaType { get; init; } = string.Empty; 
+    public string MediaType { get; init; } = string.Empty;
 
-    public string? Title { get; init; }          // movie
-    public string? Name { get; init; }           // tv / person
+    public string? Title { get; init; } // movie
+    public string? Name { get; init; } // tv / person
     public string? Overview { get; init; }
     public string? PosterPath { get; init; }
     public string? BackdropPath { get; init; }
-    public string? ReleaseDate { get; init; }    // movie  "yyyy-MM-dd"
+    public string? ReleaseDate { get; init; } // movie  "yyyy-MM-dd"
     public float VoteAverage { get; init; }
     public int VoteCount { get; init; }
     public float Popularity { get; init; }

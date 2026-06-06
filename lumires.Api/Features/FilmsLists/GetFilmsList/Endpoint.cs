@@ -11,10 +11,11 @@ internal sealed record Query(Guid Id);
 internal sealed record Response(
     Guid Id,
     string Title,
-    string? Description,
-    string AuthorName,
-    DateTimeOffset CreatedAt,
+    Guid UserId,
+    string Username,
+    DateTime LastActivity,
     bool IsLikedByMe,
+    bool IsSavedByMe,
     IReadOnlyCollection<ListFilmItem> Films);
 
 [UsedImplicitly]

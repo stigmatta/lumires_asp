@@ -20,6 +20,7 @@ internal sealed class Summary : Summary<Endpoint>
         [
             new TrendingListItem(Guid.CreateVersion7(), "Some title", Guid.CreateVersion7(), "username", 25,
                 true,
+                false,
                 [new FilmListItem("some-backdrop"), new FilmListItem("some-other-backdrop")])
         ]));
     }

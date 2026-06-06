@@ -18,12 +18,12 @@ internal sealed class UsersRelationshipConfiguration : IEntityTypeConfiguration<
             .WithMany(x => x.IncomingRelationships)
             .HasForeignKey(x => x.TargetUserId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.Property(x => x.Type)
             .IsRequired()
             .HasConversion<string>()
             .HasMaxLength(StringLimits.Name);
-        
+
         builder.Property(x => x.Status)
             .IsRequired()
             .HasConversion<string>()

@@ -14,10 +14,7 @@ public class WatchedFilm
     {
         if (userId == Guid.Empty) throw new DomainException("UserId is invalid", nameof(userId));
 
-        if (filmId  == Guid.Empty)
-        {
-            throw new DomainException("Film id is invalid");
-        }
+        if (filmId == Guid.Empty) throw new DomainException("Film id is invalid");
         Id = Guid.CreateVersion7();
         UserId = userId;
         FilmId = filmId;
@@ -33,5 +30,4 @@ public class WatchedFilm
 
     public IReadOnlyCollection<User> Users =>
         _users.AsReadOnly();
-    
 }

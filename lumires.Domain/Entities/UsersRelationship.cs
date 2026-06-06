@@ -40,10 +40,10 @@ public sealed class UsersRelationship
     public void SetStatus(UserRelationshipStatus status)
     {
         Status = status;
-    } 
-    
+    }
+
     public void SetType(UserRelationshipType type)
     {
         Type = type;
-    } 
+    }
 }

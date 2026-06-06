@@ -1,13 +1,13 @@
-﻿namespace Tests.ApiTests.Movies;
-
-using FastEndpoints;
+﻿using FastEndpoints;
 using FluentAssertions;
+using lumires.Api.Features.Films.UnrateFilm;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Domain.Entities;
 using MockQueryable.Moq;
 using Moq;
-using lumires.Api.Features.Films.UnrateFilm;
+
+namespace Tests.ApiTests.Movies;
 
 public class UnrateMovieTests
 {

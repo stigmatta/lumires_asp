@@ -34,7 +34,7 @@ internal class DataAccess(
                 thread.Id.ToString(),
                 DateTime.UtcNow);
 
-             notificationService.SendToUser(thread.UserId, message);
+            notificationService.SendToUser(thread.UserId, message);
         }
 
 

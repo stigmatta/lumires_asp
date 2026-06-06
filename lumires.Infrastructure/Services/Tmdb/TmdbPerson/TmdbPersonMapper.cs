@@ -6,15 +6,18 @@ namespace Infrastructure.Services.Tmdb.TmdbPerson;
 
 internal static class TmdbPersonMapper
 {
-    public static ExternalPerson ToDomain(TmdbPersonDetailResponse tmdb) => new(
-        tmdb.Id,
-        tmdb.Name,
-        tmdb.Biography,
-        tmdb.Birthday,
-        tmdb.Deathday,
-        (GenderType)tmdb.Gender,
-        tmdb.PlaceOfBirth,
-        tmdb.ProfilePath,
-        tmdb.KnownForDepartment
-    );
+    public static ExternalPerson ToDomain(TmdbPersonDetailResponse tmdb)
+    {
+        return new ExternalPerson(
+            tmdb.Id,
+            tmdb.Name,
+            tmdb.Biography,
+            tmdb.Birthday,
+            tmdb.Deathday,
+            (GenderType)tmdb.Gender,
+            tmdb.PlaceOfBirth,
+            tmdb.ProfilePath,
+            tmdb.KnownForDepartment
+        );
+    }
 }

@@ -20,6 +20,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 x.User.AvatarUrl,
                 x.UserThreadComments.Count,
                 x.Title,
+                x.Image,
                 x.Text,
                 x.LikesCount,
                 x.CreatedAt,

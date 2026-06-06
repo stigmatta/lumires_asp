@@ -1,7 +1,6 @@
 ﻿using Ardalis.Result;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
-using lumires.Domain.Entities;
 using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,15 +30,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 r.TargetUserId == targetId,
             ct);
 
-        if (existing is not null && existing.Type == UserRelationshipType.Block)
-        {
-            db.Relationships.Remove(existing);
-        }
+        if (existing is not null && existing.Type == UserRelationshipType.Block) db.Relationships.Remove(existing);
 
-        if (existing is not null && existing.Type != UserRelationshipType.Block)
-        {
-            return Result.NoContent();
-        }
+        if (existing is not null && existing.Type != UserRelationshipType.Block) return Result.NoContent();
 
 
         await db.SaveChangesAsync(ct);

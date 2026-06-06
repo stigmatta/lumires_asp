@@ -33,7 +33,8 @@ internal sealed record PopularReviewItem(
     int LikesCount,
     int RepliesCount,
     bool IsLikedByMe,
-    bool IsEditorPick
+    bool IsEditorPick,
+    int MinutesRead
 );
 
 internal sealed class Endpoint(

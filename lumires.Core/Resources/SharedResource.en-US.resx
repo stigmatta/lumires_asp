@@ -84,4 +84,7 @@
     <data name="ValidationError_ThreadId_Invalid" xml:space="preserve">
         <value>Thread reference is invalid</value>
     </data>
+    <data name="ValidationError_ListId_Invalid" xml:space="preserve">
+        <value>Films list reference is invalid</value>
+    </data>
 </root>

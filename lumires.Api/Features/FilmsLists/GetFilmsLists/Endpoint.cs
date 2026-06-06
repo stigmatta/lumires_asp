@@ -29,7 +29,7 @@ internal sealed class Query
 {
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ListContentOrderEnum? SortBy { get; init; } = ListContentOrderEnum.MostRecent;
-    public string? SearchTerm { get; init; } = string.Empty;
+    public int? FilmId { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
 }
@@ -42,6 +42,7 @@ internal sealed record ListItemResponse(
     string Username,
     int FilmsCount,
     bool IsLikedByMe,
+    bool IsSavedByMe,
     IReadOnlyCollection<FilmListItem> Films
 );
 

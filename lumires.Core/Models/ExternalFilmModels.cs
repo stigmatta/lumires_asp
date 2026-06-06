@@ -75,7 +75,7 @@ public record ExternalPerson(
 
 [UsedImplicitly]
 public record SearchResults(
-    IReadOnlyList<ExternalFilmShort>?  Films,
+    IReadOnlyList<ExternalFilmShort>? Films,
     IReadOnlyList<ExternalPersonShort>? Directors,
     IReadOnlyList<ExternalPersonShort>? Actors,
     int Page,

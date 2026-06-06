@@ -9,22 +9,22 @@ internal static class Specifications
 {
     private const int LongThreshold = 500;
 
-    public static Expression<Func<UserThread, bool>> BuildFilter(Query req)
+    public static Expression<Func<UserThread, bool>> BuildFilter(Query req, IEnumerable<Guid>? friendIds = null)
     {
         var filter = PredicateBuilder.New<UserThread>(true);
 
-        var contentFilter = BuildCategory(req);
+        var contentFilter = BuildCategory(req, friendIds);
         filter = filter.And(contentFilter);
 
         return filter;
     }
 
-    private static Expression<Func<UserThread, bool>> BuildCategory(Query req)
+    private static Expression<Func<UserThread, bool>> BuildCategory(Query req, IEnumerable<Guid>? friendIds = null)
     {
-        return req.Category switch // TODO with movie log
+        return req.Category switch
         {
             ContentFilterEnum.LongForm => t => t.Text.Length >= LongThreshold,
-            ContentFilterEnum.Following => t => t.Id != Guid.Empty, //TODO later
+            ContentFilterEnum.FromFriends => r => friendIds != null && friendIds.Contains(r.UserId),
             ContentFilterEnum.SpoilerFree => t => t.IsSpoilerFree == true,
             _ => r => true
         };

@@ -8,7 +8,7 @@ public sealed class EmptyStringDateOnlyConverter : JsonConverter<DateOnly?>
     public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var value = reader.GetString();
-        
+
         if (string.IsNullOrWhiteSpace(value))
             return null;
 

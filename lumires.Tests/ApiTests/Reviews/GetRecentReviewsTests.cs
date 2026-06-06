@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using FluentAssertions;
-using lumires.Api.Enums.Common;
 using lumires.Api.Features.Reviews.GetRecentReviews;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
@@ -170,7 +169,7 @@ internal sealed class GetRecentReviewsTests
         item.IsSpoilerFree.Should().Be(review.IsSpoilerFree);
         item.CreatedAt.Should().Be(review.CreatedAt);
     }
-    
+
     [Test]
     public async Task Should_Sort_By_CreatedAt_Descending()
     {

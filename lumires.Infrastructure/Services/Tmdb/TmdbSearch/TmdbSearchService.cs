@@ -7,9 +7,9 @@ namespace Infrastructure.Services.Tmdb.TmdbSearch;
 public sealed class TmdbSearchService(ITmdbApi tmdbApi) : ISearchService
 {
     public async Task<Result<SearchResults>> SearchAllAsync(
-        string lang, 
-        string searchTerm, 
-        int page, 
+        string lang,
+        string searchTerm,
+        int page,
         CancellationToken ct)
     {
         var response = await tmdbApi.SearchMultiAsync(searchTerm, lang, page, ct);
@@ -18,14 +18,14 @@ public sealed class TmdbSearchService(ITmdbApi tmdbApi) : ISearchService
             return Result.Error("Empty response from TMDB");
 
         var mapped = TmdbSearchMapper.ToSearchResults(response.Content);
-        
+
         return Result.Success(mapped);
     }
 
     public async Task<Result<IReadOnlyList<ExternalFilmShort>>> SearchFilmsAsync(
-        string lang, 
-        string searchTerm, 
-        int page, 
+        string lang,
+        string searchTerm,
+        int page,
         CancellationToken ct)
     {
         var response = await tmdbApi.SearchMoviesAsync(searchTerm, lang, page, ct);
@@ -42,17 +42,21 @@ public sealed class TmdbSearchService(ITmdbApi tmdbApi) : ISearchService
 
     public async Task<Result<IReadOnlyList<ExternalPersonShort>>> SearchDirectorsAsync(
         string lang, string searchTerm, int page, CancellationToken ct)
-        => await SearchPersonByDepartmentAsync(lang, searchTerm, page, "Directing", ct);
+    {
+        return await SearchPersonByDepartmentAsync(lang, searchTerm, page, "Directing", ct);
+    }
 
     public async Task<Result<IReadOnlyList<ExternalPersonShort>>> SearchActorsAsync(
         string lang, string searchTerm, int page, CancellationToken ct)
-        => await SearchPersonByDepartmentAsync(lang, searchTerm, page, "Acting", ct);
+    {
+        return await SearchPersonByDepartmentAsync(lang, searchTerm, page, "Acting", ct);
+    }
 
     private async Task<Result<IReadOnlyList<ExternalPersonShort>>> SearchPersonByDepartmentAsync(
-        string lang, 
-        string searchTerm, 
-        int page, 
-        string department, 
+        string lang,
+        string searchTerm,
+        int page,
+        string department,
         CancellationToken ct)
     {
         var response = await tmdbApi.SearchPersonAsync(searchTerm, lang, page, ct);
@@ -67,5 +71,4 @@ public sealed class TmdbSearchService(ITmdbApi tmdbApi) : ISearchService
 
         return Result.Success<IReadOnlyList<ExternalPersonShort>>(people);
     }
-
 }

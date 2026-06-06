@@ -10,7 +10,7 @@ internal enum ContentFilterEnum
 {
     All,
     LongForm,
-    Following,
+    FromFriends,
     SpoilerFree
 }
 
@@ -33,9 +33,10 @@ internal sealed record ThreadItemResponse(
     string? AvatarUrl,
     int RepliesCount,
     string? Title,
+    string? Image,
     string Text,
     int LikesCount,
-    DateOnly CreatedAt,
+    DateTime CreatedAt,
     bool IsLikedByMe,
     bool IsSpoilerFree,
     ThreadCommentItemResponse? Comment);
@@ -62,7 +63,6 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        var lang = currentUserService.LangCulture;
         var userId = currentUserService.UserId;
 
         var response = await db.GetThreadsAsync(query, userId, ct);

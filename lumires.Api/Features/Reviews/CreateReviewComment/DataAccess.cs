@@ -32,7 +32,7 @@ internal class DataAccess(
             reviewComment.Id.ToString(), //TODO or review.Id ?
             DateTime.UtcNow);
 
-         notificationService.SendToUsers(review.UserId, command.TargetedUserId, message);
+        notificationService.SendToUsers(review.UserId, command.TargetedUserId, message);
 
         await db.SaveChangesAsync(ct);
 
