@@ -90,12 +90,12 @@ internal sealed partial class FilmReferencedEventHandler(
                     .OfType<Genre>();
 
                 film.AddGenres(filmGenres);
-                
+
 
                 var releaseYear = data.ReleaseDate?.Year;
                 var slug = SlugExtensions.Slugify(
-                    releaseYear.HasValue 
-                        ? $"{data.Title}-{releaseYear}" 
+                    releaseYear.HasValue
+                        ? $"{data.Title}-{releaseYear}"
                         : data.Title
                 );
                 film.AddSlug(slug);

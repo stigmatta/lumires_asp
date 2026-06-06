@@ -5,14 +5,16 @@ namespace lumires.Domain.Entities;
 
 public sealed partial class User
 {
+    private readonly List<UserFilmRating> _filmRatings = [];
     private readonly List<FilmsList> _filmsLists = [];
+    private readonly List<UsersRelationship> _incomingRelationships = [];
+    private readonly List<UsersRelationship> _outgoingRelationships = [];
     private readonly List<ReviewComment> _reviewComments = [];
     private readonly List<Review> _reviews = [];
-    private readonly List<UserFilmRating> _filmRatings = [];
-    private readonly List<UserThread> _userThreads = [];
+    private readonly List<SavedFilm> _savedFilms = [];
+    private readonly List<SavedList> _savedLists = [];
     private readonly List<UserThreadComment> _userThreadComments = [];
-    private readonly List<UsersRelationship> _outgoingRelationships = [];
-    private readonly List<UsersRelationship> _incomingRelationships = [];
+    private readonly List<UserThread> _userThreads = [];
     private readonly List<WatchedFilm> _watchedFilms = [];
 
     private User()
@@ -42,6 +44,7 @@ public sealed partial class User
     public string Email { get; private set; } = null!;
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset? LastActiveAt { get; private set; }
 
     public IReadOnlyCollection<FilmsList> FilmsLists => _filmsLists.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
@@ -49,16 +52,22 @@ public sealed partial class User
     public IReadOnlyCollection<UserFilmRating> FilmRatings => _filmRatings.AsReadOnly();
     public IReadOnlyCollection<UserThread> UserThreads => _userThreads.AsReadOnly();
     public IReadOnlyCollection<UserThreadComment> UserThreadsComments => _userThreadComments.AsReadOnly();
-    
+
     public IReadOnlyCollection<UsersRelationship> OutgoingRelationships =>
         _outgoingRelationships.AsReadOnly();
 
     public IReadOnlyCollection<UsersRelationship> IncomingRelationships =>
         _incomingRelationships.AsReadOnly();
-    
+
     public IReadOnlyCollection<WatchedFilm> WatchedFilms =>
         _watchedFilms.AsReadOnly();
-    
+
+    public IReadOnlyCollection<SavedFilm> SavedFilms =>
+        _savedFilms.AsReadOnly();
+
+    public IReadOnlyCollection<SavedList> SavedLists =>
+        _savedLists.AsReadOnly();
+
 
     public void SetAvatarUrl(string avatarUrl)
     {

@@ -18,10 +18,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Select(c => new Response(
                 c.Id,
                 c.Title,
-                c.Description,
+                c.UserId,
                 c.User.Username,
-                c.CreatedAt,
+                c.UpdatedAt ?? c.CreatedAt,
                 c.Likes.Any(l => l.UserId == userId),
+                c.SavedLists.Any(l => l.UserId == userId),
                 c.Films
                     .OrderBy(m => m.Order)
                     .Select(m => new ListFilmItem(

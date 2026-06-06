@@ -30,7 +30,7 @@ internal sealed class GetSimilarFilmsTests
         _dbContextMock
             .Setup(x => x.Films)
             .Returns(new List<Film>().BuildMockDbSet().Object);
-        
+
         _dbContextMock
             .Setup(x => x.Genres)
             .Returns(new List<Genre>().BuildMockDbSet().Object);
@@ -141,7 +141,7 @@ internal sealed class GetSimilarFilmsTests
     {
         // Arrange
         var films = Enumerable.Range(1, filmCount)
-            .Select(i => new ExternalFilmShort(i, $"Film {i}", null, 1995, 7f, 23, 25, [2,5]))
+            .Select(i => new ExternalFilmShort(i, $"Film {i}", null, 1995, 7f, 23, 25, [2, 5]))
             .ToList();
 
         _externalFilmServiceMock
@@ -187,9 +187,9 @@ internal sealed class GetSimilarFilmsTests
         // Arrange
         var films = new List<ExternalFilmShort>
         {
-            new(10, "Film A", null, 2005, 8, 27, 20, [2,5]),
-            new(20, "Film B", null, 1999, 8, 27, 20, [2,5]),
-            new(30, "Film C", null, 2003, 8, 27, 20, [2,5])
+            new(10, "Film A", null, 2005, 8, 27, 20, [2, 5]),
+            new(20, "Film B", null, 1999, 8, 27, 20, [2, 5]),
+            new(30, "Film C", null, 2003, 8, 27, 20, [2, 5])
         };
 
         _externalFilmServiceMock
@@ -228,9 +228,9 @@ internal sealed class GetSimilarFilmsTests
         // Arrange
         var films = new List<ExternalFilmShort>
         {
-            new(10, "Existing A", null, 1952, 8, 25, 20, [3,8]),
-            new(20, "Existing B", null, 1932, 8, 25, 63, [3,8]),
-            new(30, "New Film", null, 2004, 8, 25, 12, [3,8])
+            new(10, "Existing A", null, 1952, 8, 25, 20, [3, 8]),
+            new(20, "Existing B", null, 1932, 8, 25, 63, [3, 8]),
+            new(30, "New Film", null, 2004, 8, 25, 12, [3, 8])
         };
 
         _externalFilmServiceMock

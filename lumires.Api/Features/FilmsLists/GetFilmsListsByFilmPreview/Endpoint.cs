@@ -11,13 +11,19 @@ internal sealed record Query(int Id);
 internal sealed record Response(IReadOnlyCollection<FilmsListsItems> FilmsLists);
 
 [UsedImplicitly]
-internal sealed record FilmsListsItems(Guid Id, bool IsLikedByMe, IReadOnlyCollection<FilmInListItem> Films, string Name);
+internal sealed record FilmsListsItems(
+    Guid Id,
+    bool IsLikedByMe,
+    bool IsSavedByMe,
+    IReadOnlyCollection<FilmInListItem> Films,
+    string Name);
 
 [UsedImplicitly]
 internal sealed record FilmInListItem(string? BackdropPath);
 
 internal sealed class Endpoint(
-    DataAccess db, ICurrentUserService currentUserService) : Endpoint<Query, Response>
+    DataAccess db,
+    ICurrentUserService currentUserService) : Endpoint<Query, Response>
 {
     public override void Configure()
     {

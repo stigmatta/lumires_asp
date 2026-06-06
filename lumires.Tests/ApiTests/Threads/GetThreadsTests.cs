@@ -105,7 +105,7 @@ internal sealed class GetThreadsTests
         threads[2].ToggleLike(Guid.CreateVersion7());
         threads[2].ToggleLike(Guid.CreateVersion7());
         threads[2].ToggleLike(Guid.CreateVersion7());
-        
+
         SetupThreads(threads);
 
         var ep = CreateEndpoint();

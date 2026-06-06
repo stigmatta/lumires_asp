@@ -61,7 +61,7 @@ public class LikeThreadTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var thread = new UserThread(userId,  null, "Text", false);
+        var thread = new UserThread(userId, null, null, "Text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
@@ -80,7 +80,7 @@ public class LikeThreadTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var thread = new UserThread(userId,  null, "Text", false);
+        var thread = new UserThread(userId, null, null, "Text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
@@ -100,7 +100,7 @@ public class LikeThreadTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var thread = new UserThread(userId,  null, "Text", false);
+        var thread = new UserThread(userId, null, null, "Text", false);
         thread.ToggleLike(userId);
         SetupThreads([thread]);
 
@@ -121,7 +121,7 @@ public class LikeThreadTests
         var userId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(userId);
 
-        var thread = new UserThread(userId,  null, "Text", false);
+        var thread = new UserThread(userId, null, null, "Text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();

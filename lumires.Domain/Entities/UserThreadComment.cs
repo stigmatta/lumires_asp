@@ -2,17 +2,17 @@
 
 namespace lumires.Domain.Entities;
 
-
 public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
 {
     private UserThreadComment()
     {
     }
-    
-    public UserThreadComment(Guid commentatorId, Guid threadId, string text, Guid? targetedUserId, bool isSpoilerFree = true)
+
+    public UserThreadComment(Guid commentatorId, Guid threadId, string text, Guid? targetedUserId,
+        bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
-        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+        CreatedAt = DateTime.UtcNow;
 
         UserId = commentatorId;
         ThreadId = threadId;
@@ -23,8 +23,8 @@ public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
 
 
     public Guid Id { get; }
-    public DateOnly CreatedAt { get; }
-    public DateOnly? UpdatedAt { get; }
+    public DateTime CreatedAt { get; }
+    public DateTime? UpdatedAt { get; }
     public User Commentator { get; private set; } = null!;
     public Guid UserId { get; private set; }
 
@@ -42,6 +42,6 @@ public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
 
     protected override UserThreadCommentLike CreateLike(Guid userId)
     {
-        return new UserThreadCommentLike { UserThreadCommentId = Id, UserId = userId };
+        return new UserThreadCommentLike { UserThreadCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
     }
 }

@@ -2,7 +2,6 @@
 
 public static class CacheKeys
 {
-
     public static string FilmSources(int id, string region)
     {
         return $"sources:{id}:{region}";
@@ -26,7 +25,6 @@ public static class CacheKeys
     public static string ThisWeekMostReviewedFilms(string lang)
     {
         return $"this_week_most_reviewed_films:{lang}";
-        
     }
 
     public static string GenresList(string lang)
@@ -43,17 +41,17 @@ public static class CacheKeys
     {
         return "reviews_summary";
     }
-    
+
     public static string ThreadsSummary()
     {
         return "threads_summary";
     }
-    
+
     public static string ListsSummary()
     {
         return "lists_summary";
     }
-    
+
     public static string PopularReviewsBySpan(int daySpan)
     {
         return $"popular_reviews_{daySpan}";

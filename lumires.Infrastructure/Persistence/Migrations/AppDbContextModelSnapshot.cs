@@ -52,6 +52,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsEditorPick")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("integer");
+
                     b.Property<float>("Popularity")
                         .HasColumnType("real");
 
@@ -145,6 +148,24 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("FilmDirectors");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.FilmLike", b =>
+                {
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("FilmId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FilmsLikes", (string)null);
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.FilmLocalization", b =>
                 {
                     b.Property<Guid>("Id")
@@ -180,12 +201,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("FilmLocalizations");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.FilmTag", b =>
+                {
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("FilmId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("FilmTags");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.FilmsList", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -208,7 +247,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
@@ -228,6 +267,9 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("FilmsListId", "UserId");
 
@@ -522,6 +564,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("ReviewCommentId", "UserId");
 
                     b.HasIndex("UserId");
@@ -537,11 +582,106 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("ReviewId", "UserId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("ReviewLikes");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.ReviewTag", b =>
+                {
+                    b.Property<Guid>("ReviewId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ReviewId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ReviewTags");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedFilm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("UserId", "FilmId")
+                        .IsUnique();
+
+                    b.ToTable("SavedFilms");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ListId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListId");
+
+                    b.HasIndex("UserId", "ListId")
+                        .IsUnique();
+
+                    b.ToTable("SavedLists");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.User", b =>
@@ -561,6 +701,15 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<DateTimeOffset?>("LastActiveAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("SavedFilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SavedListId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -570,6 +719,10 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SavedFilmId");
+
+                    b.HasIndex("SavedListId");
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -652,8 +805,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsEditorPick")
                         .HasColumnType("boolean");
@@ -673,8 +829,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -691,8 +847,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsSpoilerFree")
                         .HasColumnType("boolean");
@@ -711,8 +867,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ThreadId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -736,6 +892,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("UserThreadCommentId", "UserId");
 
                     b.HasIndex("UserId");
@@ -750,6 +909,9 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ThreadId", "UserId");
 
@@ -869,6 +1031,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.FilmLike", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.FilmLocalization", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Film", "Film")
@@ -878,6 +1055,25 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Film");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.FilmTag", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany("Tags")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.FilmsList", b =>
@@ -1033,8 +1229,73 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.ReviewTag", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Review", "Review")
+                        .WithMany("Tags")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedFilm", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany()
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", "User")
+                        .WithMany("SavedFilms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedList", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.FilmsList", "List")
+                        .WithMany("SavedLists")
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.User", "User")
+                        .WithMany("SavedLists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("List");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.User", b =>
                 {
+                    b.HasOne("lumires.Domain.Entities.SavedFilm", null)
+                        .WithMany("Users")
+                        .HasForeignKey("SavedFilmId");
+
+                    b.HasOne("lumires.Domain.Entities.SavedList", null)
+                        .WithMany("Users")
+                        .HasForeignKey("SavedListId");
+
                     b.HasOne("lumires.Domain.Entities.WatchedFilm", null)
                         .WithMany("Users")
                         .HasForeignKey("WatchedFilmId");
@@ -1170,9 +1431,13 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Navigation("Directors");
 
+                    b.Navigation("Likes");
+
                     b.Navigation("Localizations");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Tags");
 
                     b.Navigation("UserRatings");
                 });
@@ -1182,6 +1447,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Films");
 
                     b.Navigation("Likes");
+
+                    b.Navigation("SavedLists");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Genre", b =>
@@ -1205,11 +1472,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("ReviewComments");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.ReviewComment", b =>
                 {
                     b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedFilm", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.SavedList", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.User", b =>
@@ -1225,6 +1504,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("ReviewComments");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("SavedFilms");
+
+                    b.Navigation("SavedLists");
 
                     b.Navigation("UserThreads");
 

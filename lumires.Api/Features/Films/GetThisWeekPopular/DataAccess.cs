@@ -13,7 +13,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     internal async Task<Response?> GetThisWeekPopular(string lang, CancellationToken ct)
     {
         var startOfWeek = DateTime.UtcNow.AddDays(-7);
-        
+
         var items = await db.Films
             .AsNoTracking()
             .OrderByDescending(movie => movie.Reviews

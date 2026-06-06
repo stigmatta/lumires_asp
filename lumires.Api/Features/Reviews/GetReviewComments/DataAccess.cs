@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using lumires.Api.Extensions;
-using lumires.Api.Features.Reviews.GetReviews;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     internal async Task<List<CommentItemResponse>> GetCommentsByReviewId(Query query, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        
+
         var queryable = db.ReviewComments
             .Where(rc => rc.ReviewId == query.ReviewId)
             .ApplyPaging(query.Page, query.PageSize);
@@ -33,7 +32,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             ))
             .ToListAsync(ct);
     }
-    
+
     internal async Task<int> GetReviewsCountAsync(Query query, CancellationToken ct)
     {
         return await db.ReviewComments

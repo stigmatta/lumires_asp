@@ -26,6 +26,7 @@ internal sealed class Summary : Summary<Endpoint>
         [
             new FilmsListsItems(Guid.CreateVersion7(),
                 true,
+                false,
                 [new FilmInListItem("some-backdrop"), new FilmInListItem("some-other-backdrop")],
                 "My favourite movies")
         ]));

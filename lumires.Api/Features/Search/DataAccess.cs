@@ -11,7 +11,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var lists = await db.FilmsLists
             .AsNoTracking()
-            .Where(l =>  EF.Functions.Like(l.Title.ToLower(), $"%{searchTerm}%"))
+            .Where(l => EF.Functions.Like(l.Title.ToLower(), $"%{searchTerm}%"))
             .Select(l => new ListResult(
                 l.Id,
                 l.Title,
@@ -28,17 +28,17 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
         return new SearchResponse(Lists: lists);
     }
-    
+
     internal async Task<SearchResponse> GetMembers(string searchTerm, CancellationToken ct)
     {
         var members = await db.Users
             .AsNoTracking()
-            .Where(l =>  EF.Functions.Like(l.Username.ToLower(), $"%{searchTerm}%"))
+            .Where(l => EF.Functions.Like(l.Username.ToLower(), $"%{searchTerm}%"))
             .Select(l => new MemberResult(
                 l.Id,
                 l.Username,
                 l.AvatarUrl,
-                l.IncomingRelationships.Count 
+                l.IncomingRelationships.Count
             ))
             .ToListAsync(ct);
 
@@ -49,7 +49,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var lists = await db.FilmsLists
             .AsNoTracking()
-            .Where(l =>  EF.Functions.Like(l.Title.ToLower(), $"%{searchTerm}%"))
+            .Where(l => EF.Functions.Like(l.Title.ToLower(), $"%{searchTerm}%"))
             .Select(l => new ListResult(
                 l.Id,
                 l.Title,
@@ -63,18 +63,18 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .ToList()
             ))
             .ToListAsync(ct);
-        
+
         var members = await db.Users
             .AsNoTracking()
-            .Where(l =>  EF.Functions.Like(l.Username.ToLower(), $"%{searchTerm}%"))
+            .Where(l => EF.Functions.Like(l.Username.ToLower(), $"%{searchTerm}%"))
             .Select(l => new MemberResult(
                 l.Id,
                 l.Username,
                 l.AvatarUrl,
-                l.IncomingRelationships.Count 
+                l.IncomingRelationships.Count
             ))
             .ToListAsync(ct);
-        
+
         return new SearchResponse(Lists: lists, Members: members);
     }
 }

@@ -9,14 +9,14 @@ internal static class Specifications
 {
     private const int LongThreshold = 500;
 
-    public static Expression<Func<Review, bool>> BuildFilter(Query req)
+    public static Expression<Func<Review, bool>> BuildFilter(Query req, IEnumerable<Guid>? friendIds = null)
     {
         var filter = PredicateBuilder.New<Review>(true);
 
         var ratingFilter = BuildRating(req);
         filter = filter.And(ratingFilter);
 
-        var contentFilter = BuildCategory(req);
+        var contentFilter = BuildCategory(req, friendIds);
         filter = filter.And(contentFilter);
 
         return filter;
@@ -34,14 +34,13 @@ internal static class Specifications
         };
     }
 
-    private static Expression<Func<Review, bool>> BuildCategory(Query req)
+    private static Expression<Func<Review, bool>> BuildCategory(Query req, IEnumerable<Guid>? friendIds = null)
     {
-        return req.Category switch // TODO with movie log
+        return req.Category switch
         {
-            ContentFilterEnum.FirstWatches => r => r.Id != Guid.Empty, //TODO later
             ContentFilterEnum.LongForm => r => r.Text.Length >= LongThreshold,
             ContentFilterEnum.SpoilerFree => r => r.IsSpoilerFree == true,
-            ContentFilterEnum.FromFriends => r => r.Id != Guid.Empty, //TODO later
+            ContentFilterEnum.FromFriends => r => friendIds != null && friendIds.Contains(r.UserId),
             _ => r => true
         };
     }

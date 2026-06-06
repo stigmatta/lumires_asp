@@ -1,16 +1,17 @@
-﻿using lumires.Domain.Exceptions;
+﻿using lumires.Domain.Base;
+using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
 
-public sealed class Film
+public sealed class Film : LikeableEntity<FilmLike>
 {
     private readonly List<FilmCast> _cast = [];
     private readonly List<FilmDirector> _directors = [];
     private readonly List<Genre> _genres = [];
     private readonly List<FilmLocalization> _localizations = [];
     private readonly List<Review> _reviews = [];
+    private readonly List<FilmTag> _tags = [];
     private readonly List<UserFilmRating> _userRatings = [];
-
 
     private Film()
     {
@@ -31,7 +32,8 @@ public sealed class Film
         if (externalId <= 0)
             throw new DomainException("ExternalId must be positive", nameof(externalId));
 
-        if (releaseDate.HasValue && (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31)))
+        if (releaseDate.HasValue &&
+            (releaseDate < new DateOnly(1888, 1, 1) || releaseDate > new DateOnly(2126, 12, 31)))
             throw new DomainException("Invalid movie release date", nameof(releaseDate));
 
         if (voteAverage is < 0 or > 5)
@@ -69,8 +71,7 @@ public sealed class Film
     public int Runtime { get; private set; }
     public string ProductionCompany { get; private set; } = null!;
     public bool IsEditorPick { get; private set; }
-    
-    
+
 
     public IReadOnlyCollection<Genre> Genres => _genres.AsReadOnly();
     public IReadOnlyCollection<FilmLocalization> Localizations => _localizations.AsReadOnly();
@@ -78,6 +79,18 @@ public sealed class Film
     public IReadOnlyCollection<FilmDirector> Directors => _directors.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
     public IReadOnlyCollection<UserFilmRating> UserRatings => _userRatings.AsReadOnly();
+    public IReadOnlyCollection<FilmTag> Tags => _tags.AsReadOnly();
+
+
+    protected override Guid GetUserId(FilmLike like)
+    {
+        return like.UserId;
+    }
+
+    protected override FilmLike CreateLike(Guid userId)
+    {
+        return new FilmLike { FilmId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+    }
 
 
     public void AddLocalization(FilmLocalization localization)
@@ -141,9 +154,15 @@ public sealed class Film
 
         _directors.Add(director);
     }
-    
+
     public void SetEditorPick(bool editorPick)
     {
         IsEditorPick = editorPick;
+    }
+
+    public void AddTag(Tag tag)
+    {
+        if (_tags.Any(t => t.TagId == tag.Id)) return;
+        _tags.Add(new FilmTag { FilmId = Id, TagId = tag.Id });
     }
 }

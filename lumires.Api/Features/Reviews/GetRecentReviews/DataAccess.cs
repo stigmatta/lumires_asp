@@ -10,12 +10,13 @@ namespace lumires.Api.Features.Reviews.GetRecentReviews;
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
-    
-    internal async Task<List<RecentReviewItem>> GetRecentReviewsAsync(Query query, string lang, Guid userId, CancellationToken ct)
+
+    internal async Task<List<RecentReviewItem>> GetRecentReviewsAsync(Query query, string lang, Guid userId,
+        CancellationToken ct)
     {
         return await db.Reviews
-            .OrderByDescending(r => r.CreatedAt)  
-            .ApplyPaging(query.Page, query.PageSize)  
+            .OrderByDescending(r => r.CreatedAt)
+            .ApplyPaging(query.Page, query.PageSize)
             .Select(r => new RecentReviewItem(
                 r.Id,
                 r.UserId,

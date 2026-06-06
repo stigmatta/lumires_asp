@@ -12,8 +12,8 @@ namespace Tests.ApiTests.Reviews;
 internal sealed class GetThisWeekTrendingReviewsTests
 {
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -29,10 +29,12 @@ internal sealed class GetThisWeekTrendingReviewsTests
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
-    private Endpoint CreateEndpoint(DataAccess? dataAccess = null) =>
-        Factory.Create<Endpoint>(
+    private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
+    {
+        return Factory.Create<Endpoint>(
             _currentUserMock.Object,
             dataAccess ?? _dataAccess);
+    }
 
     private void SetupReviews(List<Review> reviews)
     {
@@ -83,7 +85,7 @@ internal sealed class GetThisWeekTrendingReviewsTests
     public async Task GetTrendingReviews_Should_Exclude_Reviews_Older_Than_7_Days()
     {
         // Arrange
-        var oldReviews = Helpers.CreateTrendingReviews(3, daysOld: 14);
+        var oldReviews = Helpers.CreateTrendingReviews(3, 14);
         SetupReviews(oldReviews);
 
         var ep = CreateEndpoint();
@@ -99,8 +101,8 @@ internal sealed class GetThisWeekTrendingReviewsTests
     public async Task GetTrendingReviews_Should_Only_Include_Reviews_Within_7_Days()
     {
         // Arrange
-        var recent = Helpers.CreateTrendingReviews(3, daysOld: 3);
-        var old = Helpers.CreateTrendingReviews(3, daysOld: 14);
+        var recent = Helpers.CreateTrendingReviews(3, 3);
+        var old = Helpers.CreateTrendingReviews(3, 14);
         SetupReviews([..recent, ..old]);
 
         var ep = CreateEndpoint();
@@ -154,9 +156,9 @@ internal sealed class GetThisWeekTrendingReviewsTests
     {
         var reviews = Helpers.CreateTrendingReviewsWithEngagement(
         [
-            (likesCount: 10, commentsCount: 0), 
-            (likesCount: 0,  commentsCount: 10),
-            (likesCount: 5,  commentsCount: 3), 
+            (likesCount: 10, commentsCount: 0),
+            (likesCount: 0, commentsCount: 10),
+            (likesCount: 5, commentsCount: 3)
         ]);
         SetupReviews(reviews);
 

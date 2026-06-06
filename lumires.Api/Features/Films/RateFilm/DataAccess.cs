@@ -15,16 +15,16 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Where(m => m.ExternalId == command.FilmId)
             .Select(m => m.Id)
             .FirstOrDefaultAsync(ct);
-        
+
         if (filmId == Guid.Empty) return Result.NotFound();
-        
+
 
         var userRating = await db.UserFilmRatings
             .Where(fr => fr.FilmId == filmId && fr.UserId == userId)
             .FirstOrDefaultAsync(ct);
 
         UserFilmRating newRating = null!;
-        
+
         if (userRating is not null)
         {
             userRating.UpdateRating(command.Rating);
@@ -39,5 +39,4 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
         return userRating?.FilmId ?? newRating.FilmId;
     }
-    
 }

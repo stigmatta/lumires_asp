@@ -6,6 +6,7 @@ namespace lumires.Domain.Entities;
 public sealed class FilmsList : LikeableEntity<FilmsListLike>
 {
     private readonly List<ListFilm> _films = [];
+    private readonly List<SavedList> _savedLists = [];
 
     private FilmsList()
     {
@@ -24,20 +25,22 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
         UserId = userId;
         Description = description;
         IsPrivate = isPrivate;
-        CreatedAt = DateTimeOffset.UtcNow;
-        UpdatedAt = DateTimeOffset.UtcNow;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public Guid Id { get; }
     public string Title { get; private set; } = null!;
     public string? Description { get; private set; }
-    public DateTimeOffset CreatedAt { get; }
-    public DateTimeOffset UpdatedAt { get; private set; }
+    public DateTime CreatedAt { get; }
+    public DateTime? UpdatedAt { get; private set; }
     public bool IsPrivate { get; private set; }
     public bool IsEditorPick { get; private set; }
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
     public IReadOnlyCollection<ListFilm> Films => _films.AsReadOnly();
+
+    public IReadOnlyCollection<SavedList> SavedLists =>
+        _savedLists.AsReadOnly();
 
     public void AddFilm(Guid filmId)
     {
@@ -54,7 +57,7 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
     {
         if (_films.Any(m => m.FilmId == film.Id))
             return;
-        
+
         var nextOrder = _films.Count > 0 ? _films.Max(m => m.Order) + 1 : 1;
         _films.Add(new ListFilm(Id, film, nextOrder));
 
@@ -71,9 +74,9 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
 
     private void UpdateTimestamp()
     {
-        UpdatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
-    
+
 
     protected override Guid GetUserId(FilmsListLike like)
     {
@@ -82,7 +85,7 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
 
     protected override FilmsListLike CreateLike(Guid userId)
     {
-        return new FilmsListLike { FilmsListId = Id, UserId = userId };
+        return new FilmsListLike { FilmsListId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
     }
 
     public void SetEditorPick(bool editorPick)

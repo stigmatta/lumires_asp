@@ -16,7 +16,7 @@ internal sealed class GetThisWeekMostReviewedFilmsTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
-    
+
 
     [Before(Test)]
     public void Setup()
@@ -67,16 +67,16 @@ internal sealed class GetThisWeekMostReviewedFilmsTests
     }
 
     [Test]
-    [Arguments(1,  "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 100, "Warner")]
+    [Arguments(1, "2010-07-16", "/poster1.jpg", 4.5, 200, 20, 100, "Warner")]
     [Arguments(42, "2014-11-07", "/poster2.jpg", 3.8, 350, 20, 200, "HBO")]
     public async Task GetThisWeekMostReviewed_Should_Be_200_And_Correct_When_Not_Empty(
         int externalId, string dateStr, string posterPath,
         float voteAverage, int voteCount, float popularity, int runtime, string company)
     {
         var films = Helpers.CreateFilmsWithWeeklyReviews([
-            (externalId: externalId, reviewCount: 5),
+            (externalId, reviewCount: 5),
             (externalId: 2, reviewCount: 3),
-            (externalId: 3, reviewCount: 1),
+            (externalId: 3, reviewCount: 1)
         ]).BuildMockDbSet();
 
         _dbContextMock.Setup(x => x.Films).Returns(films.Object);
@@ -91,7 +91,7 @@ internal sealed class GetThisWeekMostReviewedFilmsTests
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
-        ep.Response.Items[0].ExternalId.Should().Be(externalId);
+        ep.Response.Items[0].FilmId.Should().Be(externalId);
     }
 
 
@@ -213,7 +213,7 @@ internal sealed class GetThisWeekMostReviewedFilmsTests
                 if (callCount == 1)
                     return new List<Film>
                         {
-                            Helpers.CreateFilmWithWeeklyReviews(1, "film-one", reviewCount: 2) 
+                            Helpers.CreateFilmWithWeeklyReviews(1, "film-one", 2)
                         }
                         .BuildMockDbSet().Object;
 

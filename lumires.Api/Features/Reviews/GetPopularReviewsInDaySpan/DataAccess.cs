@@ -15,7 +15,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     {
         var currentUserId = currentUserService.UserId;
         var startDate = DateTime.UtcNow.AddDays(-daySpan);
-        
+
         var items = await db.Reviews
             .AsNoTracking()
             .Where(r => r.IsSpoilerFree && r.CreatedAt >= startDate)
@@ -52,7 +52,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 r.LikesCount,
                 r.ReviewComments.Count,
                 currentUserId != Guid.Empty && r.Likes.Any(l => l.UserId == currentUserId),
-                r.IsEditorPick
+                r.IsEditorPick,
+                r.Text.Length / 5 / 200 + 1
             ))
             .ToListAsync(ct);
 

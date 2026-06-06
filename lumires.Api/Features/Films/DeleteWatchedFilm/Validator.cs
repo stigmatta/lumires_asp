@@ -3,7 +3,7 @@ using FluentValidation;
 using lumires.Core.Resources;
 using Microsoft.Extensions.Localization;
 
-namespace lumires.Api.Features.Films.MarkWatchedFilm;
+namespace lumires.Api.Features.Films.DeleteWatchedFilm;
 
 internal sealed class Validator : Validator<Command>
 {

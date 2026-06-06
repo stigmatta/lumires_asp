@@ -16,7 +16,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .AsNoTracking()
             .CountAsync(r => r.CreatedAt >= daySpan, ct);
     }
-    
+
     public async Task<int> GetListsTotalCount(CancellationToken ct)
     {
         return await db.FilmsLists

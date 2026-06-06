@@ -5,12 +5,13 @@ namespace lumires.Api.Features.Films.GetFilmRatingBreakdown;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);
+
 internal sealed class Endpoint(DataAccess db)
     : Endpoint<Query, Dictionary<float, int>>
 {
     public override void Configure()
     {
-        Get("/films/rating-breakdown");
+        Get("/films/{Slug}/{Id:int}/rating-breakdown");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }
@@ -20,5 +21,4 @@ internal sealed class Endpoint(DataAccess db)
         var items = await db.GetFilmRatingsDictionaryAsync(query.Id, ct);
         await Send.OkAsync(items, ct);
     }
-
 }

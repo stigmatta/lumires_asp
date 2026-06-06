@@ -9,15 +9,22 @@ internal static class Specifications
 {
     private const int LongThreshold = 500;
 
-    public static Expression<Func<Review, bool>> BuildFilter(Query req)
+    public static Expression<Func<Review, bool>> BuildFilter(Query req, IEnumerable<Guid>? friendIds = null)
     {
         var filter = PredicateBuilder.New<Review>(true);
 
         var ratingFilter = BuildRating(req);
         filter = filter.And(ratingFilter);
 
-        var contentFilter = BuildCategory(req);
+        var contentFilter = BuildCategory(req, friendIds);
         filter = filter.And(contentFilter);
+
+        if (req.FilmId.HasValue) filter = filter.And(r => r.Film.ExternalId == req.FilmId.Value);
+
+        if (req.TagIds is not null && req.TagIds.Length > 0)
+            filter = filter.And(r =>
+                req.TagIds.All(tagId =>
+                    r.Tags.Any(t => t.TagId == tagId)));
 
         return filter;
     }
@@ -34,14 +41,13 @@ internal static class Specifications
         };
     }
 
-    private static Expression<Func<Review, bool>> BuildCategory(Query req)
+    private static Expression<Func<Review, bool>> BuildCategory(Query req, IEnumerable<Guid>? friendIds = null)
     {
-        return req.Category switch // TODO with movie log
+        return req.Category switch
         {
-            ContentFilterEnum.FirstWatches => r => r.Id != Guid.Empty, //TODO later
             ContentFilterEnum.LongForm => r => r.Text.Length >= LongThreshold,
             ContentFilterEnum.SpoilerFree => r => r.IsSpoilerFree == true,
-            ContentFilterEnum.FromFriends => r => r.Id != Guid.Empty, //TODO later
+            ContentFilterEnum.FromFriends => r => friendIds != null && friendIds.Contains(r.UserId),
             _ => r => true
         };
     }

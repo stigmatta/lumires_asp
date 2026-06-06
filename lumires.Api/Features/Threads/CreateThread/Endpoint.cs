@@ -5,12 +5,13 @@ using lumires.Core.Abstractions.Services;
 namespace lumires.Api.Features.Threads.CreateThread;
 
 [UsedImplicitly]
-internal sealed record Command(string? Title, string Text, bool IsSpoilerFree = true);
+internal sealed record Command(string? Title, string? Image, string Text, bool IsSpoilerFree = true);
 
 [UsedImplicitly]
 internal sealed record Response(
     Guid Id,
     string? Title,
+    string? Image,
     string Text,
     DateOnly CreatedAt,
     bool IsSpoilerFree
@@ -41,6 +42,7 @@ internal sealed class Endpoint(
         var response = new Response(
             result.Value,
             command.Title,
+            command.Image,
             command.Text,
             DateOnly.FromDateTime(DateTime.UtcNow),
             command.IsSpoilerFree

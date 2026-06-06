@@ -23,6 +23,5 @@ public sealed class WatchedFilmConfiguration : IEntityTypeConfiguration<WatchedF
 
         builder.HasIndex(x => new { x.UserId, x.FilmId })
             .IsUnique();
-
     }
 }

@@ -14,7 +14,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var items = await db.FilmsLists
             .AsNoTracking()
             .Where(x => x.CreatedAt >= weekAgo)
-            .OrderByDescending(x => x.LikesCount) //TODO if we`d have listcomments - change strategy of calculation
+            .OrderByDescending(x => x.Likes
+                .Count(l => l.LikedAt >= weekAgo))
             .Take(6)
             .Select(x => new TrendingListItem(
                 x.Id,
@@ -23,6 +24,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 x.User.Username,
                 x.Films.Count,
                 x.Likes.Any(l => l.UserId == currentUserId),
+                x.SavedLists.Any(l => l.UserId == currentUserId),
                 x.Films.Select(f => new FilmListItem(f.Film.PosterPath))
                     .ToArray()))
             .ToArrayAsync(ct);

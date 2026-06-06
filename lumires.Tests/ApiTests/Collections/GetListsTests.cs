@@ -112,21 +112,21 @@ internal sealed class GetFilmsListsTests
         ep.Response.PageSize.Should().Be(5);
         ep.Response.TotalResults.Should().Be(10);
     }
-    
+
     [Test]
     public void Should_Filter_By_SearchTerm()
     {
         var lists = new List<FilmsList>
         {
             Helpers.CreateFilmsList(
-                title: "Ignored",
+                "Ignored",
                 films:
                 [
                     Helpers.CreatePopularFilm(new DateOnly(2022, 1, 1), "Inception")
                 ]),
-            
+
             Helpers.CreateFilmsList(
-                title: "Ignored 2",
+                "Ignored 2",
                 films:
                 [
                     Helpers.CreatePopularFilm(new DateOnly(2022, 1, 1), "Avatar")
@@ -141,6 +141,4 @@ internal sealed class GetFilmsListsTests
 
         result.Should().HaveCount(1);
     }
-
-
 }

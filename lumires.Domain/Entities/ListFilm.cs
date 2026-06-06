@@ -21,7 +21,7 @@ public sealed class ListFilm
         Order = order;
         AddedAt = DateTimeOffset.UtcNow;
     }
-    
+
     public ListFilm(Guid filmsListId, Film film, int order)
     {
         if (filmsListId == Guid.Empty) throw new DomainException("Collection ID is invalid", nameof(filmsListId));

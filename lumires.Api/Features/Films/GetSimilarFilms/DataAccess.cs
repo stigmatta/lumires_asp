@@ -21,8 +21,8 @@ internal sealed record RawItem(
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
-    
-    internal async Task<IReadOnlyCollection<RawItem>?> GetExistingFilms(int[] ids, string lang, CancellationToken ct)
+
+    internal async Task<IReadOnlyCollection<RawItem>> GetExistingFilms(int[] ids, string lang, CancellationToken ct)
     {
         var rawItems = await db.Films
             .AsNoTracking()
@@ -50,9 +50,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 movie.VoteCount
             ))
             .ToListAsync(ct);
+
         return new ReadOnlyCollection<RawItem>(rawItems);
     }
-    
+
     internal async Task<Dictionary<int, GenreItem>> GetGenresDictionaryAsync(string lang, CancellationToken ct)
     {
         return await db.Genres

@@ -34,7 +34,7 @@ internal static class Helpers
         for (var i = 0; i < count; i++)
         {
             var user = new User(Guid.NewGuid(), $"user{i}", $"user{i}@gmail.com");
-            var thread = new UserThread(user.Id, $"Title {i}", $"Text {i}", i % 2 == 0);
+            var thread = new UserThread(user.Id, $"Title {i}", null, $"Text {i}", i % 2 == 0);
 
             thread.SetUser(user);
 

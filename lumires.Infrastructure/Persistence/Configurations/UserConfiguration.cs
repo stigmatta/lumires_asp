@@ -37,7 +37,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
 
         builder.Metadata
             .FindNavigation(nameof(User.FilmsLists))?
@@ -50,9 +50,17 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Metadata
             .FindNavigation(nameof(User.ReviewComments))?
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        
+
         builder.Metadata
             .FindNavigation(nameof(User.WatchedFilms))?
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Metadata
+            .FindNavigation(nameof(User.SavedFilms))?
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Metadata
+            .FindNavigation(nameof(User.SavedLists))?
             .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

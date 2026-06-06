@@ -1,6 +1,9 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq.Expressions;
+using JetBrains.Annotations;
 using lumires.Api.Extensions;
 using lumires.Core.Abstractions.Data;
+using lumires.Domain.Entities;
+using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.Threads.GetThreads;
@@ -10,7 +13,24 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     internal async Task<List<ThreadItemResponse>> GetThreadsAsync(Query query, Guid userId, CancellationToken ct)
     {
-        var filter = Specifications.BuildFilter(query);
+        Expression<Func<UserThread, bool>> filter;
+
+        if (query.Category == ContentFilterEnum.FromFriends)
+        {
+            var friendIds = await db.Relationships
+                .Where(f => f.SourceUserId == userId
+                            && f.Type == UserRelationshipType.Follow
+                            && f.Status == UserRelationshipStatus.Accepted)
+                .Select(f => f.TargetUserId)
+                .ToListAsync(ct);
+
+            filter = Specifications.BuildFilter(query, friendIds);
+        }
+        else
+        {
+            filter = Specifications.BuildFilter(query);
+        }
+
         var sort = Specifications.BuildSort(query);
 
 
@@ -27,6 +47,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 t.User.AvatarUrl,
                 t.UserThreadComments.Count,
                 t.Title,
+                t.Image,
                 t.Text,
                 t.LikesCount,
                 t.CreatedAt,

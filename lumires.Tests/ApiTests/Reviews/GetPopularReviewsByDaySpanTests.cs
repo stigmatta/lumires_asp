@@ -110,7 +110,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Only_Include_Reviews_Within_DaySpan()
     {
         // Arrange
-        var recentReviews = Helpers.CreatePopularReviews(2025,3, 3);
+        var recentReviews = Helpers.CreatePopularReviews(2025, 3, 3);
         var oldReviews = Helpers.CreatePopularReviews(2025, 3, 30);
         SetupReviews([..recentReviews, ..oldReviews]);
 
@@ -282,7 +282,7 @@ internal sealed class GetPopularReviewsInDaySpanTests
     public async Task GetPopularReviews_Should_Cache_Separately_Per_DaySpan()
     {
         // Arrange
-        var reviews = Helpers.CreatePopularReviews(2021,5, 3);
+        var reviews = Helpers.CreatePopularReviews(2021, 5, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();

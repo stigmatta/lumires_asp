@@ -69,13 +69,13 @@ internal sealed class CreateThreadCommentTests
     [Test]
     public async Task Should_Be_201_When_Successfully_Created()
     {
-        var thread = new UserThread(Guid.NewGuid(), null, "Review text", false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(thread.Id, "Great review!", null, true),
+            new Command(thread.Id, "Great review!", null),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -84,17 +84,17 @@ internal sealed class CreateThreadCommentTests
     [Test]
     public async Task Should_Return_Correct_Response()
     {
-        var thread = new UserThread(Guid.NewGuid(),  null, "Review text", false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
-        var command = new Command(thread.Id, "Great review!", null, true);
+        var command = new Command(thread.Id, "Great review!", null);
 
         await ep.HandleAsync(command, CancellationToken.None);
 
         ep.Response.Text.Should().Be(command.Text);
         ep.Response.Id.Should().NotBe(Guid.Empty);
-        ep.Response.CreatedAt.Should().Be(DateOnly.FromDateTime(DateTime.UtcNow));
+        ep.Response.CreatedAt.Should().Be(DateTime.UtcNow);
     }
 
     [Test]
@@ -104,7 +104,7 @@ internal sealed class CreateThreadCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(Guid.NewGuid(), "Some comment", null, true),
+            new Command(Guid.NewGuid(), "Some comment", null),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(404);
@@ -113,13 +113,13 @@ internal sealed class CreateThreadCommentTests
     [Test]
     public async Task Should_Send_Notification_To_ThreadAuthor()
     {
-        var thread = new UserThread(Guid.NewGuid(),  null, "Review text", false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(thread.Id, "Nice review!", null, true),
+            new Command(thread.Id, "Nice review!", null),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -131,13 +131,13 @@ internal sealed class CreateThreadCommentTests
     public async Task Should_Send_Notification_To_Both_When_TargetedUserId_Provided()
     {
         var targetedUserId = Guid.NewGuid();
-        var thread = new UserThread(Guid.NewGuid(),  null, "Review text", false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(thread.Id, "Replying to your comment!", targetedUserId, true),
+            new Command(thread.Id, "Replying to your comment!", targetedUserId),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -148,13 +148,13 @@ internal sealed class CreateThreadCommentTests
     [Test]
     public async Task Should_Work_Without_TargetedUserId()
     {
-        var thread = new UserThread(Guid.NewGuid(),  null, "Review text",  false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(thread.Id, "Just a comment", null, true),
+            new Command(thread.Id, "Just a comment", null),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -167,14 +167,14 @@ internal sealed class CreateThreadCommentTests
         var expectedUserId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(expectedUserId);
 
-        var thread = new UserThread(Guid.NewGuid(), null, "Review text",  false);
+        var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
         SetupThreads([thread]);
 
         var dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);
         var ep = CreateEndpoint(dataAccess);
 
         await ep.HandleAsync(
-            new Command(thread.Id, "Comment text", null, true),
+            new Command(thread.Id, "Comment text", null),
             CancellationToken.None);
 
         _notificationMock.Verify(

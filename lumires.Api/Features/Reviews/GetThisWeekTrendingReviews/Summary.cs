@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+
 namespace lumires.Api.Features.Reviews.GetThisWeekTrendingReviews;
 
 [UsedImplicitly]

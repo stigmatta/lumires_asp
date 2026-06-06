@@ -19,6 +19,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Select(fl => new FilmsListsItems(
                 fl.Id,
                 fl.Likes.Any(x => x.UserId == userId),
+                fl.SavedLists.Any(x => x.UserId == userId),
                 fl.Films
                     .Where(f => f.Film.ExternalId == filmId)
                     .Select(f => new FilmInListItem(f.Film.BackdropPath))

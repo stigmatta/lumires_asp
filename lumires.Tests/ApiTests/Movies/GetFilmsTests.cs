@@ -49,14 +49,13 @@ internal sealed class GetFilmsTests
             _dataAccess,
             _currentUserMock.Object);
     }
-    
+
     private void SetupFilms(List<Film> films)
     {
         _dbContextMock
             .Setup(x => x.Films)
             .Returns(films.BuildMockDbSet().Object);
     }
-
 
 
     [Test]
@@ -104,7 +103,7 @@ internal sealed class GetFilmsTests
     [Test]
     public async Task Should_Return_Correct_Paging_Metadata()
     {
-        SetupFilms(Helpers.CreateFilmsWithPopularity([4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f,4.5f]));
+        SetupFilms(Helpers.CreateFilmsWithPopularity([4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f]));
 
         var ep = CreateEndpoint();
 

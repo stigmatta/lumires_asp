@@ -63,8 +63,6 @@ internal sealed class GetCollectionTests
         ep.HttpContext.Response.StatusCode.Should().Be(200);
         ep.Response.Id.Should().Be(collection.Id);
         ep.Response.Title.Should().Be("Test Title");
-        ep.Response.Description.Should().Be("Test description");
-        ep.Response.AuthorName.Should().Be("test_user");
     }
 
     [Test]

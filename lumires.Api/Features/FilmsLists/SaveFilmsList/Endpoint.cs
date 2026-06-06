@@ -2,33 +2,28 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
-namespace lumires.Api.Features.Films.MarkWatchedFilm;
-
+namespace lumires.Api.Features.FilmsLists.SaveFilmsList;
 
 [UsedImplicitly]
-internal sealed record Command(int FilmId);
+internal sealed record Command(Guid ListId);
 
 internal sealed class Endpoint(
-    ICurrentUserService currentUserService,
     DataAccess dataAccess,
-    IFilmResolver filmResolver)
+    ICurrentUserService currentUserService)
     : Endpoint<Command, EmptyResponse>
 {
     public override void Configure()
     {
-        Post("/films/{Slug}/{filmId:int}/watched/");
-        Description(x => x.WithTags("Films"));
+        Post("/lists/{listId:guid}/save/");
+        Description(x => x.WithTags("Lists"));
         Throttle(5, 2);
     }
-    
+
     public override async Task HandleAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        var lang = currentUserService.LangCulture;
-        
-        await filmResolver.EnsureFilmExistsAsync(command.FilmId, lang, ct);
 
-        var result = await dataAccess.MarkWatchedAsync(command, currentUserId, ct);
+        var result = await dataAccess.SaveListAsync(command, currentUserId, ct);
         if (!result.IsSuccess)
         {
             await HttpContext.SendErrorAsync(result.Status, ct);
@@ -37,5 +32,4 @@ internal sealed class Endpoint(
 
         await Send.NoContentAsync(ct);
     }
-    
 }

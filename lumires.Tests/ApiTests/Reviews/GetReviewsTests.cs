@@ -13,8 +13,8 @@ namespace Tests.ApiTests.Reviews;
 internal sealed class GetReviewsTests
 {
     private Mock<ICurrentUserService> _currentUserMock = null!;
-    private Mock<IAppDbContext> _dbContextMock = null!;
     private DataAccess _dataAccess = null!;
+    private Mock<IAppDbContext> _dbContextMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -31,10 +31,12 @@ internal sealed class GetReviewsTests
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
 
-    private Endpoint CreateEndpoint(DataAccess? dataAccess = null) =>
-        Factory.Create<Endpoint>(
+    private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
+    {
+        return Factory.Create<Endpoint>(
             dataAccess ?? _dataAccess,
             _currentUserMock.Object);
+    }
 
     private void SetupReviews(List<Review> reviews)
     {
@@ -184,7 +186,7 @@ internal sealed class GetReviewsTests
     [Test]
     public async Task GetReviews_Should_Sort_By_MostReplies()
     {
-        var reviews = Helpers.CreateReviewsWithComments(5, commentsPerReview: 3);
+        var reviews = Helpers.CreateReviewsWithComments(5, 3);
         SetupReviews(reviews);
 
         var ep = CreateEndpoint();
@@ -261,7 +263,7 @@ internal sealed class GetReviewsTests
 
         foreach (var review in shortReviews)
             review.SetText(new string('a', 100));
-        
+
         SetupReviews([..longReviews, ..shortReviews]);
 
         var ep = CreateEndpoint();
