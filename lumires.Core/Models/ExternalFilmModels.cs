@@ -91,3 +91,10 @@ public record ExternalPersonShort(
     float Popularity,
     IReadOnlyList<ExternalFilmShort> KnownFor
 );
+
+[UsedImplicitly]
+public record ExternalPersonCredits(
+    int ExternalId,
+    IReadOnlyCollection<ExternalFilmShort> AsActor,
+    IReadOnlyCollection<ExternalFilmShort> AsDirector
+);

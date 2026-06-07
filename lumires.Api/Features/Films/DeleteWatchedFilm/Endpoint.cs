@@ -14,7 +14,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Delete("/films/{Slug}/{filmId:int}/watched/");
+        Delete("/films/{filmId:int}/watched/");
         Description(x => x.WithTags("Films"));
         Throttle(5, 2);
     }

@@ -18,7 +18,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/films/{Slug}/{Id:int}/stats");
+        Get("/films/{Id:int}/stats");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }

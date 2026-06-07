@@ -348,7 +348,7 @@ public sealed class TmdbFilmService(
         string lang,
         CancellationToken ct)
     {
-        var response = await tmdbApi.GetSimilarFilmsAsync(movieId, EnLang, ct);
+        var response = await tmdbApi.GetSimilarFilmsAsync(movieId, lang, ct);
 
         switch (response.StatusCode)
         {
@@ -366,6 +366,52 @@ public sealed class TmdbFilmService(
             .ToList();
 
         return Result.Success<IReadOnlyCollection<ExternalFilmShort>>(items);
+    }
+
+    public async Task<Result<ExternalPersonCredits>> GetPersonCreditsAsync(int personId, string lang, CancellationToken ct = default)
+    {
+        var response = await tmdbApi.GetPersonCreditsAsync(personId, lang, ct);
+
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.Unauthorized:
+                return Result.Unauthorized();
+            case HttpStatusCode.NotFound:
+                return Result.NotFound();
+        }
+
+        if (!response.IsSuccessStatusCode || response.Content is null)
+            return Result.Error("Failed to fetch person credits from TMDB");
+
+        var asActor = response.Content.Cast
+            .Select(c => new ExternalFilmShort(
+                c.Id,
+                c.Title,
+                c.PosterPath,
+                DateOnly.TryParse(c.ReleaseDate, out var castDate) ? castDate.Year : null,
+                c.VoteAverage,
+                c.VoteCount,
+                c.Popularity,
+                c.GenreIds.ToArray()
+            ))
+            .ToList();
+
+        var asDirector = response.Content.Crew
+            .Where(c => c.Job == "Director")
+            .DistinctBy(c => c.Id)
+            .Select(c => new ExternalFilmShort(
+                c.Id,
+                c.Title,
+                c.PosterPath,
+                DateOnly.TryParse(c.ReleaseDate, out var crewDate) ? crewDate.Year : null,
+                c.VoteAverage,
+                c.VoteCount,
+                c.Popularity,
+                c.GenreIds.ToArray()
+            ))
+            .ToList();
+
+        return Result.Success(new ExternalPersonCredits(personId, asActor, asDirector));
     }
 
     private async Task<Film?> FetchAndBuildFilmAsync(int tmdbId, CancellationToken ct)

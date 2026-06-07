@@ -2,10 +2,10 @@
 using JetBrains.Annotations;
 using lumires.Core;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Events.Films;
 using lumires.Core.Helpers;
+using lumires.Domain.Enums;
 
-namespace lumires.Api.Features.Films.GetSimilarFilms;
+namespace lumires.Api.Features.Films.GetDirectorFilmography;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);
@@ -16,27 +16,27 @@ internal sealed record GenreItem(
     string Name);
 
 [UsedImplicitly]
-internal sealed record SimilarFilmItem(
+internal sealed record FilmItem(
     int ExternalId,
     string? PosterPath,
     string Title,
-    string Slug,
     int? ReleaseYear,
     GenreItem[] Genres,
     float Rating);
 
 [UsedImplicitly]
-internal sealed record Response(IReadOnlyCollection<SimilarFilmItem> Films);
+internal sealed record Response(IReadOnlyCollection<FilmItem> Films);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     IExternalFilmService externalFilmService,
+    IPersonResolver personResolver,
     DataAccess db)
     : Endpoint<Query, Response>
 {
     public override void Configure()
     {
-        Get("/films/{Id:int}/similar");
+        Get("/directors/{Id:int}/filmography");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }
@@ -45,7 +45,9 @@ internal sealed class Endpoint(
     {
         var lang = currentUserService.LangCulture;
 
-        var externalResults = await externalFilmService.GetSimilarFilmsAsync(query.Id, lang, ct);
+        await personResolver.EnsurePersonExistsAsync((query.Id, nameof(PersonDepartment.Directing)), lang, ct);
+
+        var externalResults = await externalFilmService.GetPersonCreditsAsync(query.Id, lang, ct);
 
         if (!externalResults.IsSuccess)
         {
@@ -53,22 +55,22 @@ internal sealed class Endpoint(
             return;
         }
 
-        var externalFilms = externalResults.Value;
+        var directorFilms = externalResults.Value.AsDirector;
 
-        if (externalFilms.Count == 0)
+        if (directorFilms.Count == 0)
         {
             await Send.OkAsync(new Response([]), ct);
             return;
         }
 
-        var similarFilmsIds = externalFilms.Select(x => x.ExternalId).ToArray();
+        var directorFilmsIds = directorFilms.Select(x => x.ExternalId).ToArray();
 
-        var existingFilmsDict = (await db.GetExistingFilms(similarFilmsIds, lang, ct))
+        var existingFilmsDict = (await db.GetExistingFilms(directorFilmsIds, lang, ct))
             .ToDictionary(x => x.Id);
 
         var allGenresDict = await db.GetGenresDictionaryAsync(lang, ct);
 
-        var films = externalFilms.Select(external =>
+        var films = directorFilms.Select(external =>
         {
             if (existingFilmsDict.TryGetValue(external.ExternalId, out var local))
             {
@@ -79,11 +81,10 @@ internal sealed class Endpoint(
                     local.VoteCount
                 );
 
-                return new SimilarFilmItem(
+                return new FilmItem(
                     external.ExternalId,
                     external.PosterPath,
                     local.Title,
-                    local.Slug,
                     local.ReleaseYear,
                     local.Genres,
                     rating
@@ -92,17 +93,17 @@ internal sealed class Endpoint(
 
             var slug = SlugExtensions.Slugify($"{external.Title}-{external.ReleaseYear}");
 
-            var genres = external.GenreIds.Select(id =>
+            var genres = external.GenreIds
+                .Select(id =>
                     allGenresDict.TryGetValue(id, out var genre)
                         ? genre
-                        : new GenreItem(id, $"Unknown ({id})"))
+                        : new GenreItem(id, string.Empty))
                 .ToArray();
 
-            return new SimilarFilmItem(
+            return new FilmItem(
                 external.ExternalId,
                 external.PosterPath,
                 external.Title,
-                slug,
                 external.ReleaseYear,
                 genres,
                 external.VoteAverage
@@ -110,25 +111,5 @@ internal sealed class Endpoint(
         }).ToList();
 
         await Send.OkAsync(new Response(films), ct);
-
-        var idsToEnrich = externalFilms
-            .Where(x => !existingFilmsDict.ContainsKey(x.ExternalId))
-            .Select(x => x.ExternalId)
-            .ToList();
-
-        if (idsToEnrich.Count > 0)
-        {
-            await new FilmReferencedEvent
-            {
-                ExternalIds = [..idsToEnrich],
-                Language = lang
-            }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
-
-            await new FilmEnrichmentEvent
-            {
-                ExternalIds = [..idsToEnrich],
-                SkipLanguage = lang
-            }.PublishAsync(Mode.WaitForNone, CancellationToken.None);
-        }
     }
 }

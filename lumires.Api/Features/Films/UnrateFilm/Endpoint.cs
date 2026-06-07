@@ -14,7 +14,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Post("/films/{Slug}/{filmId:int}/unrate/");
+        Post("/films/{filmId:int}/unrate/");
         Description(x => x.WithTags("Films"));
     }
 

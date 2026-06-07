@@ -76,4 +76,10 @@ public interface ITmdbApi
         [AliasAs("language")] string lang,
         [AliasAs("page")] int page,
         CancellationToken ct);
+    
+    [Get("/person/{personId}/movie_credits")]
+    Task<IApiResponse<TmdbPersonCreditsResponse>> GetPersonCreditsAsync(
+        int personId,
+        string language,
+        CancellationToken ct);
 }

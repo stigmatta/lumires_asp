@@ -32,7 +32,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
 {
     public override void Configure()
     {
-        Get("/films/{slug}/{filmId:int}/reviews");
+        Get("/films/{filmId:int}/reviews");
         Description(x => x.WithTags("Reviews"));
         AllowAnonymous();
     }
