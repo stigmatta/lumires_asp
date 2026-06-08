@@ -18,8 +18,8 @@ public class UserSettingsConfiguration : IEntityTypeConfiguration<UserSettings>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.FavoriteFilms)
-            .WithMany()
-            .UsingEntity(j => j.ToTable("UserFavoriteFilms"));
+            .WithOne(x => x.UserSettings)
+            .HasForeignKey(x => x.UserSettingsId);
 
         builder.OwnsOne(x => x.Notifications, n =>
         {

@@ -141,6 +141,33 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cant set more than 4 favourite films.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid order.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_Order_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_Order_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orders must be unique.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_OrderUnique {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_OrderUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description is too long.
         /// </summary>
         internal static string ValidationError_Description_TooLong {

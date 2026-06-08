@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260608165202_Added_User_Settings")]
+    [Migration("20260608194039_Added_User_Settings")]
     partial class Added_User_Settings
     {
         /// <inheritdoc />
@@ -38,21 +38,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("GenresId");
 
                     b.ToTable("FilmGenres");
-                });
-
-            modelBuilder.Entity("FilmUserSettings", b =>
-                {
-                    b.Property<Guid>("FavoriteFilmsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserSettingsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("FavoriteFilmsId", "UserSettingsId");
-
-                    b.HasIndex("UserSettingsId");
-
-                    b.ToTable("UserFavoriteFilms", (string)null);
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.Film", b =>
@@ -758,6 +743,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.UserFavoriteFilm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserSettingsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("UserSettingsId");
+
+                    b.ToTable("UserFavoriteFilms");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.UserFilmRating", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1055,21 +1064,6 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FilmUserSettings", b =>
-                {
-                    b.HasOne("lumires.Domain.Entities.Film", null)
-                        .WithMany()
-                        .HasForeignKey("FavoriteFilmsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("lumires.Domain.Entities.UserSettings", null)
-                        .WithMany()
-                        .HasForeignKey("UserSettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("lumires.Domain.Entities.FilmCast", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Film", "Film")
@@ -1363,6 +1357,25 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("lumires.Domain.Entities.UserFavoriteFilm", b =>
+                {
+                    b.HasOne("lumires.Domain.Entities.Film", "Film")
+                        .WithMany()
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("lumires.Domain.Entities.UserSettings", "UserSettings")
+                        .WithMany("FavoriteFilms")
+                        .HasForeignKey("UserSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("UserSettings");
+                });
+
             modelBuilder.Entity("lumires.Domain.Entities.UserFilmRating", b =>
                 {
                     b.HasOne("lumires.Domain.Entities.Film", "Film")
@@ -1620,6 +1633,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("UserThreadsComments");
 
                     b.Navigation("WatchedFilms");
+                });
+
+            modelBuilder.Entity("lumires.Domain.Entities.UserSettings", b =>
+                {
+                    b.Navigation("FavoriteFilms");
                 });
 
             modelBuilder.Entity("lumires.Domain.Entities.UserThread", b =>

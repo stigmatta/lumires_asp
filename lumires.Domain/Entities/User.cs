@@ -38,6 +38,7 @@ public sealed partial class User
         Username = username;
         Email = email;
         CreatedAt = DateTimeOffset.UtcNow;
+        UserSettings = new UserSettings(id);
     }
 
     public Guid Id { get; private set; }

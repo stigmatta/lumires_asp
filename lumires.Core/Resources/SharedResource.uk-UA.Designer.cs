@@ -141,6 +141,51 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ви не можете встановити більше 4 улюблених фільмів.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_Validation_Error_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_Validation_Error_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Некоретний порядок.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_Validation_Error_Order_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_Validation_Error_Order_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ви не можете встановити більше 4 улюблених фільмів.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Некоретний довжина порядку.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_Order_Length {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_Order_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Порядок фільмів повинен бути унікальним.
+        /// </summary>
+        internal static string UpdateFavoriteFilms_ValidationError_OrderUnique {
+            get {
+                return ResourceManager.GetString("UpdateFavoriteFilms_ValidationError_OrderUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Опис занадто великий.
         /// </summary>
         internal static string ValidationError_Description_TooLong {

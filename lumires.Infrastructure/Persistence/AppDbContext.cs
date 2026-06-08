@@ -38,6 +38,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<FilmLike> FilmLikes => Set<FilmLike>();
     public DbSet<FilmTag> FilmTags => Set<FilmTag>();
     public DbSet<ReviewTag> ReviewTags => Set<ReviewTag>();
+    public DbSet<UserFavoriteFilm> UserFavoriteFilms => Set<UserFavoriteFilm>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

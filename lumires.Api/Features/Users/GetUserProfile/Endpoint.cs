@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Core.Abstractions.Services;
 
 namespace lumires.Api.Features.Users.GetUserProfile;
 
@@ -33,11 +32,6 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var response = await db.GetUserProfile(query.Username, ct);
-        if (response is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
 
         await Send.OkAsync(response, ct);
     }

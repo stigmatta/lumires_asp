@@ -5,4 +5,9 @@ public interface IFilmResolver
     Task<bool>
         EnsureFilmExistsAsync(int externalId, string lang,
             CancellationToken ct); //bool for check if it was already in db 
+
+    Task EnsureFilmsExistAsync(
+        IReadOnlyCollection<int> externalIds,
+        string language,
+        CancellationToken ct);
 }

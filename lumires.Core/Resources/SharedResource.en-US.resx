@@ -87,4 +87,13 @@
     <data name="ValidationError_ListId_Invalid" xml:space="preserve">
         <value>Films list reference is invalid</value>
     </data>
+    <data name="UpdateFavoriteFilms_ValidationError_Length" xml:space="preserve">
+        <value>You cant set more than 4 favourite films</value>
+    </data>
+    <data name="UpdateFavoriteFilms_ValidationError_Order_Length" xml:space="preserve">
+        <value>Invalid order</value>
+    </data>
+    <data name="UpdateFavoriteFilms_ValidationError_OrderUnique" xml:space="preserve">
+        <value>Orders must be unique</value>
+    </data>
 </root>

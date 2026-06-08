@@ -39,6 +39,7 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<FilmLike> FilmLikes { get; }
     DbSet<FilmTag> FilmTags { get; }
     DbSet<ReviewTag> ReviewTags { get; }
+    DbSet<UserFavoriteFilm> UserFavoriteFilms { get; }
 
 
     DatabaseFacade Database { get; }

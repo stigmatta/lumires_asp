@@ -28,4 +28,35 @@ internal class FilmResolver(IAppDbContext db) : IFilmResolver, IResolver
 
         return false;
     }
+    
+    public async Task EnsureFilmsExistAsync(
+        IReadOnlyCollection<int> externalIds,
+        string language,
+        CancellationToken ct)
+    {
+        var existingIds = await db.Films
+            .Where(f => externalIds.Contains(f.ExternalId))
+            .Where(f => f.Localizations.Any(l => l.LanguageCode == language))
+            .Select(f => f.ExternalId)
+            .ToListAsync(ct);
+
+        var missingIds = externalIds
+            .Except(existingIds)
+            .ToArray();
+
+        if (missingIds.Length == 0)
+            return;
+
+        await new FilmReferencedEvent
+        {
+            ExternalIds = missingIds,
+            Language = language
+        }.PublishAsync(Mode.WaitForAll, ct);
+
+        await new FilmEnrichmentEvent
+        {
+            ExternalIds = missingIds,
+            SkipLanguage = language
+        }.PublishAsync(Mode.WaitForNone, ct);
+    }
 }

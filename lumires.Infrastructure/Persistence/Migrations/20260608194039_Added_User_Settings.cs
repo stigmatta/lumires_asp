@@ -117,15 +117,17 @@ namespace Infrastructure.Persistence.Migrations
                 name: "UserFavoriteFilms",
                 columns: table => new
                 {
-                    FavoriteFilmsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserSettingsId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserSettingsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FilmId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFavoriteFilms", x => new { x.FavoriteFilmsId, x.UserSettingsId });
+                    table.PrimaryKey("PK_UserFavoriteFilms", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserFavoriteFilms_Films_FavoriteFilmsId",
-                        column: x => x.FavoriteFilmsId,
+                        name: "FK_UserFavoriteFilms_Films_FilmId",
+                        column: x => x.FilmId,
                         principalTable: "Films",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -136,6 +138,11 @@ namespace Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFavoriteFilms_FilmId",
+                table: "UserFavoriteFilms",
+                column: "FilmId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFavoriteFilms_UserSettingsId",
