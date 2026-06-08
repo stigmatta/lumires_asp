@@ -4,22 +4,17 @@ using lumires.Core.Abstractions.Services;
 using lumires.Core.Mappers;
 using lumires.Domain.Enums;
 
-namespace lumires.Api.Features.FilmPeople.GetDirector;
+namespace lumires.Api.Features.FilmPeople.GetSimilarDirectors;
 
 [UsedImplicitly]
 internal sealed record Query(int Id);
 
 [UsedImplicitly]
+internal sealed record DirectorItem(int DirectorId, string? ProfilePath, string Name);
+
+[UsedImplicitly]
 internal sealed record Response(
-    int DirectorId,
-    string Lang,
-    string Name,
-    string? Biography,
-    DateOnly? Birthday,
-    DateOnly? Deathday,
-    GenderType Gender,
-    string? PlaceOfBirth,
-    string? ProfilePath);
+    IReadOnlyCollection<DirectorItem> SimilarDirectors);
 
 internal sealed class Endpoint(
     IPersonResolver personResolver,
@@ -29,7 +24,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/directors/{Id:int}");
+        Get("/directors/{Id:int}/similar");
         Description(x => x.WithTags("People"));
         AllowAnonymous();
     }
@@ -42,13 +37,7 @@ internal sealed class Endpoint(
 
         await personResolver.EnsurePersonExistsAsync(idAndDep, lang, ct);
 
-        var response = await db.GetDirectorByIdAsync(query.Id, lang, ct);
-
-        if (response is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
+        var response = await db.GetSimilarDirectors(query.Id, lang, ct);
 
         await Send.OkAsync(response, ct);
     }

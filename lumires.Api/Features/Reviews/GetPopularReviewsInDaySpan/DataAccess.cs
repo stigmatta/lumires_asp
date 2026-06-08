@@ -42,7 +42,11 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                     .ToArray(),
                 r.Film.Runtime,
                 r.Film.Directors.First().PersonId,
-                r.Film.Directors.First().Person.GetName(lang),
+                r.Film.Directors.First().Person.Localizations
+                    .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                    .OrderByDescending(l => l.LanguageCode == lang)
+                    .Select(l => l.Name)
+                    .FirstOrDefault() ?? "Unknown",
                 r.Title,
                 r.Text,
                 r.UserId,

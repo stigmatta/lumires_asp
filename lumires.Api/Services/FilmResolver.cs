@@ -13,10 +13,11 @@ internal class FilmResolver(IAppDbContext db) : IFilmResolver, IResolver
         string language,
         CancellationToken ct)
     {
-        var exists = await db.Films
-            .AnyAsync(m => m.ExternalId == externalId, ct);
+        var film = await db.Films
+            .Include(p => p.Localizations)
+            .FirstOrDefaultAsync(m => m.ExternalId == externalId, ct);
 
-        if (exists)
+        if (film is not null && film.Localizations.Any(d => d.LanguageCode == language))
             return true;
 
         await new FilmReferencedEvent

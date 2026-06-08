@@ -27,7 +27,7 @@ internal class DataAccess(
 
         var isLiked = threadComment.ToggleLike(currentUserId);
 
-        if (isLiked)
+        if (isLiked && threadComment.Commentator.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedThreadComment, currentUserId.ToString(),
                 currentUsername,

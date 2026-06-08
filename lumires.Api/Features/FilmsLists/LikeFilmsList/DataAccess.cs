@@ -27,7 +27,7 @@ internal class DataAccess(
 
         var isLiked = list.ToggleLike(currentUserId);
 
-        if (isLiked)
+        if (isLiked && list.User.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedFilmsList, currentUserId.ToString(),
                 currentUsername,

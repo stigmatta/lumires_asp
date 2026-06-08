@@ -49,10 +49,10 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor,
             .FirstOrDefaultAsync(ct);
 
         if (result == null)
-            return "unknown";
+            return string.Empty;
 
         return !string.IsNullOrWhiteSpace(result.Username)
             ? result.Username
-            : result.Email?.Split('@')[0] ?? "unknown";
+            : result.Email.Split('@')[0];
     }
 }

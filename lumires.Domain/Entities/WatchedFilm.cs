@@ -4,17 +4,13 @@ namespace lumires.Domain.Entities;
 
 public class WatchedFilm
 {
-    private readonly List<User> _users = [];
-
-    private WatchedFilm()
-    {
-    }
+    private WatchedFilm() { }
 
     public WatchedFilm(Guid userId, Guid filmId)
     {
-        if (userId == Guid.Empty) throw new DomainException("UserId is invalid", nameof(userId));
+        if (userId == Guid.Empty) throw new DomainException("UserId is invalid");
+        if (filmId == Guid.Empty) throw new DomainException("FilmId is invalid");
 
-        if (filmId == Guid.Empty) throw new DomainException("Film id is invalid");
         Id = Guid.CreateVersion7();
         UserId = userId;
         FilmId = filmId;
@@ -26,8 +22,5 @@ public class WatchedFilm
     public User User { get; private set; } = null!;
     public Guid FilmId { get; private set; }
     public Film Film { get; private set; } = null!;
-    public DateTimeOffset CreatedAt { get; }
-
-    public IReadOnlyCollection<User> Users =>
-        _users.AsReadOnly();
+    public DateTimeOffset CreatedAt { get; private set; }
 }

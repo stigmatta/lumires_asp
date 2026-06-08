@@ -13,6 +13,7 @@ internal sealed record Query(int Id);
 internal sealed record Response(
     int ActorId,
     string Lang,
+    string Name,
     string? Biography,
     DateOnly? Birthday,
     DateOnly? Deathday,
@@ -28,7 +29,7 @@ internal sealed class Endpoint(
 {
     public override void Configure()
     {
-        Get("/actors/{Slug}/{Id:int}");
+        Get("/actors/{Id:int}");
         Description(x => x.WithTags("People"));
         AllowAnonymous();
     }
@@ -37,7 +38,7 @@ internal sealed class Endpoint(
     {
         var lang = currentUserService.LangCulture;
 
-        var idAndDep = (query.Id, PersonDepartmentMapper.ToString(PersonDepartment.Directing));
+        var idAndDep = (query.Id, nameof(PersonDepartment.Acting));
 
         await personResolver.EnsurePersonExistsAsync(idAndDep, lang, ct);
 

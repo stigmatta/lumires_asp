@@ -13,15 +13,20 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
     internal async Task<Response?> GetDirectorByIdAsync(int tmdbId, string lang, CancellationToken ct)
     {
-        var details = await db.PersonsDetails
+        return await db.PersonsDetails
             .AsNoTracking()
             .Where(pd => pd.Person.ExternalId == tmdbId
                          && pd.Person.PersonDepartment == PersonDepartment.Directing)
-            .Where(pd => pd.LanguageCode == lang
-                         || pd.LanguageCode == DefLang)
+            .Where(pd => pd.LanguageCode == lang || pd.LanguageCode == DefLang)
+            .OrderByDescending(pd => pd.LanguageCode == lang)
             .Select(m => new Response(
                 m.Person.ExternalId,
                 m.LanguageCode,
+                m.Person.Localizations
+                    .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                    .OrderByDescending(l => l.LanguageCode == lang)
+                    .Select(l => l.Name)
+                    .FirstOrDefault() ?? "Unknown",
                 m.Biography,
                 m.Birthday,
                 m.Deathday,
@@ -29,9 +34,6 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 m.PlaceOfBirth,
                 m.ProfilePath
             ))
-            .ToListAsync(ct);
-
-        var exact = details.FirstOrDefault(d => d.Lang == lang);
-        return exact ?? details.FirstOrDefault(d => d.Lang == DefLang);
+            .FirstOrDefaultAsync(ct);
     }
 }

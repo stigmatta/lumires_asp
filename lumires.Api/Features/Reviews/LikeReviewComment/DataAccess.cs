@@ -27,7 +27,7 @@ internal class DataAccess(
 
         var isLiked = reviewComment.ToggleLike(currentUserId);
 
-        if (isLiked)
+        if (isLiked && reviewComment.Commentator.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedReviewComment, currentUserId.ToString(),
                 currentUsername,

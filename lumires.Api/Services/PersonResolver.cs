@@ -72,10 +72,12 @@ public sealed partial class PersonResolver(IAppDbContext db, ILogger<PersonResol
         string language,
         CancellationToken ct)
     {
-        var exists = await db.Persons
-            .AnyAsync(m => m.ExternalId == idAndDep.externalId && m.PersonDepartment == PersonDepartment.Directing, ct);
+        var person = await db.Persons
+            .Include(p => p.Details)
+            .FirstOrDefaultAsync(m => m.ExternalId == idAndDep.externalId
+                                      && m.PersonDepartment == PersonDepartment.Directing, ct);
 
-        if (exists)
+        if (person is not null && person.Details.Any(d => d.LanguageCode == language) && person.Localizations.Any(d => d.LanguageCode == language))
             return true;
 
         await new PersonReferencedEvent

@@ -3,9 +3,11 @@ using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Messaging;
+using lumires.Core.Resources;
 using lumires.Domain.Entities;
 using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace lumires.Api.Features.Threads.CreateThreadComment;
 
@@ -13,26 +15,59 @@ namespace lumires.Api.Features.Threads.CreateThreadComment;
 internal class DataAccess(
     IAppDbContext db,
     INotificationService notificationService,
-    ICurrentUserService currentUserService) : IDataAccess
+    ICurrentUserService currentUserService,
+    IStringLocalizer<SharedResource> localizer) : IDataAccess
 {
     internal async Task<Result<Response>> CreateThreadCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
         var currentUsername = await currentUserService.GetUsernameAsync(ct);
 
-        var thread = await db.Threads.FirstOrDefaultAsync(m => m.Id == command.ThreadId, ct);
+        var thread = await db.Threads
+            .Where(t => t.Id == command.ThreadId)
+            .Select(x => new
+            {
+                x.Id,
+                x.UserId,
+                RepliesAllowed = x.User.UserSettings.Notifications.RepliesAndMentions
+            })
+            .FirstOrDefaultAsync(ct);
+        
         if (thread is null) return Result.NotFound();
+        
+        User? targetedUser = null;
+        if (command.TargetedUserId.HasValue)
+        {
+            targetedUser = await db.Users
+                .FirstOrDefaultAsync(u => u.Id == command.TargetedUserId.Value, ct);
+
+            if (targetedUser is null)
+                return Result.Invalid(new ValidationError("TargetedUserId", localizer["ValidationError_UserId_Invalid"]));
+        }
 
         var threadComment = new UserThreadComment(thread.UserId, command.ThreadId, command.Text, command.TargetedUserId,
             command.IsSpoilerFree);
 
         db.ThreadComments.Add(threadComment);
 
-        var message = new NotificationMessage(NotificationType.ThreadReplied, currentUserId.ToString(), currentUsername,
-            threadComment.Id.ToString(), //TODO or thread.Id ?
-            DateTime.UtcNow);
+        if (thread.RepliesAllowed)
+        {
+            var message = new NotificationMessage(
+                NotificationType.ThreadReplied,
+                currentUserId.ToString(),
+                currentUsername,
+                threadComment.Id.ToString(),
+                DateTime.UtcNow);
 
-        notificationService.SendToUsers(thread.UserId, command.TargetedUserId, message);
+            if (targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions)
+            {
+                notificationService.SendToUsers(thread.UserId, targetedUser.Id, message);
+            }
+            else
+            {
+                notificationService.SendToUser(thread.UserId, message);
+            }
+        }
 
         await db.SaveChangesAsync(ct);
 

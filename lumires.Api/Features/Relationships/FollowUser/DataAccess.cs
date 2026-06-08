@@ -24,9 +24,10 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
             return Result.Conflict();
 
         var targetUser = await db.Users
-            .AnyAsync(x => x.Id == targetId, ct);
+            .Include(u => u.UserSettings)
+            .FirstOrDefaultAsync(x => x.Id == targetId, ct);
 
-        if (!targetUser)
+        if (targetUser is null)
             return Result.NotFound();
 
         var alreadyFollowing = await db.Relationships.AnyAsync(r =>
@@ -55,33 +56,41 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
                 r.Type == UserRelationshipType.Follow,
             ct);
 
+        var status = targetUser.UserSettings.IsAnyoneCanFollow
+            ? UserRelationshipStatus.Accepted
+            : UserRelationshipStatus.Pending;
+
         var relationship = new UsersRelationship(
             userId,
             targetId,
             UserRelationshipType.Follow,
-            UserRelationshipStatus.Accepted);
+            status);
 
         db.Relationships.Add(relationship);
         await db.SaveChangesAsync(ct);
 
-        if (reversedFollow)
-            notificationService.SendToUser(
-                targetId,
-                new NotificationMessage(
-                    NotificationType.FollowedBack,
-                    userId.ToString(),
-                    username,
-                    targetId.ToString(),
-                    DateTime.UtcNow));
+        if (status == UserRelationshipStatus.Accepted)
+        {
+            var message = new NotificationMessage(
+                reversedFollow ? NotificationType.FollowedBack : NotificationType.Followed,
+                userId.ToString(),
+                username,
+                targetId.ToString(),
+                DateTime.UtcNow);
+
+            if (targetUser.UserSettings.Notifications.NewFollower) notificationService.SendToUser(targetId, message);
+        }
         else
-            notificationService.SendToUser(
-                targetId,
-                new NotificationMessage(
-                    NotificationType.Followed,
-                    userId.ToString(),
-                    username,
-                    targetId.ToString(),
-                    DateTime.UtcNow));
+        {
+            var message = new NotificationMessage(
+                NotificationType.Followed,
+                userId.ToString(),
+                username,
+                targetId.ToString(),
+                DateTime.UtcNow);
+
+            notificationService.SendToUser(targetId, message);
+        }
 
         return Result.Created(relationship.Id);
     }

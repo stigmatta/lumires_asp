@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using lumires.Domain.Enums;
 using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
@@ -41,10 +42,16 @@ public sealed partial class User
 
     public Guid Id { get; private set; }
     public string Username { get; private set; } = null!;
+    public string? DisplayName { get; private set; }
     public string Email { get; private set; } = null!;
     public string? AvatarUrl { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset? LastActiveAt { get; private set; }
+    public UserPronouns Pronouns { get; private set; }
+    public string? Location { get; private set; }
+    public string? Tagline { get; private set; }
+    public string? Biography { get; private set; }
+    public UserSettings UserSettings { get; private set; } = null!;
 
     public IReadOnlyCollection<FilmsList> FilmsLists => _filmsLists.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();

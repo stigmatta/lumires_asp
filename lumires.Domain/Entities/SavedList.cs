@@ -4,8 +4,6 @@ namespace lumires.Domain.Entities;
 
 public class SavedList
 {
-    private readonly List<User> _users = [];
-
     private SavedList()
     {
     }
@@ -27,7 +25,4 @@ public class SavedList
     public Guid ListId { get; private set; }
     public FilmsList List { get; private set; } = null!;
     public DateTimeOffset CreatedAt { get; }
-
-    public IReadOnlyCollection<User> Users =>
-        _users.AsReadOnly();
 }

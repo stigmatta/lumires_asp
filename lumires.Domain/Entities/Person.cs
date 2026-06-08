@@ -54,12 +54,4 @@ public sealed class Person
         detail.SetPerson(this);
         _details.Add(detail);
     }
-
-    public string GetName(string languageCode)
-    {
-        return Localizations.FirstOrDefault(pl => pl.LanguageCode == languageCode)?.Name
-               ?? Localizations.FirstOrDefault(pl => pl.LanguageCode == "en")?.Name
-               ?? Localizations.FirstOrDefault()?.Name
-               ?? "Unknown";
-    }
 }

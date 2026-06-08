@@ -22,21 +22,19 @@ internal class DataAccess(
 
         if (review is null) return Result.NotFound();
 
-        var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
+        var isLiked = review.ToggleLike(currentUserService.UserId);
 
-        var isLiked = review.ToggleLike(currentUserId);
-
-        if (isLiked)
+        if (isLiked && review.Reviewer.UserSettings.Notifications.LikesOnContent)
         {
-            var message = new NotificationMessage(NotificationType.LikedReview, currentUserId.ToString(),
-                currentUsername,
+            var message = new NotificationMessage(
+                NotificationType.LikedReview,
+                currentUserService.UserId.ToString(),
+                await currentUserService.GetUsernameAsync(ct),
                 review.Id.ToString(),
                 DateTime.UtcNow);
 
             notificationService.SendToUser(review.UserId, message);
         }
-
 
         await db.SaveChangesAsync(ct);
 
