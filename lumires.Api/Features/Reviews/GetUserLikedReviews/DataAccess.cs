@@ -21,7 +21,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var sort = Specifications.BuildSort(query);
 
         var queryable = db.Reviews
-            .Where(f => f.Likes.Any(l => l.UserId == userId))
+            .Where(f => f.Likes.Any(l => l.UserId == db.Users
+                .Where(u => u.Username == query.Username)
+                .Select(u => u.Id)
+                .FirstOrDefault()))
             .ApplyFilter(filter)
             .ApplySorting(sort)
             .ApplyPaging(query.Page, query.PageSize);
@@ -57,7 +60,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var filter = Specifications.BuildFilter(query);
 
         return await db.Reviews
-            .Where(f => f.Likes.Any(l => l.UserId == userId))
+            .Where(f => f.Likes.Any(l => l.UserId == db.Users
+                .Where(u => u.Username == query.Username)
+                .Select(u => u.Id)
+                .FirstOrDefault()))
             .ApplyFilter(filter)
             .CountAsync(ct);
     }

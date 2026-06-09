@@ -11,6 +11,7 @@ namespace lumires.Api.Features.Reviews.GetUserLikedReviews;
 [UsedImplicitly]
 internal sealed class Query
 {
+    public string Username { get; init; } = null!;
     public RatingEnum? Filter { get; init; } = RatingEnum.All;
     public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
     public Guid[]? TagIds { get; init; }

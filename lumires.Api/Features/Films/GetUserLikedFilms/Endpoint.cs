@@ -11,6 +11,7 @@ namespace lumires.Api.Features.Users.GetUserLikedFilms;
 [UsedImplicitly]
 internal sealed class Query
 {
+    public string Username { get; init; } = null!;
     public RatingEnum? Rating { get; init; } = RatingEnum.All;
     public string[]? Genres { get; init; } = [];
     public FilmContentOrder? SortBy { get; init; } = FilmContentOrder.MostRecent;
@@ -34,7 +35,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var currentUserId = currentUserService.UserId;
 
         var items = await db.GetLikedFilmsAsync(query, lang, currentUserId, ct);
-        var count = await db.GetFilmsCountAsync(query, lang, currentUserId, ct);
+        var count = await db.GetFilmsCountAsync(query, lang, ct);
 
         var paged = new PagedResponse<CommonFilmListResponse>(
             items,

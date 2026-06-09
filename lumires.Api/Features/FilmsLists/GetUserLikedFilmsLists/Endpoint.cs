@@ -27,6 +27,7 @@ internal enum ListContentOrderEnum
 [UsedImplicitly]
 internal sealed class Query
 {
+    public string Username { get; init; } = null!;
     public ListContentOrderEnum? SortBy { get; init; } = ListContentOrderEnum.MostRecent;
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
@@ -62,7 +63,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var userId = currentUserService.UserId;
 
         var response = await db.GetListsAsync(query, userId, ct);
-        var count = await db.GetListsCountAsync(userId, ct);
+        var count = await db.GetListsCountAsync(query, ct);
 
         var paged = new PagedResponse<ListItemResponse>(
             response,

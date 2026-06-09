@@ -17,7 +17,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var sort = Specifications.BuildSort(query);
 
         var queryable = db.Films
-            .Where(f => f.Likes.Any(l => l.UserId == userId))
+            .Where(f => f.Likes.Any(l => l.UserId == db.Users
+                .Where(u => u.Username == query.Username)
+                .Select(u => u.Id)
+                .FirstOrDefault()))
             .ApplyFilter(filter)
             .ApplySorting(sort)
             .ApplyPaging(query.Page, query.PageSize);
@@ -62,11 +65,14 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         })];
     }
 
-    public async Task<int> GetFilmsCountAsync(Query query, string lang, Guid userId, CancellationToken ct)
+    public async Task<int> GetFilmsCountAsync(Query query, string lang, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query, lang);
         return await db.Films
-            .Where(f => f.Likes.Any(l => l.UserId == userId))
+            .Where(f => f.Likes.Any(l => l.UserId == db.Users
+                .Where(u => u.Username == query.Username)
+                .Select(u => u.Id)
+                .FirstOrDefault()))
             .ApplyFilter(filter)
             .CountAsync(ct);
     }
