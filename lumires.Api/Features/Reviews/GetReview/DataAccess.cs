@@ -17,6 +17,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             .Select(x => new Response(
                 x.Id,
                 x.UserId,
+                x.Film.ExternalId,
                 x.Reviewer.Username,
                 x.Reviewer.AvatarUrl,
                 x.ReviewComments.Count,

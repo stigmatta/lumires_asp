@@ -19,6 +19,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Take(3)
             .Select(r => new TrendingReviewItem(
                 r.Id,
+                r.Film.ExternalId,
                 r.Title,
                 r.UserId,
                 r.Reviewer.Username,

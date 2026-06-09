@@ -44,7 +44,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
 
     protected override ReviewCommentLike CreateLike(Guid userId)
     {
-        return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 
     public void SetCommentator(User user)

@@ -5,16 +5,16 @@ using lumires.Api.Enums.Common;
 using lumires.Core.Constants;
 using lumires.Domain.Entities;
 
-namespace lumires.Api.Features.Films.GetFilms;
+namespace lumires.Api.Features.Users.GetUserLikedFilms;
 
-internal static class CalcConsts
+internal enum FilmContentOrder
 {
-    internal const int PopularThreshold = 50;
-    internal const int NewReleaseDays = 30;
-    internal const int HiddenGemPopularity = 20;
-    internal const double HiddenGemVoteAvg = 3.8;
+    MostRecent,
+    MostLiked,
+    MostReplies,
+    HighestRated,
+    LeastRated
 }
-
 internal static class Specifications
 {
     public static Expression<Func<Film, bool>> BuildFilter(Query req, string lang)
@@ -22,7 +22,6 @@ internal static class Specifications
         var filter = PredicateBuilder.New<Film>(true);
 
         filter = filter.And(BuildRatingFilter(req));
-        filter = filter.And(BuildContentFilter(req));
 
         if (!(req.Genres?.Length > 0)) return filter;
 
@@ -64,21 +63,6 @@ internal static class Specifications
             RatingEnum.FourStars => f => f.VoteAverage >= 4 && f.VoteAverage < 4.5,
             RatingEnum.ThreeStars => f => f.VoteAverage >= 3 && f.VoteAverage < 4,
             RatingEnum.UnderThree => f => f.VoteAverage < 3,
-            _ => f => true
-        };
-    }
-
-    private static Expression<Func<Film, bool>> BuildContentFilter(Query req)
-    {
-        return req.Content switch
-        {
-            FilmContentFilter.Popular => f => f.Popularity >= CalcConsts.PopularThreshold,
-            FilmContentFilter.NewReleases => f =>
-                f.ReleaseDate >= DateOnly.FromDateTime(DateTime.UtcNow)
-                    .AddDays(-CalcConsts.NewReleaseDays),
-            FilmContentFilter.HiddenGems => f =>
-                f.Popularity <= CalcConsts.HiddenGemPopularity && f.VoteAverage > CalcConsts.HiddenGemVoteAvg,
-            FilmContentFilter.TopRated => f => f.VoteAverage > CalcConsts.HiddenGemVoteAvg,
             _ => f => true
         };
     }

@@ -18,7 +18,7 @@ internal sealed record Response(Guid FilmsListId, string Title, DateTimeOffset C
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
-    DataAccess dataAccess)
+    DataAccess dataAccess, IFilmResolver filmResolver)
     : Endpoint<Command, Response>
 {
     public override void Configure()
@@ -30,7 +30,9 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-
+        var lang = currentUserService.LangCulture;
+        
+        await filmResolver.EnsureFilmsExistAsync(command.FilmIds, lang, ct);
         var result = await dataAccess.CreateFilmsListAsync(command, currentUserId, ct);
 
         if (!result.IsSuccess)

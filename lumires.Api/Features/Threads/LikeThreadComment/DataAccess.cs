@@ -18,6 +18,8 @@ internal class DataAccess(
     {
         var threadComment = await db.ThreadComments
             .Include(r => r.Likes)
+            .Include(r => r.Commentator)
+            .ThenInclude(c => c.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == threadCommentId, ct);
 
         if (threadComment is null) return Result.NotFound();

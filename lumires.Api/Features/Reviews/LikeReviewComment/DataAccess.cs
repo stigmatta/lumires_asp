@@ -18,6 +18,8 @@ internal class DataAccess(
     {
         var reviewComment = await db.ReviewComments
             .Include(r => r.Likes)
+            .Include(r => r.Commentator)
+            .ThenInclude(r => r.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == reviewCommentId, ct);
 
         if (reviewComment is null) return Result.NotFound();

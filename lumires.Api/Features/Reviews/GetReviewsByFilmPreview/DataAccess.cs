@@ -16,6 +16,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .Select(r => new ReviewPreviewItem(
                 r.Id,
                 r.UserId,
+                r.Film.ExternalId,
                 r.Reviewer.Username,
                 r.Reviewer.AvatarUrl,
                 r.Text,

@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
 
-namespace lumires.Api.Features.FilmsLists.GetFilmsLists;
+namespace lumires.Api.Features.FilmsLists.GetUserLikedFilmsLists;
 
 [UsedImplicitly]
 internal enum ContentFilterEnum
@@ -27,10 +27,7 @@ internal enum ListContentOrderEnum
 [UsedImplicitly]
 internal sealed class Query
 {
-    public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ListContentOrderEnum? SortBy { get; init; } = ListContentOrderEnum.MostRecent;
-    public int? FilmId { get; init; }
-    public Guid? UserId { get; init; } //if requested from profile
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
 }
@@ -55,7 +52,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
 {
     public override void Configure()
     {
-        Get("/lists");
+        Get("/users/{username}/liked/lists");
         Description(x => x.WithTags("Lists"));
         AllowAnonymous();
     }
@@ -65,7 +62,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var userId = currentUserService.UserId;
 
         var response = await db.GetListsAsync(query, userId, ct);
-        var count = await db.GetListsCountAsync(query, ct);
+        var count = await db.GetListsCountAsync(userId, ct);
 
         var paged = new PagedResponse<ListItemResponse>(
             response,

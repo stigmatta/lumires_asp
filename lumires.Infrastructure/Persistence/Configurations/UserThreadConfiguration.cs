@@ -17,6 +17,9 @@ internal sealed class UserThreadConfiguration : IEntityTypeConfiguration<UserThr
 
         builder.Property(x => x.Title).IsRequired(false)
             .HasMaxLength(StringLimits.Name);
+        
+        builder.Property(x => x.Image).IsRequired(false)
+            .HasMaxLength(StringLimits.Url);
 
         builder.Property(x => x.Text).IsRequired()
             .HasMaxLength(StringLimits.Description);

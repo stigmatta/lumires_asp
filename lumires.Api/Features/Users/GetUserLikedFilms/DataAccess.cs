@@ -6,29 +6,29 @@ using lumires.Core.Constants;
 using lumires.Core.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Films.GetFilms;
+namespace lumires.Api.Features.Users.GetUserLikedFilms;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    public async Task<List<CommonFilmListResponse>> GetFilmsAsync(Query query, string lang, CancellationToken ct)
+    public async Task<List<CommonFilmListResponse>> GetLikedFilmsAsync(Query query, string lang, Guid userId, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query, lang);
         var sort = Specifications.BuildSort(query);
 
-        var raw = await db.Films
+        var queryable = db.Films
+            .Where(f => f.Likes.Any(l => l.UserId == userId))
             .ApplyFilter(filter)
             .ApplySorting(sort)
-            .ApplyPaging(query.Page, query.PageSize)
+            .ApplyPaging(query.Page, query.PageSize);
+
+        var rawItems = await queryable
             .Select(f => new
             {
-                f.ExternalId,
-                f.PosterPath,
-                f.ReleaseDate,
-                f.VoteAverage,
-                f.VoteCount,
+                Film = f,
                 Title = f.Localizations
-                    .Where(l => l.LanguageCode == lang || l.LanguageCode == LocalizationConstants.DefaultCulture)
+                    .Where(l => l.Film.ExternalId == f.ExternalId && 
+                                (l.LanguageCode == lang || l.LanguageCode == LocalizationConstants.DefaultCulture))
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
@@ -41,26 +41,32 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .ToArray()
             })
             .ToListAsync(ct);
-
-        return [.. raw.Select(f =>
+        
+        return [.. rawItems.Select(x =>
         {
-            var (rating, _) = CalculateFilmRating.Handle(f.VoteAverage, f.VoteCount, f.VoteAverage, f.VoteCount);
+            var (rating, _) = CalculateFilmRating.Handle(
+                x.Film.VoteAverage,
+                x.Film.VoteCount,
+                x.Film.VoteAverage,  
+                x.Film.VoteCount
+            );
 
             return new CommonFilmListResponse(
-                f.ExternalId,
-                f.Title,
-                f.PosterPath,
-                f.ReleaseDate?.Year,
-                f.Genres,
+                x.Film.ExternalId,
+                x.Title,
+                x.Film.PosterPath,
+                x.Film.ReleaseDate?.Year,
+                x.Genres,
                 rating
             );
         })];
     }
 
-    public async Task<int> GetFilmsCountAsync(Query query, string lang, CancellationToken ct)
+    public async Task<int> GetFilmsCountAsync(Query query, string lang, Guid userId, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query, lang);
         return await db.Films
+            .Where(f => f.Likes.Any(l => l.UserId == userId))
             .ApplyFilter(filter)
             .CountAsync(ct);
     }

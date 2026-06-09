@@ -44,7 +44,7 @@ public sealed class UserThread : LikeableEntity<UserThreadLike>
 
     protected override UserThreadLike CreateLike(Guid userId)
     {
-        return new UserThreadLike { ThreadId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new UserThreadLike { ThreadId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 
     public void SetUser(User user)

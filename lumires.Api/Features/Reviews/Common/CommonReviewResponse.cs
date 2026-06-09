@@ -5,6 +5,7 @@ namespace lumires.Api.Features.Reviews.Common;
 [UsedImplicitly]
 internal record CommonReviewResponse(
     Guid Id,
+    int FilmId,
     Guid UserId,
     string Username,
     string? AvatarUrl,

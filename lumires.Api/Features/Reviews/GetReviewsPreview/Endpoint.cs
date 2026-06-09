@@ -9,6 +9,7 @@ internal sealed record Response(IReadOnlyCollection<ReviewPreviewItem> Reviews);
 [UsedImplicitly]
 internal sealed record ReviewPreviewItem(
     Guid Id,
+    int FilmId,
     Guid UserId,
     string Username,
     string? AvatarUrl,

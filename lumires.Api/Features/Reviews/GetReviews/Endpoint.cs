@@ -23,6 +23,7 @@ internal sealed class Query
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
     public int? FilmId { get; init; }
+    public Guid? UserId { get; init; } //if requested from user`s profile
     public Guid[]? TagIds { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
@@ -46,7 +47,7 @@ internal sealed record ReviewItemResponse(
     string FilmTitle,
     string FilmSlug,
     string? FilmPosterPath
-) : CommonReviewResponse(Id, UserId, Username, AvatarUrl, RepliesCount, Rating, Title, Text, LikesCount, CreatedAt,
+) : CommonReviewResponse(Id, FilmId, UserId, Username, AvatarUrl, RepliesCount, Rating, Title, Text, LikesCount, CreatedAt,
     IsLikedByMe, IsSpoilerFree);
 
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService)

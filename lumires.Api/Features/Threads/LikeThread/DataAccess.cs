@@ -18,6 +18,8 @@ internal class DataAccess(
     {
         var thread = await db.Threads
             .Include(r => r.Likes)
+            .Include(t => t.User)
+            .ThenInclude(u => u.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == threadId, ct);
 
         if (thread is null) return Result.NotFound();

@@ -89,7 +89,7 @@ public sealed class Film : LikeableEntity<FilmLike>
 
     protected override FilmLike CreateLike(Guid userId)
     {
-        return new FilmLike { FilmId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new FilmLike { FilmId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 
 

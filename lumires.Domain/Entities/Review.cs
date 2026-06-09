@@ -63,7 +63,7 @@ public sealed class Review : LikeableEntity<ReviewLike>
 
     protected override ReviewLike CreateLike(Guid userId)
     {
-        return new ReviewLike { ReviewId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new ReviewLike { ReviewId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 
     public void SetReviewer(User reviewer)

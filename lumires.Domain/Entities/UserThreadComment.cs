@@ -42,6 +42,6 @@ public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
 
     protected override UserThreadCommentLike CreateLike(Guid userId)
     {
-        return new UserThreadCommentLike { UserThreadCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new UserThreadCommentLike { UserThreadCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 }

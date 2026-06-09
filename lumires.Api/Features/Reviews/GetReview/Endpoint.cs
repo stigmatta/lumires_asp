@@ -10,6 +10,7 @@ internal sealed record Query(Guid ReviewId);
 internal sealed record Response(
     Guid Id,
     Guid UserId,
+    int FilmId,
     string Username,
     string? AvatarUrl,
     int RepliesCount,

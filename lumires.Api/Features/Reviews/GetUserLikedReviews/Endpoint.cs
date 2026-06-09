@@ -1,20 +1,25 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Enums.Common;
 using lumires.Api.Features.Reviews.Common;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
 
-namespace lumires.Api.Features.Reviews.GetRecentReviews;
+namespace lumires.Api.Features.Reviews.GetUserLikedReviews;
+
 
 [UsedImplicitly]
 internal sealed class Query
 {
+    public RatingEnum? Filter { get; init; } = RatingEnum.All;
+    public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
+    public Guid[]? TagIds { get; init; }
     public int Page { get; init; } = 1;
-    public int PageSize { get; init; } = 4;
+    public int PageSize { get; init; } = 6;
 }
 
 [UsedImplicitly]
-internal sealed record RecentReviewItem(
+internal sealed record ReviewItemResponse(
     Guid Id,
     Guid UserId,
     string Username,
@@ -35,11 +40,11 @@ internal sealed record RecentReviewItem(
     IsLikedByMe, IsSpoilerFree);
 
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService)
-    : Endpoint<Query, PagedResponse<RecentReviewItem>>
+    : Endpoint<Query, PagedResponse<ReviewItemResponse>>
 {
     public override void Configure()
     {
-        Get("/reviews/recent");
+        Get("/users/{username}/liked/reviews");
         Description(x => x.WithTags("Reviews"));
         AllowAnonymous();
     }
@@ -49,10 +54,10 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var lang = currentUserService.LangCulture;
         var userId = currentUserService.UserId;
 
-        var response = await db.GetRecentReviewsAsync(query, lang, userId, ct);
-        var count = await db.GetReviewsCountAsync(ct);
+        var response = await db.GetReviewsAsync(query, lang, userId, ct);
+        var count = await db.GetReviewsCountAsync(query, userId, ct);
 
-        var paged = new PagedResponse<RecentReviewItem>(
+        var paged = new PagedResponse<ReviewItemResponse>(
             response,
             count,
             query.Page,

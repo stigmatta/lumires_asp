@@ -18,6 +18,8 @@ internal class DataAccess(
     {
         var list = await db.FilmsLists
             .Include(r => r.Likes)
+            .Include(r => r.User)
+            .ThenInclude(u => u.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == listId, ct);
 
         if (list is null) return Result.NotFound();

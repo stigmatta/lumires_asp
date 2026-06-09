@@ -18,6 +18,8 @@ internal class DataAccess(
     {
         var review = await db.Reviews
             .Include(r => r.Likes)
+            .Include(r => r.Reviewer)
+            .ThenInclude(r => r.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == reviewId, ct);
 
         if (review is null) return Result.NotFound();

@@ -3,12 +3,10 @@ using LinqKit;
 using lumires.Api.Enums.Common;
 using lumires.Domain.Entities;
 
-namespace lumires.Api.Features.Reviews.GetReviews;
+namespace lumires.Api.Features.Reviews.GetUserLikedReviews;
 
 internal static class Specifications
 {
-    private const int LongThreshold = 500;
-
     public static Expression<Func<Review, bool>> BuildFilter(Query req, IEnumerable<Guid>? friendIds = null)
     {
         var filter = PredicateBuilder.New<Review>(true);
@@ -16,20 +14,11 @@ internal static class Specifications
         var ratingFilter = BuildRating(req);
         filter = filter.And(ratingFilter);
 
-        var contentFilter = BuildCategory(req, friendIds);
-        filter = filter.And(contentFilter);
-
-        if (req.FilmId.HasValue) filter = filter.And(r => r.Film.ExternalId == req.FilmId.Value);
-
         if (req.TagIds is not null && req.TagIds.Length > 0)
             filter = filter.And(r =>
                 req.TagIds.All(tagId =>
                     r.Tags.Any(t => t.TagId == tagId)));
         
-        if (req.UserId.HasValue)
-            filter = filter.And(fl =>
-                fl.UserId == req.UserId.Value);
-
         return filter;
     }
 
@@ -41,17 +30,6 @@ internal static class Specifications
             RatingEnum.FourStars => r => r.Rating >= 4f && r.Rating < 4.5f,
             RatingEnum.ThreeStars => r => r.Rating >= 3f && r.Rating < 4f,
             RatingEnum.UnderThree => r => r.Rating < 3f,
-            _ => r => true
-        };
-    }
-
-    private static Expression<Func<Review, bool>> BuildCategory(Query req, IEnumerable<Guid>? friendIds = null)
-    {
-        return req.Category switch
-        {
-            ContentFilterEnum.LongForm => r => r.Text.Length >= LongThreshold,
-            ContentFilterEnum.SpoilerFree => r => r.IsSpoilerFree == true,
-            ContentFilterEnum.FromFriends => r => friendIds != null && friendIds.Contains(r.UserId),
             _ => r => true
         };
     }

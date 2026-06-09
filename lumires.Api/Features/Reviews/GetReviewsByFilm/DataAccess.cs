@@ -44,6 +44,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         return await queryable
             .Select(r => new CommonReviewResponse(
                 r.Id,
+                r.Film.ExternalId,
                 r.UserId,
                 r.Reviewer.Username,
                 r.Reviewer.AvatarUrl,

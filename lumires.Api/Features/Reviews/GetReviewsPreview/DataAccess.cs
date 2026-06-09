@@ -12,7 +12,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var items = await db.Reviews
             .AsNoTracking()
             .OrderByDescending(r => r.LikesCount)
-            .Select(r => new ReviewPreviewItem(r.Id,
+            .Select(r => new ReviewPreviewItem(
+                r.Id,
+                r.Film.ExternalId,
                 r.UserId,
                 r.Reviewer.Username,
                 r.Reviewer.AvatarUrl,

@@ -85,7 +85,7 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
 
     protected override FilmsListLike CreateLike(Guid userId)
     {
-        return new FilmsListLike { FilmsListId = Id, UserId = userId, LikedAt = DateTimeOffset.Now };
+        return new FilmsListLike { FilmsListId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
 
     public void SetEditorPick(bool editorPick)
