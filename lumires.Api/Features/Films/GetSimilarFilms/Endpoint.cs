@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Features.Films.Contracts;
 using lumires.Core;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Events.Films;
@@ -11,22 +12,7 @@ namespace lumires.Api.Features.Films.GetSimilarFilms;
 internal sealed record Query(int Id);
 
 [UsedImplicitly]
-internal sealed record GenreItem(
-    int Id,
-    string Name);
-
-[UsedImplicitly]
-internal sealed record SimilarFilmItem(
-    int ExternalId,
-    string? PosterPath,
-    string Title,
-    string Slug,
-    int? ReleaseYear,
-    GenreItem[] Genres,
-    float Rating);
-
-[UsedImplicitly]
-internal sealed record Response(IReadOnlyCollection<SimilarFilmItem> Films);
+internal sealed record Response(IReadOnlyCollection<CommonFilmListResponse> Films);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
@@ -66,7 +52,7 @@ internal sealed class Endpoint(
         var existingFilmsDict = (await db.GetExistingFilms(similarFilmsIds, lang, ct))
             .ToDictionary(x => x.Id);
 
-        var allGenresDict = await db.GetGenresDictionaryAsync(lang, ct);
+        var allGenres = await db.GetGenresDictionaryAsync(lang, ct);
 
         var films = externalFilms.Select(external =>
         {
@@ -79,32 +65,27 @@ internal sealed class Endpoint(
                     local.VoteCount
                 );
 
-                return new SimilarFilmItem(
+                return new CommonFilmListResponse(
                     external.ExternalId,
-                    external.PosterPath,
                     local.Title,
-                    local.Slug,
+                    external.PosterPath,
                     local.ReleaseYear,
                     local.Genres,
                     rating
                 );
             }
 
-            var slug = SlugExtensions.Slugify($"{external.Title}-{external.ReleaseYear}");
-
-            var genres = external.GenreIds.Select(id =>
-                    allGenresDict.TryGetValue(id, out var genre)
-                        ? genre
-                        : new GenreItem(id, $"Unknown ({id})"))
+            var genres = external.GenreIds
+                .Where(allGenres.ContainsKey)
+                .Select(id => allGenres[id])
                 .ToArray();
 
-            return new SimilarFilmItem(
+            return new CommonFilmListResponse(
                 external.ExternalId,
-                external.PosterPath,
                 external.Title,
-                slug,
+                external.PosterPath,
                 external.ReleaseYear,
-                genres,
+                [.. genres.Select(g => g.Name)],
                 external.VoteAverage
             );
         }).ToList();

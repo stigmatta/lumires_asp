@@ -9,19 +9,17 @@ namespace lumires.Api.Features.Films.LikeFilm;
 [UsedImplicitly]
 internal class DataAccess(
     IAppDbContext db,
-    ICurrentUserService currentUserService,
-    INotificationService notificationService) : IDataAccess
+    ICurrentUserService currentUserService) : IDataAccess
 {
-    internal async Task<Result<Response>> ToggleLikeAsync(Guid filmId, CancellationToken ct)
+    internal async Task<Result<Response>> ToggleLikeAsync(int filmId, CancellationToken ct)
     {
         var film = await db.Films
             .Include(r => r.Likes)
-            .FirstOrDefaultAsync(r => r.Id == filmId, ct);
+            .FirstOrDefaultAsync(r => r.ExternalId == filmId, ct);
 
         if (film is null) return Result.NotFound();
 
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
 
         var isLiked = film.ToggleLike(currentUserId);
 

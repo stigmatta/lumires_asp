@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Core;
+using lumires.Api.Features.Films.Contracts;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Helpers;
 using lumires.Domain.Enums;
@@ -11,21 +11,7 @@ namespace lumires.Api.Features.Films.GetActorFilmography;
 internal sealed record Query(int Id);
 
 [UsedImplicitly]
-internal sealed record GenreItem(
-    int Id,
-    string Name);
-
-[UsedImplicitly]
-internal sealed record FilmItem(
-    int ExternalId,
-    string? PosterPath,
-    string Title,
-    int? ReleaseYear,
-    GenreItem[] Genres,
-    float Rating);
-
-[UsedImplicitly]
-internal sealed record Response(IReadOnlyCollection<FilmItem> Films);
+internal sealed record Response(IReadOnlyCollection<CommonFilmListResponse> Films);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
@@ -81,10 +67,10 @@ internal sealed class Endpoint(
                     local.VoteCount
                 );
 
-                return new FilmItem(
+                return new CommonFilmListResponse(
                     external.ExternalId,
-                    external.PosterPath,
                     local.Title,
+                    external.PosterPath,
                     local.ReleaseYear,
                     local.Genres,
                     rating
@@ -92,20 +78,19 @@ internal sealed class Endpoint(
             }
 
             var genres = external.GenreIds
-                .Select(id =>
-                    allGenresDict.TryGetValue(id, out var genre)
-                        ? genre
-                        : new GenreItem(id, string.Empty))
+                .Where(allGenresDict.ContainsKey)
+                .Select(id => allGenresDict[id])
                 .ToArray();
 
-            return new FilmItem(
+            return new CommonFilmListResponse(
                 external.ExternalId,
-                external.PosterPath,
                 external.Title,
+                external.PosterPath,
                 external.ReleaseYear,
-                genres,
+                [.. genres.Select(g => g.Name)],
                 external.VoteAverage
             );
+            
         }).ToList();
 
         await Send.OkAsync(new Response(films), ct);

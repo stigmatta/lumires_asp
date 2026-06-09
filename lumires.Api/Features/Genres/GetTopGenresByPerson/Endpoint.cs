@@ -1,18 +1,12 @@
-﻿// Query.cs + Response.cs + Endpoint.cs
-using FastEndpoints;
+﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Features.Genres.Contracts;
 using lumires.Core.Abstractions.Services;
 
 namespace lumires.Api.Features.Genres.GetTopGenresByPerson;
 
 [UsedImplicitly]
 internal sealed record Query(int PersonId);
-
-[UsedImplicitly]
-internal sealed record GenreItem(
-    Guid Id,
-    string Name,
-    string LanguageCode);
 
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyList<GenreItem> Genres);

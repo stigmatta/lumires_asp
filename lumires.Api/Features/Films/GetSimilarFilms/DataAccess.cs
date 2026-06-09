@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using JetBrains.Annotations;
+using lumires.Api.Features.Films.Contracts;
+using lumires.Api.Features.Genres.Contracts;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +14,7 @@ internal sealed record RawItem(
     string? PosterPath,
     string Title,
     string Slug,
-    GenreItem[] Genres,
+    string[] Genres,
     int? ReleaseYear,
     float VoteAverage,
     int VoteCount);
@@ -37,8 +39,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .FirstOrDefault() ?? string.Empty,
                 movie.Slug,
                 movie.Genres
-                    .Select(g => new GenreItem(
-                        g.ExternalId,
+                    .Select(g => (
                         g.Localizations
                             .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == DefLang)
                             .OrderByDescending(gl => gl.LanguageCode == lang)

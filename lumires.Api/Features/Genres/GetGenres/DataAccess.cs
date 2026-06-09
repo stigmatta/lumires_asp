@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using lumires.Api.Features.Genres.Contracts;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,12 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var genres = await db.Genres
             .AsNoTracking()
             .Select(g => new GenreItem(
-                g.Id,
+                g.ExternalId,
                 g.Localizations
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Name)
-                    .FirstOrDefault() ?? string.Empty,
-                lang
+                    .FirstOrDefault() ?? string.Empty
             ))
             .ToListAsync(ct);
 

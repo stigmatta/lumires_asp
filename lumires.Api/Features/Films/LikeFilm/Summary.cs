@@ -23,7 +23,7 @@ internal sealed class Summary : Summary<Endpoint>
                       - **Authorization Bearer** — Is required
                       """;
 
-        ExampleRequest = new Query(Guid.CreateVersion7());
+        ExampleRequest = new Query(550);
 
         Response(200, "Film is successfully liked");
         Response(404);

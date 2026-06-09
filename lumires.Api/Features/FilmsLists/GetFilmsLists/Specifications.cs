@@ -6,7 +6,7 @@ namespace lumires.Api.Features.FilmsLists.GetFilmsLists;
 
 internal static class Specifications
 {
-    public static Expression<Func<FilmsList, bool>> BuildFilter(Query req, IEnumerable<Guid>? friendIds = null)
+    public static Expression<Func<FilmsList, bool>> BuildFilter(Query req,  IEnumerable<Guid>? friendIds = null)
     {
         var filter = PredicateBuilder.New<FilmsList>(true);
 
@@ -17,6 +17,10 @@ internal static class Specifications
             filter = filter.And(fl =>
                 fl.Films.Any(f => f.Film.ExternalId == req.FilmId.Value)
             );
+        
+        if (req.UserId.HasValue)
+            filter = filter.And(fl =>
+                fl.UserId == req.UserId.Value);
 
         return filter;
     }

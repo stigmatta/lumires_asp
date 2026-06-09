@@ -30,6 +30,7 @@ internal sealed class Query
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ListContentOrderEnum? SortBy { get; init; } = ListContentOrderEnum.MostRecent;
     public int? FilmId { get; init; }
+    public Guid? UserId { get; init; } //if requested from user id
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
 }

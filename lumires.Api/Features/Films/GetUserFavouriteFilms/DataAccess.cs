@@ -5,7 +5,7 @@ using lumires.Core.Constants;
 using lumires.Core.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Users.GetUserFavouriteFilms;
+namespace lumires.Api.Features.Films.GetUserFavouriteFilms;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
@@ -46,7 +46,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     )
                     .ToArray(),
                 u.Film.VoteAverage,
-                u.Film.VoteCount
+                u.Film.VoteCount,
+                u.UserSettings.UserId,
+                u.UserSettings.User.Username
             })
             .ToListAsync(ct);
 
@@ -69,7 +71,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             f.PosterPath,
             f.ReleaseYear,
             f.Genres,
-            ratings[f.ExternalId]
+            ratings[f.ExternalId],
+            f.UserId,
+            f.Username
         )).ToList();
 
         return new Response(favouriteFilms);

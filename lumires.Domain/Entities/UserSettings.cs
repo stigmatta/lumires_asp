@@ -16,6 +16,11 @@ public class UserSettings
         if (userId == Guid.Empty) throw new DomainException("UserId is invalid", nameof(userId));
 
         UserId = userId;
+        ProfileVisibility = ProfileVisibility.Everyone;
+        IsAnyoneCanFollow = true;
+        IsWatchlistPublic = true;
+        AreLikesPublic = true;
+        AreRatingsShowInFeeds = true;
         Notifications = new UserNotificationPreferences(true, true, true, true, true, true);
     }
 

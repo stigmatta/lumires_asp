@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using lumires.Api.Extensions;
+using lumires.Api.Features.Films.Contracts;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace lumires.Api.Features.Films.GetFilms;
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    public async Task<List<FilmItemResponse>> GetFilmsAsync(Query query, string lang, CancellationToken ct)
+    public async Task<List<CommonFilmListResponse>> GetFilmsAsync(Query query, string lang, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query, lang);
         var sort = Specifications.BuildSort(query);
@@ -20,7 +21,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .ApplyPaging(query.Page, query.PageSize);
 
         return await queryable
-            .Select(f => new FilmItemResponse(
+            .Select(f => new CommonFilmListResponse(
                 f.ExternalId,
                 f.Localizations.Where(l =>
                         l.Film.ExternalId == f.ExternalId && (l.LanguageCode == lang ||
@@ -28,6 +29,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Title)
                     .FirstOrDefault() ?? string.Empty,
+                f.PosterPath,
                 f.ReleaseDate.HasValue ? f.ReleaseDate.Value.Year : null,
                 f.Genres
                     .Select(g => g.Localizations
@@ -36,8 +38,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                         .Select(gl => gl.Name)
                         .FirstOrDefault() ?? string.Empty)
                     .ToArray(),
-                f.VoteAverage,
-                f.PosterPath
+                f.VoteAverage
             ))
             .ToListAsync(ct);
     }

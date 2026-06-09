@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Features.Genres.Contracts;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using ZiggyCreatures.Caching.Fusion;
@@ -10,9 +11,6 @@ namespace lumires.Api.Features.Genres.GetGenres;
 internal sealed record Response(
     IReadOnlyCollection<GenreItem> Genres
 );
-
-[UsedImplicitly]
-internal sealed record GenreItem(Guid Id, string Name, string LanguageCode);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,

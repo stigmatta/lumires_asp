@@ -1,29 +1,22 @@
 ﻿using JetBrains.Annotations;
-using lumires.Api.Features.Reviews.Common;
 using lumires.Core.Abstractions.Data;
-using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Reviews.GetPopularReviewsInDaySpan;
+namespace lumires.Api.Features.Reviews.GetUserFeaturedReview;
 
 [UsedImplicitly]
-internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserService) : IDataAccess
+internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    internal async Task<Response?> GetPopularReviewsBySpan(int daySpan, string lang, CancellationToken ct)
+    internal async Task<ProfileFeaturedReview?> GetFeaturedReview(Guid userId, string lang, Guid currentUserId,
+        CancellationToken ct)
     {
-        var currentUserId = currentUserService.UserId;
-        var startDate = DateTime.UtcNow.AddDays(-daySpan);
-
-        var items = await db.Reviews
-            .AsNoTracking()
-            .Where(r => r.IsSpoilerFree && r.CreatedAt >= startDate)
+        return await db.Reviews
+            .Where(r => r.UserId == userId)
             .OrderByDescending(r => r.LikesCount)
-            .ThenByDescending(r => r.CreatedAt)
-            .Take(10)
-            .Select(r => new FeaturedReviewResponse(
+            .Select(r => new ProfileFeaturedReview(
                 r.Id,
                 r.Film.ExternalId,
                 r.Film.Localizations
@@ -35,11 +28,12 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 r.Film.PosterPath,
                 r.Film.ReleaseDate.HasValue ? r.Film.ReleaseDate.Value.Year : null,
                 r.Film.Genres
-                    .Select(g => g.Localizations
-                        .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == LocalizationConstants.DefaultCulture)
-                        .OrderByDescending(gl => gl.LanguageCode == lang)
-                        .Select(gl => gl.Name)
-                        .FirstOrDefault() ?? string.Empty)
+                    .Select(g =>
+                        g.Localizations
+                            .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == DefLang)
+                            .OrderByDescending(gl => gl.LanguageCode == lang)
+                            .Select(gl => gl.Name)
+                            .FirstOrDefault() ?? string.Empty)
                     .ToArray(),
                 r.Film.Runtime,
                 r.Film.Directors.First().PersonId,
@@ -58,10 +52,9 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 r.ReviewComments.Count,
                 currentUserId != Guid.Empty && r.Likes.Any(l => l.UserId == currentUserId),
                 r.IsEditorPick,
-                r.Text.Length / 5 / 200 + 1
+                r.Text.Length / 5 / 200 + 1,
+                r.UserId == currentUserId
             ))
-            .ToListAsync(ct);
-
-        return new Response(items);
+            .FirstOrDefaultAsync(ct);
     }
 }

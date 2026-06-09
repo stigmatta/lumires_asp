@@ -1,5 +1,6 @@
 ﻿// DataAccess.cs
 using JetBrains.Annotations;
+using lumires.Api.Features.Genres.Contracts;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 .SelectMany(fd => fd.Film.Genres)
                 .Concat(p.FilmCasts
                     .SelectMany(fc => fc.Film.Genres)))
-            .GroupBy(g => g.Id)
+            .GroupBy(g => g.ExternalId)
             .OrderByDescending(g => g.Count())
             .Take(5)
             .Select(g => new GenreItem(
@@ -34,8 +35,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
                     .OrderByDescending(l => l.LanguageCode == lang)
                     .Select(l => l.Name)
-                    .FirstOrDefault() ?? string.Empty,
-                lang
+                    .FirstOrDefault() ?? string.Empty
             ))
             .ToListAsync(ct);
 

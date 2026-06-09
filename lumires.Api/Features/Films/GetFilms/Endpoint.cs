@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Api.Enums.Common;
+using lumires.Api.Features.Films.Contracts;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Models;
 
@@ -35,18 +36,8 @@ internal sealed class Query
     public int PageSize { get; init; } = 16;
 }
 
-[UsedImplicitly]
-internal sealed record FilmItemResponse(
-    int Id,
-    string Title,
-    int? ReleaseYear,
-    string[] Genres,
-    float VoteAverage,
-    string? PosterPath
-);
-
 internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserService)
-    : Endpoint<Query, PagedResponse<FilmItemResponse>>
+    : Endpoint<Query, PagedResponse<CommonFilmListResponse>>
 {
     public override void Configure()
     {
@@ -62,7 +53,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var items = await db.GetFilmsAsync(query, lang, ct);
         var count = await db.GetFilmsCountAsync(query, lang, ct);
 
-        var paged = new PagedResponse<FilmItemResponse>(
+        var paged = new PagedResponse<CommonFilmListResponse>(
             items,
             count,
             query.Page,

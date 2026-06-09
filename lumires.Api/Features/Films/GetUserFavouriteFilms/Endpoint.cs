@@ -1,14 +1,22 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Api.Features.Films.Contracts;
 using lumires.Core.Abstractions.Services;
 
-namespace lumires.Api.Features.Users.GetUserFavouriteFilms;
+namespace lumires.Api.Features.Films.GetUserFavouriteFilms;
 
 [UsedImplicitly]
 internal sealed record Query(string Username);
 
-[UsedImplicitly]
-internal sealed record FavouriteFilm(int Id, string Title, string? PosterPath, int? ReleaseYear, string[] Genres, float VoteAverage);
+internal sealed record FavouriteFilm(
+    int Id,
+    string Title,
+    string? PosterPath,
+    int? ReleaseYear,
+    string[] Genres,
+    float VoteAverage,
+    Guid UserId,
+    string Username) : CommonFilmListResponse(Id, Title, PosterPath, ReleaseYear, Genres, VoteAverage);
 
 [UsedImplicitly]
 internal sealed record Response(IReadOnlyCollection<FavouriteFilm> FavouriteFilms);
@@ -21,7 +29,7 @@ internal sealed class Endpoint(
     public override void Configure()
     {
         Get("/users/{username}/favourite-films");
-        Description(x => x.WithTags("Users"));
+        Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }
 
@@ -34,6 +42,7 @@ internal sealed class Endpoint(
             await HttpContext.SendErrorAsync(result.Status, ct);
             return;
         }
+
         await Send.OkAsync(result, ct);
     }
 }

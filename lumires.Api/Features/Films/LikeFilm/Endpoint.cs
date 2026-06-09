@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace lumires.Api.Features.Films.LikeFilm;
 
 [UsedImplicitly]
-internal sealed record Query(Guid Id);
+internal sealed record Query(int Id);
 
 [UsedImplicitly]
 internal sealed record Response(bool IsLiked, int LikesCount);
