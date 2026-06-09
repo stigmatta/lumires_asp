@@ -76,6 +76,22 @@ public sealed partial class User
     public IReadOnlyCollection<SavedList> SavedLists =>
         _savedLists.AsReadOnly();
 
+    public void UpdateProfileSettings(string? avatarUrl, string? displayName, string? username, UserPronouns pronouns,
+        string? location, string? tagline, string? biography)
+    {
+        AvatarUrl = avatarUrl;
+        DisplayName = displayName;
+        Pronouns = pronouns;
+        Location = location;
+        Tagline = tagline;
+        Biography = biography;
+        
+        if (username is not null)
+        {
+            Username = username;
+        }
+    }
+    
 
     public void SetAvatarUrl(string avatarUrl)
     {
@@ -92,6 +108,7 @@ public sealed partial class User
     {
         return EmailRegex().IsMatch(email);
     }
+    
 
     [GeneratedRegex(@"^[a-zA-Z0-9][a-zA-Z0-9._]{2,19}$")]
     private static partial Regex UsernameRegex();

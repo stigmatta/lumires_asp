@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using lumires.Api.Middleware;
@@ -23,6 +25,12 @@ public static class ApiRegistration
         builder.Services.AddFastEndpoints()
             .AddResponseCaching();
         builder.Services.RegisterQueryClasses();
+        
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        });
 
         builder.AddServiceDefaults();
 

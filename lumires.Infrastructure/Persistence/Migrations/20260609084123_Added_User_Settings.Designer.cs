@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260608194039_Added_User_Settings")]
+    [Migration("20260609084123_Added_User_Settings")]
     partial class Added_User_Settings
     {
         /// <inheritdoc />
@@ -848,9 +848,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsAnyoneCanFollow")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLikesPublic")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsWatchlistPublic")

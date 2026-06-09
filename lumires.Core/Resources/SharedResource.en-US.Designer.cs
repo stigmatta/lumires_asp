@@ -168,6 +168,15 @@ namespace lumires.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AvatarUrl must be a valid URL.
+        /// </summary>
+        internal static string ValidationError_AvatarUrl_Invalid {
+            get {
+                return ResourceManager.GetString("ValidationError_AvatarUrl_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description is too long.
         /// </summary>
         internal static string ValidationError_Description_TooLong {

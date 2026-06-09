@@ -96,4 +96,7 @@
     <data name="UpdateFavoriteFilms_ValidationError_OrderUnique" xml:space="preserve">
         <value>Orders must be unique</value>
     </data>
+    <data name="ValidationError_AvatarUrl_Invalid" xml:space="preserve">
+        <value>AvatarUrl must be a valid URL</value>
+    </data>
 </root>

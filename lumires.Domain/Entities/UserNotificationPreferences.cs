@@ -28,4 +28,20 @@ public class UserNotificationPreferences
     public bool ActivityFromFollowed { get; private set; }
     public bool SavesOnLists { get; private set; }
     public bool WeeklyDigest { get; private set; }
+    
+    public void UpdateNotificationsPreferences(
+        bool newFollower,
+        bool likesOnContent,
+        bool repliesAndMentions,
+        bool activityFromFollowed,
+        bool savesOnLists,
+        bool weeklyDigest)
+    {
+        NewFollower = newFollower;
+        LikesOnContent = likesOnContent;
+        RepliesAndMentions = repliesAndMentions;
+        ActivityFromFollowed = activityFromFollowed;
+        SavesOnLists = savesOnLists;
+        WeeklyDigest = weeklyDigest;
+    }
 }

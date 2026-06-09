@@ -12,7 +12,7 @@ internal sealed class Summary : Summary<Endpoint>
         Description = """
                       Updates favourite films of self.
 
-                      If films is not in the db - enrich them with a resolver.
+                      If films are not in the db - enrich them with a resolver.
 
                       Can return 403 if jwt is not corresponding with a current user
 
@@ -27,7 +27,7 @@ internal sealed class Summary : Summary<Endpoint>
                 new FavouriteFilm(8844, 4)
             ]
         );
-        Response(201, "Favourite films are successfully updated");
+        Response(204, "Favourite films are successfully updated");
         Response(400);
     }
 }

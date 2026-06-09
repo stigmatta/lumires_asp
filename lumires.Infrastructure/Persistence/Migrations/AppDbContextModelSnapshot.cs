@@ -847,9 +847,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsAnyoneCanFollow")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsLikesPublic")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsWatchlistPublic")
                         .HasColumnType("boolean");
 

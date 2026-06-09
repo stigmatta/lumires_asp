@@ -28,13 +28,21 @@ public class UserSettings
     public bool IsWatchlistPublic { get; private set; }
     public bool AreLikesPublic { get; private set; }
     public bool AreRatingsShowInFeeds { get; private set; }
-    public bool IsLikesPublic { get; private set; }
-
     public UserNotificationPreferences Notifications { get; private set; } 
 
     public void SetFavouriteFilms(List<UserFavoriteFilm> films)
     {
         ArgumentNullException.ThrowIfNull(films);
         FavoriteFilms = films;
-    } 
+    }
+
+    public void UpdatePrivacySettings(ProfileVisibility profileVisibility, bool isAnyoneCanFollow,
+        bool isWatchlistPublic, bool areLikesPublic, bool areRatingsShowInFeeds)
+    {
+        ProfileVisibility = profileVisibility;
+        IsAnyoneCanFollow = isAnyoneCanFollow;
+        IsWatchlistPublic = isWatchlistPublic;
+        AreLikesPublic = areLikesPublic;
+        AreRatingsShowInFeeds = areRatingsShowInFeeds;
+    }
 }
