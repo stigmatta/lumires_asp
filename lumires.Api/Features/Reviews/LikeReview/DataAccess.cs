@@ -22,6 +22,7 @@ internal class DataAccess(
         var review = await db.Reviews
             .Include(r => r.Likes)
             .Include(r => r.Film)
+            .ThenInclude(f => f.Localizations)
             .Include(r => r.Reviewer)
             .ThenInclude(r => r.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == reviewId, ct);

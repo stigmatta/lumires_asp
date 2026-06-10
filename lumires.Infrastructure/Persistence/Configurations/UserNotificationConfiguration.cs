@@ -22,18 +22,15 @@ internal sealed class UserNotificationConfiguration : IEntityTypeConfiguration<U
             .HasMaxLength(StringLimits.Name);
         
         builder.Property(x => x.SenderName)
-            .IsRequired()
             .HasMaxLength(StringLimits.Name);
         
         builder.Property(x => x.SenderAvatar)
-            .IsRequired()
             .HasMaxLength(StringLimits.Url);
 
         builder.Property(x => x.TargetId)
             .HasMaxLength(StringLimits.Name);
         
         builder.Property(x => x.TargetPayload)
-            .IsRequired()
             .HasMaxLength(StringLimits.Default);
 
         builder.Property(x => x.CreatedAt)

@@ -10,29 +10,12 @@ namespace Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "SenderAvatar",
-                table: "UserNotifications",
-                type: "character varying(500)",
-                maxLength: 500,
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "SenderName",
-                table: "UserNotifications",
-                type: "character varying(100)",
-                maxLength: 100,
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "TargetPayload",
-                table: "UserNotifications",
-                type: "character varying(255)",
-                maxLength: 255,
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.Sql("""
+                                 ALTER TABLE "UserNotifications" 
+                                     ADD COLUMN IF NOT EXISTS "SenderAvatar" character varying(500),
+                                     ADD COLUMN IF NOT EXISTS "SenderName" character varying(100),
+                                     ADD COLUMN IF NOT EXISTS "TargetPayload" character varying(255);
+                                 """);
         }
 
         /// <inheritdoc />

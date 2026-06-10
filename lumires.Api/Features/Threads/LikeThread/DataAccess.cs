@@ -2,7 +2,6 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
-using lumires.Core.Constants;
 using lumires.Core.Messaging;
 using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
