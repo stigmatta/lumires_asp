@@ -92,7 +92,7 @@ internal sealed class GetGenresTests
         ep.Response.Genres.Count.Should().Be(1);
 
         var result = ep.Response.Genres.First();
-        result.Id.Should().Be(genre.Id);
+        result.Id.Should().Be(genre.ExternalId);
         result.Name.Should().Be("Action");
     }
 }

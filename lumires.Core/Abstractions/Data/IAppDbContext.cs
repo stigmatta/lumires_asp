@@ -33,6 +33,7 @@ public interface IAppDbContext : IDisposable, IAsyncDisposable
     DbSet<UserThreadCommentLike> ThreadCommentLikes { get; }
     DbSet<UsersRelationship> Relationships { get; }
     DbSet<WatchedFilm> WatchedFilms { get; }
+    DbSet<WatchlistFilm> WatchlistFilms { get; }
     DbSet<SavedFilm> SavedFilms { get; }
     DbSet<SavedList> SavedLists { get; }
 

@@ -131,7 +131,7 @@ internal sealed class GetSimilarFilmsTests
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
         ep.Response.Films.Should().ContainSingle()
-            .Which.ExternalId.Should().Be(externalId);
+            .Which.Id.Should().Be(externalId);
     }
 
     [Test]

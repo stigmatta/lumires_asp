@@ -4,9 +4,11 @@ using lumires.Api.Features.Reviews.CreateReviewComment;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using lumires.Core.Messaging;
+using lumires.Core.Resources;
 using lumires.Domain.Entities;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using MockQueryable.Moq;
 using Moq;
 
@@ -18,6 +20,7 @@ internal sealed class CreateReviewCommentTests
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<INotificationService> _notificationMock = null!;
+    private Mock<IStringLocalizer<SharedResource>> _localizerMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -25,6 +28,7 @@ internal sealed class CreateReviewCommentTests
         _dbContextMock = new Mock<IAppDbContext>();
         _currentUserMock = new Mock<ICurrentUserService>();
         _notificationMock = new Mock<INotificationService>();
+        _localizerMock = new Mock<IStringLocalizer<SharedResource>>();
 
         _currentUserMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
 
@@ -39,7 +43,7 @@ internal sealed class CreateReviewCommentTests
         _notificationMock
             .Setup(x => x.SendToUsers(It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<NotificationMessage>()));
 
-        _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -63,7 +67,7 @@ internal sealed class CreateReviewCommentTests
     {
         var mock = reviews.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Reviews).Returns(mock.Object);
-        _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
     }
 
     [Test]
@@ -170,7 +174,7 @@ internal sealed class CreateReviewCommentTests
         var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
-        var dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object);
+        var dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
         var ep = CreateEndpoint(dataAccess);
 
         await ep.HandleAsync(

@@ -17,6 +17,7 @@ public sealed partial class User
     private readonly List<UserThreadComment> _userThreadComments = [];
     private readonly List<UserThread> _userThreads = [];
     private readonly List<WatchedFilm> _watchedFilms = [];
+    private readonly List<WatchlistFilm> _watchlistFilms = [];
 
     private User()
     {
@@ -69,6 +70,9 @@ public sealed partial class User
 
     public IReadOnlyCollection<WatchedFilm> WatchedFilms =>
         _watchedFilms.AsReadOnly();
+
+    public IReadOnlyCollection<WatchlistFilm> WatchlistFilms =>
+        _watchlistFilms.AsReadOnly();
 
     public IReadOnlyCollection<SavedFilm> SavedFilms =>
         _savedFilms.AsReadOnly();
