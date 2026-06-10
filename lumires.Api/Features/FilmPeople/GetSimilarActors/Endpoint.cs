@@ -38,6 +38,24 @@ internal sealed class Endpoint(
 
         var response = await db.GetSimilarActors(query.Id, lang, ct);
 
+        // Similar actors are discovered from synced film credits, where persons
+        // are created with only a localized name and no PersonDetail row — so their
+        // ProfilePath is null until their own page is opened. Enrich any results that
+        // are still missing a profile path so the client gets avatars here too.
+        var missingProfile = response.SimilarActors
+            .Where(a => string.IsNullOrEmpty(a.ProfilePath))
+            .Select(a => a.ActorId)
+            .ToList();
+
+        if (missingProfile.Count > 0)
+        {
+            foreach (var id in missingProfile)
+                await personResolver.EnsurePersonExistsAsync(
+                    (id, nameof(PersonDepartment.Acting)), lang, ct);
+
+            response = await db.GetSimilarActors(query.Id, lang, ct);
+        }
+
         await Send.OkAsync(response, ct);
     }
 }
