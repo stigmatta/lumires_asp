@@ -31,6 +31,13 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 Followings = u.OutgoingRelationships.Count(r =>
                     r.Type == UserRelationshipType.Follow &&
                     r.Status == UserRelationshipStatus.Accepted),
+                Friends = u.OutgoingRelationships.Count(r =>
+                    r.Type == UserRelationshipType.Follow &&
+                    r.Status == UserRelationshipStatus.Accepted &&
+                    u.IncomingRelationships.Any(i =>
+                        i.Type == UserRelationshipType.Follow &&
+                        i.Status == UserRelationshipStatus.Accepted &&
+                        i.SourceUserId == r.TargetUserId)), 
                 IsMe = u.Id == currentUserId,
                 ProfileVisibilty = u.UserSettings.ProfileVisibility
             })
@@ -42,7 +49,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
         {
             return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.Biography, user.Followers, user.Followings, user.IsMe);
+                user.Tagline, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe);
         }
 
         switch (user.ProfileVisibilty)
@@ -68,7 +75,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         }
 
         return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.Biography, user.Followers, user.Followings, user.IsMe);
+            user.Tagline, user.Biography, user.Followers, user.Followings,  user.Friends, user.IsMe);
     }
 
 }

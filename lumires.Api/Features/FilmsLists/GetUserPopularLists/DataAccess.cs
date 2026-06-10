@@ -11,7 +11,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         CancellationToken ct)
     {
         var lists = await db.FilmsLists
-            .Where(x => x.User.Username == query.Username)
+            .Where(x => x.User.Username == query.Username && !x.IsPrivate)
             .OrderByDescending(x => x.LikesCount)
             .Take(6)
             .Select(x => new ListResponse(

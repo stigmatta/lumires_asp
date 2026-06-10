@@ -13,7 +13,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
         var items = await db.FilmsLists
             .AsNoTracking()
-            .Where(x => x.CreatedAt >= weekAgo)
+            .Where(x => x.CreatedAt >= weekAgo && !x.IsPrivate)
             .OrderByDescending(x => x.Likes
                 .Count(l => l.LikedAt >= weekAgo))
             .Take(6)

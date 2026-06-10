@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using Ardalis.Result;
+using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -10,33 +11,35 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    public async Task<Response?> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
+    public async Task<Result<Response?>> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
     {
-        return await db.FilmsLists
-            .AsNoTracking()
-            .Where(c => c.Id == id)
-            .Select(c => new Response(
-                c.Id,
-                c.Title,
-                c.UserId,
-                c.User.Username,
-                c.UpdatedAt ?? c.CreatedAt,
-                c.Likes.Any(l => l.UserId == userId),
-                c.SavedLists.Any(l => l.UserId == userId),
-                c.Films
-                    .OrderBy(m => m.Order)
-                    .Select(m => new ListFilmItem(
-                        m.Film.ExternalId,
-                        m.Film.Localizations
-                            .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
-                            .OrderByDescending(l => l.LanguageCode == lang)
-                            .Select(l => l.Title)
-                            .SingleOrDefault() ?? string.Empty,
-                        m.Film.PosterPath,
-                        m.Order
-                    ))
-                    .ToList()
-            ))
-            .FirstOrDefaultAsync(ct);
+        var list = await db.FilmsLists
+            .FirstOrDefaultAsync(l => l.Id == id, ct);
+
+        if (list is null) return Result.NotFound();
+
+        if (list.IsPrivate && list.UserId != userId)
+            return Result.Forbidden();
+
+        return new Response(
+            list.Id,
+            list.Title,
+            list.UserId,
+            list.User.Username,
+            list.UpdatedAt ?? list.CreatedAt,
+            list.Likes.Any(l => l.UserId == userId),
+            list.SavedLists.Any(l => l.UserId == userId),
+            [.. list.Films
+                .OrderBy(m => m.Order)
+                .Select(m => new ListFilmItem(
+                    m.Film.ExternalId,
+                    m.Film.Localizations
+                        .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                        .OrderByDescending(l => l.LanguageCode == lang)
+                        .Select(l => l.Title)
+                        .SingleOrDefault() ?? string.Empty,
+                    m.Film.PosterPath,
+                    m.Order
+                ))]);
     }
 }

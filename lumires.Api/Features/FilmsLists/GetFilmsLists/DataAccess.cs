@@ -40,6 +40,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             .ApplyPaging(query.Page, query.PageSize);
 
         return await queryable
+            .Where(x => !x.IsPrivate)
             .Select(l => new ListItemResponse(
                 l.Id,
                 l.Title,

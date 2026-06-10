@@ -14,6 +14,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
         var existingList = await db.FilmsLists.FirstOrDefaultAsync(f => f.Id == command.ListId, ct);
 
         if (existingList is null) return Result.NotFound();
+        
+        if (existingList.IsPrivate) return Result.Forbidden();
 
         var alreadySaved =
             await db.SavedLists.AnyAsync(f => f.ListId == command.ListId && f.UserId == userId, ct);

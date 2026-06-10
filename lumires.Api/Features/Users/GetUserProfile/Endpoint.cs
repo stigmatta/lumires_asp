@@ -16,6 +16,7 @@ internal sealed record Response(
     string? Biography,
     int Followers,
     int Followings,
+    int Friends,
     bool IsMe);
 
 internal sealed class Endpoint(

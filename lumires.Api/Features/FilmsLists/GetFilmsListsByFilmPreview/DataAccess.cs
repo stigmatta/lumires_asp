@@ -14,7 +14,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var items = await db.FilmsLists
             .Where(fl => fl.Films
-                .Any(f => f.Film.ExternalId == filmId))
+                .Any(f => f.Film.ExternalId == filmId) && !fl.IsPrivate) 
             .OrderByDescending(fl => fl.LikesCount)
             .Select(fl => new FilmsListsItems(
                 fl.Id,

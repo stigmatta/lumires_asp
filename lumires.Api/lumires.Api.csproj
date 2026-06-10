@@ -68,7 +68,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Features\Users\GetUserProfileStat\" />
         <Folder Include="obj\Debug\net9.0\"/>
     </ItemGroup>
 

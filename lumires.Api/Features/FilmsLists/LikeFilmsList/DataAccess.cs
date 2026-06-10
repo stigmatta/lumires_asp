@@ -24,6 +24,8 @@ internal class DataAccess(
 
         if (list is null) return Result.NotFound();
 
+        if (list.IsPrivate) return Result.Forbidden();
+
         var currentUserId = currentUserService.UserId;
         var currentUsername = await currentUserService.GetUsernameAsync(ct);
 

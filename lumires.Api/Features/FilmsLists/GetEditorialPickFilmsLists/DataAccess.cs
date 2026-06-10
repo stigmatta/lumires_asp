@@ -11,7 +11,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     {
         var items = await db.FilmsLists
             .AsNoTracking()
-            .Where(x => x.IsEditorPick)
+            .Where(x => x.IsEditorPick && !x.IsPrivate)
             .OrderByDescending(x => x.LikesCount)
             .Take(3)
             .Select(x => new EditorialListItem(
