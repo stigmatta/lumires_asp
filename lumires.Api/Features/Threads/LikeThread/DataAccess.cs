@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
 using lumires.Core.Messaging;
 using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ internal class DataAccess(
     ICurrentUserService currentUserService,
     INotificationService notificationService) : IDataAccess
 {
+
     internal async Task<Result<Response>> ToggleLikeAsync(Guid threadId, CancellationToken ct)
     {
         var thread = await db.Threads
@@ -25,15 +27,23 @@ internal class DataAccess(
         if (thread is null) return Result.NotFound();
 
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
+        var currentUser = await db.Users
+            .Where(x => x.Id == currentUserService.UserId)
+            .Select(x => new
+            {
+                x.Username,
+                x.AvatarUrl
+            }).FirstAsync(ct);
 
         var isLiked = thread.ToggleLike(currentUserId);
 
         if (isLiked && thread.User.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedThread, currentUserId.ToString(),
-                currentUsername,
+                currentUser.Username,
+                currentUser.AvatarUrl,
                 thread.Id.ToString(),
+                thread.Title,
                 DateTime.UtcNow);
 
             notificationService.SendToUser(thread.UserId, message);

@@ -20,9 +20,21 @@ internal sealed class UserNotificationConfiguration : IEntityTypeConfiguration<U
         builder.Property(x => x.SenderId)
             .IsRequired()
             .HasMaxLength(StringLimits.Name);
+        
+        builder.Property(x => x.SenderName)
+            .IsRequired()
+            .HasMaxLength(StringLimits.Name);
+        
+        builder.Property(x => x.SenderAvatar)
+            .IsRequired()
+            .HasMaxLength(StringLimits.Url);
 
         builder.Property(x => x.TargetId)
             .HasMaxLength(StringLimits.Name);
+        
+        builder.Property(x => x.TargetPayload)
+            .IsRequired()
+            .HasMaxLength(StringLimits.Default);
 
         builder.Property(x => x.CreatedAt)
             .IsRequired();

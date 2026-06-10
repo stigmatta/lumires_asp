@@ -30,9 +30,7 @@ internal sealed class Endpoint(
             return;
         }
 
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
-
-        var result = await db.FollowUserAsync(command, currentUserId, currentUsername, ct);
+        var result = await db.FollowUserAsync(command, currentUserId, ct);
 
         if (!result.IsSuccess)
         {

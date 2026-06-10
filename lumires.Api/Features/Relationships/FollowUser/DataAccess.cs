@@ -15,7 +15,6 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
     internal async Task<Result<Guid>> FollowUserAsync(
         Command command,
         Guid userId,
-        string username,
         CancellationToken ct)
     {
         var targetId = command.TargetUserId;
@@ -69,13 +68,23 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
         db.Relationships.Add(relationship);
         await db.SaveChangesAsync(ct);
 
+        var userInfo = await db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new
+            {
+                u.Username,
+                u.AvatarUrl
+            }).FirstOrDefaultAsync(ct);
+
         if (status == UserRelationshipStatus.Accepted)
         {
             var message = new NotificationMessage(
                 reversedFollow ? NotificationType.FollowedBack : NotificationType.Followed,
                 userId.ToString(),
-                username,
-                targetId.ToString(),
+                userInfo!.Username,
+                userInfo.AvatarUrl,
+                null,
+                null,
                 DateTime.UtcNow);
 
             if (targetUser.UserSettings.Notifications.NewFollower) notificationService.SendToUser(targetId, message);
@@ -85,8 +94,10 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
             var message = new NotificationMessage(
                 NotificationType.Followed,
                 userId.ToString(),
-                username,
-                targetId.ToString(),
+                userInfo!.Username,
+                userInfo.AvatarUrl,
+                null,
+                null,
                 DateTime.UtcNow);
 
             notificationService.SendToUser(targetId, message);

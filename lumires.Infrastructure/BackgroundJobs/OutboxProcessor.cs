@@ -44,7 +44,10 @@ public sealed class OutboxProcessor(
                     payload.PrimaryUserId,
                     payload.Message.Type,
                     payload.Message.SenderId,
-                    payload.Message.TargetId
+                    payload.Message.SenderName,
+                    payload.Message.SenderAvatar,
+                    payload.Message.TargetId,
+                    payload.Message.TargetPayload
                 );
                 db.UserNotifications.Add(primary);
 
@@ -54,7 +57,10 @@ public sealed class OutboxProcessor(
                         payload.SecondaryUserId.Value,
                         payload.Message.Type,
                         payload.Message.SenderId,
-                        payload.Message.TargetId
+                        payload.Message.SenderName,
+                        payload.Message.SenderAvatar,
+                        payload.Message.TargetId,
+                        payload.Message.TargetPayload
                     );
                     db.UserNotifications.Add(secondary);
                 }

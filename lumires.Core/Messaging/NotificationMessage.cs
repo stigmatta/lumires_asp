@@ -10,5 +10,7 @@ public record NotificationMessage(
     NotificationType Type,
     string SenderId,
     string? SenderName,
+    string? SenderAvatar,
     string? TargetId,
+    string? TargetPayload,
     DateTime CreatedAt);

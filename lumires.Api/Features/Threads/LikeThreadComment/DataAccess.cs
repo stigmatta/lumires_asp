@@ -25,15 +25,23 @@ internal class DataAccess(
         if (threadComment is null) return Result.NotFound();
 
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
+        var currentUser = await db.Users
+            .Where(x => x.Id == currentUserService.UserId)
+            .Select(x => new
+            {
+                x.Username,
+                x.AvatarUrl
+            }).FirstAsync(ct);
 
         var isLiked = threadComment.ToggleLike(currentUserId);
 
         if (isLiked && threadComment.Commentator.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedThreadComment, currentUserId.ToString(),
-                currentUsername,
-                threadComment.Id.ToString(),
+                currentUser.Username,
+                currentUser.AvatarUrl,
+                threadComment.Thread.Id.ToString(),
+                threadComment.Thread.Title,
                 DateTime.UtcNow);
 
             notificationService.SendToUser(threadComment.UserId, message);
