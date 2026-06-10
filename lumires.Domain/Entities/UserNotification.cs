@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using lumires.Domain.Enums;
+﻿using lumires.Domain.Enums;
 using lumires.Domain.Exceptions;
 
 namespace lumires.Domain.Entities;
@@ -28,8 +27,6 @@ public sealed class UserNotification
 
     public Guid Id { get; }
     public Guid UserId { get; }
-    
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public NotificationType Type { get; }
     public string SenderId { get; } = null!;
     public string? TargetId { get; }
