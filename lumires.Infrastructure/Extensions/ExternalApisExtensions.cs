@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using Infrastructure.Options;
 using Infrastructure.Services.Tmdb;
+using Infrastructure.Services.Tmdb.TmdbAwards;
 using Infrastructure.Services.Tmdb.TmdbFilms;
 using Infrastructure.Services.Tmdb.TmdbPerson;
 using Infrastructure.Services.Tmdb.TmdbSearch;
@@ -47,6 +48,23 @@ internal static class ExternalApiExtensions
         services.AddScoped<IExternalFilmService, TmdbFilmService>();
         services.AddScoped<IExternalPersonService, TmdbPersonService>();
         services.AddScoped<ISearchService, TmdbSearchService>();
+
+        // TMDB awards (scraped from the public website — no awards API exists)
+        services.AddHttpClient<IExternalAwardsService, TmdbAwardsService>((sp, client) =>
+            {
+                var tmdb = sp.GetRequiredService<IOptions<TmdbConfig>>().Value;
+                client.BaseAddress = new Uri(tmdb.SiteUrl.AbsoluteUri.TrimEnd('/') + "/");
+                client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "Mozilla/5.0 (compatible; LumiresBot/1.0; +https://themoviedb.org)");
+                client.Timeout = TimeSpan.FromSeconds(10);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All,
+                PooledConnectionLifetime = TimeSpan.FromMinutes(15)
+            })
+            .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(2, _ => TimeSpan.FromMilliseconds(500)));
 
         // Watchmode
         services.Configure<WatchmodeOptions>(config.GetSection(WatchmodeOptions.SectionName));

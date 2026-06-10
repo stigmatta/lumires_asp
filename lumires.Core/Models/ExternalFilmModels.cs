@@ -98,3 +98,9 @@ public record ExternalPersonCredits(
     IReadOnlyCollection<ExternalFilmShort> AsActor,
     IReadOnlyCollection<ExternalFilmShort> AsDirector
 );
+
+[UsedImplicitly]
+public record PersonAwards(
+    int Nominations,
+    int Wins
+);
