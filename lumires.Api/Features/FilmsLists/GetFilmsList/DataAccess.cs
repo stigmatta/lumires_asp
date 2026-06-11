@@ -14,7 +14,21 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     public async Task<Result<Response?>> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
     {
         var list = await db.FilmsLists
-            .FirstOrDefaultAsync(l => l.Id == id, ct);
+            .Where(fl => fl.Id == id)
+            .Select(fl => new
+            {
+                fl.Id,
+                fl.Title,
+                fl.UserId,
+                fl.User.Username,
+                fl.UpdatedAt,
+                fl.CreatedAt,
+                fl.IsPrivate,
+                fl.Likes,
+                fl.SavedLists,
+                fl.Films
+            })
+            .FirstOrDefaultAsync(ct);
 
         if (list is null) return Result.NotFound();
 
@@ -25,7 +39,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             list.Id,
             list.Title,
             list.UserId,
-            list.User.Username,
+            list.Username,
             list.UpdatedAt ?? list.CreatedAt,
             list.Likes.Any(l => l.UserId == userId),
             list.SavedLists.Any(l => l.UserId == userId),
