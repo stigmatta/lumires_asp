@@ -46,6 +46,36 @@ public sealed class UserThread : LikeableEntity<UserThreadLike>
     {
         return new UserThreadLike { ThreadId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
+    
+    public void UpdateThread(string? title, string? text, string? image, bool? isSpoilerFree)
+    {
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            Title = title;
+        }
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            Text = text;
+        }
+
+        if (!string.IsNullOrWhiteSpace(image))
+        {
+            Image = image;
+        }
+
+        if (isSpoilerFree.HasValue)
+        {
+            IsSpoilerFree = isSpoilerFree.Value;
+        }
+        UpdateTimestamp();
+    }
+    
+    private void UpdateTimestamp()
+    {
+        UpdatedAt = DateTime.UtcNow;
+    }
+
 
     public void SetUser(User user)
     {

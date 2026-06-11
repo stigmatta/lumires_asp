@@ -10,7 +10,7 @@ using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
-namespace lumires.Api.Features.Threads.CreateThreadComment;
+namespace lumires.Api.Features.Reviews.UpdateReviewComment;
 
 [UsedImplicitly]
 internal class DataAccess(
@@ -19,10 +19,12 @@ internal class DataAccess(
     ICurrentUserService currentUserService,
     IStringLocalizer<SharedResource> localizer) : IDataAccess
 {
-
-    internal async Task<Result<Response>> CreateThreadCommentAsync(Command command, CancellationToken ct)
+    private const string DefLang = LocalizationConstants.DefaultCulture;
+ 
+    internal async Task<Result> UpdateReviewCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
+        var lang = currentUserService.LangCulture;
         var currentUser = await db.Users
             .Where(u => u.Id == currentUserId)
             .Select(u => new
@@ -30,58 +32,72 @@ internal class DataAccess(
                 u.Username,
                 u.AvatarUrl
             }).FirstOrDefaultAsync(ct);
-
-        var thread = await db.Threads
-            .Where(t => t.Id == command.ThreadId)
+        
+        var review = await db.Reviews
+            .Where(m => m.Id == command.ReviewId)
             .Select(x => new
             {
                 x.Id,
                 x.UserId,
-                RepliesAllowed = x.User.UserSettings.Notifications.RepliesAndMentions,
-                x.Title
+                RepliesAllowed = x.Reviewer.UserSettings.Notifications.RepliesAndMentions,
+                FilmTitle = x.Film.Localizations
+                    .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                    .OrderByDescending(l => l.LanguageCode == lang)
+                    .Select(f => f.Title)
+                    .First()
             })
             .FirstOrDefaultAsync(ct);
-        
-        if (thread is null) return Result.NotFound();
+
+        if (review is null) return Result.NotFound();
         
         User? targetedUser = null;
         if (command.TargetedUserId.HasValue)
         {
             targetedUser = await db.Users
+                .Include(u => u.UserSettings)
                 .FirstOrDefaultAsync(u => u.Id == command.TargetedUserId.Value, ct);
+
 
             if (targetedUser is null)
                 return Result.Invalid(new ValidationError("TargetedUserId", localizer["ValidationError_UserId_Invalid"]));
         }
 
-        var threadComment = new UserThreadComment(thread.UserId, command.ThreadId, command.Text, command.TargetedUserId,
-            command.IsSpoilerFree);
+        var existingComment = await db.ReviewComments
+            .FirstOrDefaultAsync(c => c.Id == command.ReplyId, ct);
 
-        db.ThreadComments.Add(threadComment);
+        if (existingComment is null)
+            return Result.NotFound();
 
-        if (thread.RepliesAllowed)
+        if (existingComment.UserId != currentUserId)
+            return Result.Forbidden();
+        
+        existingComment.UpdateReviewComment(command.Text, command.TargetedUserId, command.IsSpoilerFree);
+        db.ReviewComments.Update(existingComment);
+
+        if (review.RepliesAllowed)
         {
             var message = new NotificationMessage(
-                NotificationType.ThreadReplied,
+                NotificationType.ReviewReplied,
                 currentUserId.ToString(),
                 currentUser!.Username,
                 currentUser.AvatarUrl,
-                thread.Id.ToString(),
-                thread.Title,
+                review.Id.ToString(),
+                review.FilmTitle,
                 DateTime.UtcNow);
 
             if (targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions)
             {
-                notificationService.SendToUsers(thread.UserId, targetedUser.Id, message);
+                notificationService.SendToUsers(review.UserId, targetedUser.Id, message);
             }
             else
             {
-                notificationService.SendToUser(thread.UserId, message);
+                notificationService.SendToUser(review.UserId, message);
             }
         }
 
         await db.SaveChangesAsync(ct);
 
-        return new Response(threadComment.Id, threadComment.Text, threadComment.CreatedAt, threadComment.IsSpoilerFree);
+        return Result.NoContent();
     }
+
 }

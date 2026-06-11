@@ -10,7 +10,7 @@ using lumires.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
-namespace lumires.Api.Features.Threads.CreateThreadComment;
+namespace lumires.Api.Features.Threads.UpdateThreadComment;
 
 [UsedImplicitly]
 internal class DataAccess(
@@ -19,8 +19,7 @@ internal class DataAccess(
     ICurrentUserService currentUserService,
     IStringLocalizer<SharedResource> localizer) : IDataAccess
 {
-
-    internal async Task<Result<Response>> CreateThreadCommentAsync(Command command, CancellationToken ct)
+    internal async Task<Result> UpdateThreadCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
         var currentUser = await db.Users
@@ -53,11 +52,17 @@ internal class DataAccess(
             if (targetedUser is null)
                 return Result.Invalid(new ValidationError("TargetedUserId", localizer["ValidationError_UserId_Invalid"]));
         }
+        var existingComment = await db.ThreadComments
+            .FirstOrDefaultAsync(c => c.Id == command.ReplyId, ct);
 
-        var threadComment = new UserThreadComment(thread.UserId, command.ThreadId, command.Text, command.TargetedUserId,
-            command.IsSpoilerFree);
+        if (existingComment is null)
+            return Result.NotFound();
 
-        db.ThreadComments.Add(threadComment);
+        if (existingComment.UserId != currentUserId)
+            return Result.Forbidden();
+        
+        existingComment.UpdateThreadComment(command.Text, command.TargetedUserId, command.IsSpoilerFree);
+        db.ThreadComments.Update(existingComment);
 
         if (thread.RepliesAllowed)
         {
@@ -82,6 +87,6 @@ internal class DataAccess(
 
         await db.SaveChangesAsync(ct);
 
-        return new Response(threadComment.Id, threadComment.Text, threadComment.CreatedAt, threadComment.IsSpoilerFree);
+        return Result.NoContent();
     }
 }
