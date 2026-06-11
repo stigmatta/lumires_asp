@@ -24,6 +24,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     .Select(f => new FilmInListItem(f.Film.BackdropPath))
                     .Take(6)
                     .ToList(),
+                fl.Films.Count,
                 fl.Title
             ))
             .Take(4)

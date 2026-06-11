@@ -16,6 +16,7 @@ internal sealed record FilmsListsItems(
     bool IsLikedByMe,
     bool IsSavedByMe,
     IReadOnlyCollection<FilmInListItem> Films,
+    int FilmCount,
     string Name);
 
 [UsedImplicitly]
