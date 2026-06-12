@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
+using lumires.Domain.Enums;
 
 namespace lumires.Api.Features.Users.GetUserProfile;
 
@@ -7,7 +8,11 @@ namespace lumires.Api.Features.Users.GetUserProfile;
 internal sealed record Query(string Username);
 
 [UsedImplicitly]
+internal sealed record Relationship(UserRelationshipType Type, UserRelationshipStatus Status);
+
+[UsedImplicitly]
 internal sealed record Response(
+    Guid Id,
     string Username,
     string? DisplayName,
     string Pronouns,
@@ -19,10 +24,8 @@ internal sealed record Response(
     int Followings,
     int Friends,
     bool IsMe,
-    bool? AreYouFollowed,
-    bool? DoYouFollow,
-    bool? AreYouBlocked,
-    bool? IsHeBlocked);
+    Relationship? IncomingRelationship,
+    Relationship? OutgoingRelationship);
 
 internal sealed class Endpoint(
     DataAccess db)

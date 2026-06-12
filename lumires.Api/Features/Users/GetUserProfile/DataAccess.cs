@@ -47,27 +47,25 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             user.IncomingRelationships.Any(i =>
                 i is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted } &&
                 i.SourceUserId == r.TargetUserId));
+        
+        var outgoing = user.IncomingRelationships
+            .Where(r => r.SourceUserId == currentUserId)
+            .Select(x => new Relationship(x.Type, x.Status))
+            .FirstOrDefault();
 
-        var areYouBlocked = user.IncomingRelationships.Any(r =>
-            r.TargetUserId == currentUserId &&
-            r.Type == UserRelationshipType.Block);
-
-        var isHeBlocked = user.OutgoingRelationships.Any(r =>
-            r.TargetUserId == user.Id &&
-            r.Type == UserRelationshipType.Block);
-
-        var areYouFollowed = user.IncomingRelationships.Any(r =>
-            r.TargetUserId == currentUserId &&
-            r.Type == UserRelationshipType.Follow);
-
-        var doYouFollow = user.OutgoingRelationships.Any(r =>
-            r.TargetUserId == user.Id &&
-            r.Type == UserRelationshipType.Follow);
+        var incoming = user.OutgoingRelationships
+            .Where(r => r.TargetUserId == currentUserId)
+            .Select(x => new Relationship(x.Type, x.Status))
+            .FirstOrDefault();
+    
+        if (incoming is not null && incoming.Type == UserRelationshipType.Block)
+        {
+            return Result.Forbidden();
+        }
 
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
-            return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, areYouFollowed,
-                doYouFollow, areYouBlocked, isHeBlocked);
+            return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
+                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming, outgoing);
 
         switch (user.ProfileVisibilty)
         {
@@ -91,8 +89,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 break;
         }
 
-        return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, areYouFollowed,
-            doYouFollow, areYouBlocked, isHeBlocked);
+        return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
+            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe,  incoming, outgoing);
     }
 }
