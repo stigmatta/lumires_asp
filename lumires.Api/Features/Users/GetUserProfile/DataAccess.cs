@@ -12,7 +12,11 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
 {
     internal async Task<Result<Response>> GetUserProfile(string username, CancellationToken ct)
     {
-        var currentUser = await db.Users.FirstOrDefaultAsync(u => u.Id == currentUserService.UserId, ct);
+        var currentUserId = currentUserService.UserId;
+        
+        var relations = await db.Relationships
+            .Where(r => r.SourceUserId == currentUserId)
+            .ToListAsync(ct); 
 
         var user = await db.Users
             .Where(u => u.Username == username)
@@ -39,15 +43,13 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                         i.Type == UserRelationshipType.Follow &&
                         i.Status == UserRelationshipStatus.Accepted &&
                         i.SourceUserId == r.TargetUserId)),
-                IsMe = currentUser != null && currentUser.Id == u.Id,
-                IsBlocked = currentUser != null &&
-                            currentUser.OutgoingRelationships.Any(r =>
-                                r.TargetUserId == u.Id &&
-                                r.Type == UserRelationshipType.Block),
-                IsFollowed = currentUser != null &&
-                             currentUser.OutgoingRelationships.Any(r =>
-                                 r.TargetUserId == u.Id &&
-                                 r.Type == UserRelationshipType.Follow),
+                IsMe = currentUserId != Guid.Empty && currentUserId == u.Id,
+                IsBlocked = relations.Any(r =>
+                    r.TargetUserId == u.Id &&
+                    r.Type == UserRelationshipType.Block),
+                IsFollowed = relations.Any(r =>
+                    r.TargetUserId == u.Id &&
+                    r.Type == UserRelationshipType.Follow),
                 ProfileVisibilty = u.UserSettings.ProfileVisibility
             })
             .FirstOrDefaultAsync(ct);
@@ -67,11 +69,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 return Result.Forbidden();
             case ProfileVisibility.FollowersOnly when !user.IsMe:
             {
-                if (currentUser is null)
-                    return Result.Forbidden();
-
                 var isFollower = await db.Relationships.AnyAsync(r =>
-                        r.SourceUserId == currentUser.Id &&
+                        r.SourceUserId == currentUserId &&
                         r.TargetUserId == user.Id &&
                         r.Type == UserRelationshipType.Follow &&
                         r.Status == UserRelationshipStatus.Accepted,
