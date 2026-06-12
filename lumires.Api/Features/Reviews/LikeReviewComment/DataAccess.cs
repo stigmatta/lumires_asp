@@ -23,6 +23,7 @@ internal class DataAccess(
             .Include(r => r.Likes)
             .Include(r => r.Review)
             .ThenInclude(r => r.Film)
+            .ThenInclude(f => f.Localizations)
             .Include(r => r.Commentator)
             .ThenInclude(r => r.UserSettings)
             .FirstOrDefaultAsync(r => r.Id == reviewCommentId, ct);
