@@ -31,9 +31,11 @@ internal sealed record CommentItemResponse(
     string? AvatarUrl,
     string Text,
     int LikesCount,
+    int RepliesCount,
     bool IsLikedByMe,
     bool IsSpoilerFree,
     DateTime CreatedAt,
+    Guid? ParentCommentId,
     Guid? TargetedUserId,
     string? TargetedUserUsername);
 

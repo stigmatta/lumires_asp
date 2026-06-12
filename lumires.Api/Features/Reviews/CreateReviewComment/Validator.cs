@@ -26,5 +26,10 @@ internal sealed class Validator : Validator<Command>
             .Must(x => x != Guid.Empty)
             .WithMessage(localizer["ValidationError_UserId_Invalid"])
             .When(x => x.TargetedUserId is not null);
+
+        RuleFor(x => x.ParentCommentId)
+            .Must(x => x != Guid.Empty)
+            .WithMessage(localizer["ValidationError_ReviewId_Invalid"])
+            .When(x => x.ParentCommentId is not null);
     }
 }

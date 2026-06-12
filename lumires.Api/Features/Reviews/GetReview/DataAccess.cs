@@ -29,6 +29,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 currentUserId != Guid.Empty && x.Likes.Any(l => l.UserId == currentUserId),
                 x.IsSpoilerFree,
                 x.ReviewComments
+                    .Where(rc => rc.ParentCommentId == null)
                     .OrderByDescending(rc => rc.CreatedAt)
                     .Select(c => new CommentItemResponse(
                         c.Id,
@@ -37,9 +38,11 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                         c.Commentator.AvatarUrl,
                         c.Text,
                         c.LikesCount,
+                        c.Replies.Count,
                         currentUserId != Guid.Empty && c.Likes.Any(l => l.UserId == currentUserId),
                         c.IsSpoilerFree,
                         c.CreatedAt,
+                        c.ParentCommentId,
                         c.TargetedUserId,
                         c.TargetedUser != null ? c.TargetedUser.Username : null
                     ))

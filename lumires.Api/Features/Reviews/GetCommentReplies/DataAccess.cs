@@ -1,20 +1,21 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 using lumires.Api.Extensions;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace lumires.Api.Features.Reviews.GetReviewComments;
+namespace lumires.Api.Features.Reviews.GetCommentReplies;
 
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserService) : IDataAccess
 {
-    internal async Task<List<CommentItemResponse>> GetCommentsByReviewId(Query query, CancellationToken ct)
+    internal async Task<List<CommentItemResponse>> GetRepliesByCommentId(Query query, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
 
         var queryable = db.ReviewComments
-            .Where(rc => rc.ReviewId == query.ReviewId && rc.ParentCommentId == null)
+            .Where(rc => rc.ParentCommentId == query.ReplyId)
+            .OrderBy(rc => rc.CreatedAt)
             .ApplyPaging(query.Page, query.PageSize);
 
         return await queryable
@@ -36,10 +37,10 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             .ToListAsync(ct);
     }
 
-    internal async Task<int> GetReviewsCountAsync(Query query, CancellationToken ct)
+    internal async Task<int> GetRepliesCountAsync(Query query, CancellationToken ct)
     {
         return await db.ReviewComments
-            .Where(r => r.ReviewId == query.ReviewId && r.ParentCommentId == null)
+            .Where(r => r.ParentCommentId == query.ReplyId)
             .CountAsync(ct);
     }
 }

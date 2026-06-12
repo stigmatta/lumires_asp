@@ -9,7 +9,7 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     }
 
     public ReviewComment(Guid commentatorId, Guid reviewId, string text, Guid? targetedUserId,
-        bool isSpoilerFree = true)
+        Guid? parentCommentId = null, bool isSpoilerFree = true)
     {
         Id = Guid.NewGuid();
         CreatedAt = DateTime.UtcNow;
@@ -17,10 +17,13 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
         UserId = commentatorId;
         ReviewId = reviewId;
         TargetedUserId = targetedUserId;
+        ParentCommentId = parentCommentId;
 
         Text = text ?? throw new ArgumentNullException(nameof(text));
         IsSpoilerFree = isSpoilerFree;
     }
+
+    private readonly List<ReviewComment> _replies = [];
 
 
     public Guid Id { get; }
@@ -33,6 +36,11 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     public Guid ReviewId { get; private set; }
     public Guid? TargetedUserId { get; private set; }
     public User? TargetedUser { get; private set; }
+
+    public Guid? ParentCommentId { get; private set; }
+    public ReviewComment? ParentComment { get; private set; }
+    public IReadOnlyCollection<ReviewComment> Replies => _replies.AsReadOnly();
+
     public string Text { get; private set; } = null!;
     public bool IsSpoilerFree { get; private set; }
 
