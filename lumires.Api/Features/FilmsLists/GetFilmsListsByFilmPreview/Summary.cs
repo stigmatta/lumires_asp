@@ -28,6 +28,7 @@ internal sealed class Summary : Summary<Endpoint>
                 true,
                 false,
                 [new FilmInListItem("some-backdrop"), new FilmInListItem("some-other-backdrop")],
+                10,
                 "My favourite movies")
         ]));
     }

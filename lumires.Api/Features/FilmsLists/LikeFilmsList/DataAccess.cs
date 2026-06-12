@@ -27,15 +27,24 @@ internal class DataAccess(
         if (list.IsPrivate) return Result.Forbidden();
 
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
-
+        
+        var userInfo = await db.Users
+            .Where(u => u.Id == currentUserId)
+            .Select(u => new
+            {
+                u.Username,
+                u.AvatarUrl
+            }).FirstOrDefaultAsync(ct);
+        
         var isLiked = list.ToggleLike(currentUserId);
 
         if (isLiked && list.User.UserSettings.Notifications.LikesOnContent)
         {
             var message = new NotificationMessage(NotificationType.LikedFilmsList, currentUserId.ToString(),
-                currentUsername,
+                userInfo!.Username,
+                userInfo.AvatarUrl,
                 list.Id.ToString(),
+                list.Title,
                 DateTime.UtcNow);
 
             notificationService.SendToUser(list.UserId, message);

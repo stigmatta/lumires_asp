@@ -17,7 +17,9 @@ internal sealed record Response(
     int Followers,
     int Followings,
     int Friends,
-    bool IsMe);
+    bool IsMe,
+    bool? IsFollowed,
+    bool? IsBlocked);
 
 internal sealed class Endpoint(
     DataAccess db)

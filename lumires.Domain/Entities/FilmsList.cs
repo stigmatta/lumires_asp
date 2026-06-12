@@ -72,6 +72,16 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
         UserId = user.Id;
     }
 
+    public void UpdateList(string? title, string? description = null, bool isPrivate = false)
+    {
+        if (!string.IsNullOrWhiteSpace(title))
+            Title = title;
+
+        Description = description;
+        IsPrivate = isPrivate;
+        UpdateTimestamp();
+    }
+
     private void UpdateTimestamp()
     {
         UpdatedAt = DateTime.UtcNow;

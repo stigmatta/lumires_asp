@@ -46,6 +46,31 @@ public sealed class ReviewComment : LikeableEntity<ReviewCommentLike>
     {
         return new ReviewCommentLike { ReviewCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
     }
+    
+    public void UpdateReviewComment(string? text, Guid? targetedUserId, bool? isSpoilerFree)
+    {
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            Text = text;
+        }
+
+        if (targetedUserId.HasValue && targetedUserId != Guid.Empty)
+        {
+            TargetedUserId = targetedUserId;
+        }
+
+        if (isSpoilerFree.HasValue)
+        {
+            IsSpoilerFree = isSpoilerFree.Value;
+        }
+        UpdateTimestamp();
+    }
+    
+    private void UpdateTimestamp()
+    {
+        UpdatedAt = DateTime.UtcNow;
+    }
+    
 
     public void SetCommentator(User user)
     {

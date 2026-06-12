@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
 using lumires.Core.Messaging;
 using lumires.Core.Resources;
 using lumires.Domain.Entities;
@@ -18,10 +19,17 @@ internal class DataAccess(
     ICurrentUserService currentUserService,
     IStringLocalizer<SharedResource> localizer) : IDataAccess
 {
+
     internal async Task<Result<Response>> CreateThreadCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
+        var currentUser = await db.Users
+            .Where(u => u.Id == currentUserId)
+            .Select(u => new
+            {
+                u.Username,
+                u.AvatarUrl
+            }).FirstOrDefaultAsync(ct);
 
         var thread = await db.Threads
             .Where(t => t.Id == command.ThreadId)
@@ -29,7 +37,8 @@ internal class DataAccess(
             {
                 x.Id,
                 x.UserId,
-                RepliesAllowed = x.User.UserSettings.Notifications.RepliesAndMentions
+                RepliesAllowed = x.User.UserSettings.Notifications.RepliesAndMentions,
+                x.Title
             })
             .FirstOrDefaultAsync(ct);
         
@@ -55,8 +64,10 @@ internal class DataAccess(
             var message = new NotificationMessage(
                 NotificationType.ThreadReplied,
                 currentUserId.ToString(),
-                currentUsername,
-                threadComment.Id.ToString(),
+                currentUser!.Username,
+                currentUser.AvatarUrl,
+                thread.Id.ToString(),
+                thread.Title,
                 DateTime.UtcNow);
 
             if (targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions)

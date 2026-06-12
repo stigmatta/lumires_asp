@@ -14,7 +14,33 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
     public async Task<Result<Response?>> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
     {
         var list = await db.FilmsLists
-            .FirstOrDefaultAsync(l => l.Id == id, ct);
+            .Where(fl => fl.Id == id)
+            .Select(fl => new
+            {
+                fl.Id,
+                fl.Title,
+                fl.UserId,
+                fl.User.Username,
+                fl.IsPrivate,
+                LastActivity = fl.UpdatedAt ?? fl.CreatedAt,
+                IsLikedByMe = fl.Likes.Any(l => l.UserId == userId),
+                IsSavedByMe = fl.SavedLists.Any(l => l.UserId == userId),
+                Films = fl.Films
+                    .OrderBy(m => m.Order)
+                    .Select(m => new ListFilmItem(
+                        m.Film.ExternalId,
+                        m.Film.Localizations
+                            .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                            .OrderByDescending(l => l.LanguageCode == lang)
+                            .Select(l => l.Title)
+                            .FirstOrDefault() ?? string.Empty,
+                        m.Film.PosterPath,
+                        m.Order
+                    ))
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(ct);
+
 
         if (list is null) return Result.NotFound();
 
@@ -25,21 +51,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             list.Id,
             list.Title,
             list.UserId,
-            list.User.Username,
-            list.UpdatedAt ?? list.CreatedAt,
-            list.Likes.Any(l => l.UserId == userId),
-            list.SavedLists.Any(l => l.UserId == userId),
-            [.. list.Films
-                .OrderBy(m => m.Order)
-                .Select(m => new ListFilmItem(
-                    m.Film.ExternalId,
-                    m.Film.Localizations
-                        .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
-                        .OrderByDescending(l => l.LanguageCode == lang)
-                        .Select(l => l.Title)
-                        .SingleOrDefault() ?? string.Empty,
-                    m.Film.PosterPath,
-                    m.Order
-                ))]);
+            list.Username,
+            list.LastActivity,
+            list.IsLikedByMe,
+            list.IsSavedByMe,
+            list.Films
+        );
     }
 }

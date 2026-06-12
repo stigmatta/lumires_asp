@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
 using lumires.Core.Messaging;
 using lumires.Core.Resources;
 using lumires.Domain.Entities;
@@ -18,18 +19,32 @@ internal class DataAccess(
     ICurrentUserService currentUserService,
     IStringLocalizer<SharedResource> localizer) : IDataAccess
 {
+    private const string DefLang = LocalizationConstants.DefaultCulture;
+ 
     internal async Task<Result<Response>> CreateReviewCommentAsync(Command command, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        var currentUsername = await currentUserService.GetUsernameAsync(ct);
-
+        var lang = currentUserService.LangCulture;
+        var currentUser = await db.Users
+            .Where(u => u.Id == currentUserId)
+            .Select(u => new
+            {
+                u.Username,
+                u.AvatarUrl
+            }).FirstOrDefaultAsync(ct);
+        
         var review = await db.Reviews
             .Where(m => m.Id == command.ReviewId)
             .Select(x => new
             {
                 x.Id,
                 x.UserId,
-                RepliesAllowed = x.Reviewer.UserSettings.Notifications.RepliesAndMentions
+                RepliesAllowed = x.Reviewer.UserSettings.Notifications.RepliesAndMentions,
+                FilmTitle = x.Film.Localizations
+                    .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                    .OrderByDescending(l => l.LanguageCode == lang)
+                    .Select(f => f.Title)
+                    .First()
             })
             .FirstOrDefaultAsync(ct);
 
@@ -61,8 +76,10 @@ internal class DataAccess(
             var message = new NotificationMessage(
                 NotificationType.ReviewReplied,
                 currentUserId.ToString(),
-                currentUsername,
-                reviewComment.Id.ToString(),
+                currentUser!.Username,
+                currentUser.AvatarUrl,
+                review.Id.ToString(),
+                review.FilmTitle,
                 DateTime.UtcNow);
 
             if (targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions)

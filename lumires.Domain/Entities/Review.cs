@@ -97,6 +97,35 @@ public sealed class Review : LikeableEntity<ReviewLike>
         CreatedAt = createdAt;
     }
 
+    public void UpdateReview(string? title, string? text, float? rating, bool? isSpoilerFree)
+    {
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            Title = title;
+        }
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            Text = text;
+        }
+
+        if (rating.HasValue)
+        {
+            Rating = rating;
+        }
+
+        if (isSpoilerFree.HasValue)
+        {
+            IsSpoilerFree = isSpoilerFree.Value;
+        }
+        UpdateTimestamp();
+    }
+    
+    private void UpdateTimestamp()
+    {
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void SetEditorPick(bool editorPick)
     {
         IsEditorPick = editorPick;

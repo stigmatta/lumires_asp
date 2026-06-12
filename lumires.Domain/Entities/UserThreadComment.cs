@@ -24,7 +24,7 @@ public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
 
     public Guid Id { get; }
     public DateTime CreatedAt { get; }
-    public DateTime? UpdatedAt { get; }
+    public DateTime? UpdatedAt { get; private set; }
     public User Commentator { get; private set; } = null!;
     public Guid UserId { get; private set; }
 
@@ -43,5 +43,29 @@ public sealed class UserThreadComment : LikeableEntity<UserThreadCommentLike>
     protected override UserThreadCommentLike CreateLike(Guid userId)
     {
         return new UserThreadCommentLike { UserThreadCommentId = Id, UserId = userId, LikedAt = DateTimeOffset.UtcNow };
+    }
+    
+    public void UpdateThreadComment(string? text, Guid? targetedUserId, bool? isSpoilerFree)
+    {
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            Text = text;
+        }
+
+        if (targetedUserId.HasValue && targetedUserId != Guid.Empty)
+        {
+            TargetedUserId = targetedUserId;
+        }
+
+        if (isSpoilerFree.HasValue)
+        {
+            IsSpoilerFree = isSpoilerFree.Value;
+        }
+        UpdateTimestamp();
+    }
+    
+    private void UpdateTimestamp()
+    {
+        UpdatedAt = DateTime.UtcNow;
     }
 }
