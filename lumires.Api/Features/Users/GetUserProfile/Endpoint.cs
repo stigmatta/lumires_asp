@@ -19,8 +19,10 @@ internal sealed record Response(
     int Followings,
     int Friends,
     bool IsMe,
-    bool? IsFollowed,
-    bool? IsBlocked);
+    bool? AreYouFollowed,
+    bool? DoYouFollow,
+    bool? AreYouBlocked,
+    bool? IsHeBlocked);
 
 internal sealed class Endpoint(
     DataAccess db)
@@ -36,7 +38,7 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var response = await db.GetUserProfile(query.Username, ct);
-        
+
         if (!response.IsSuccess)
         {
             await HttpContext.SendErrorAsync(response.Status, ct);

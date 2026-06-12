@@ -13,10 +13,6 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
     internal async Task<Result<Response>> GetUserProfile(string username, CancellationToken ct)
     {
         var currentUserId = currentUserService.UserId;
-        
-        var relations = await db.Relationships
-            .Where(r => r.SourceUserId == currentUserId)
-            .ToListAsync(ct); 
 
         var user = await db.Users
             .Where(u => u.Username == username)
@@ -30,26 +26,9 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 u.Tagline,
                 u.AvatarUrl,
                 u.Biography,
-                Followers = u.IncomingRelationships.Count(r =>
-                    r.Type == UserRelationshipType.Follow &&
-                    r.Status == UserRelationshipStatus.Accepted),
-                Followings = u.OutgoingRelationships.Count(r =>
-                    r.Type == UserRelationshipType.Follow &&
-                    r.Status == UserRelationshipStatus.Accepted),
-                Friends = u.OutgoingRelationships.Count(r =>
-                    r.Type == UserRelationshipType.Follow &&
-                    r.Status == UserRelationshipStatus.Accepted &&
-                    u.IncomingRelationships.Any(i =>
-                        i.Type == UserRelationshipType.Follow &&
-                        i.Status == UserRelationshipStatus.Accepted &&
-                        i.SourceUserId == r.TargetUserId)),
+                u.IncomingRelationships,
+                u.OutgoingRelationships,
                 IsMe = currentUserId != Guid.Empty && currentUserId == u.Id,
-                IsBlocked = relations.Any(r =>
-                    r.TargetUserId == u.Id &&
-                    r.Type == UserRelationshipType.Block),
-                IsFollowed = relations.Any(r =>
-                    r.TargetUserId == u.Id &&
-                    r.Type == UserRelationshipType.Follow),
                 ProfileVisibilty = u.UserSettings.ProfileVisibility
             })
             .FirstOrDefaultAsync(ct);
@@ -57,11 +36,38 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         if (user is null)
             return Result.NotFound();
 
+        var followers = user.IncomingRelationships.Count(r =>
+            r is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted });
+
+        var followings = user.OutgoingRelationships.Count(r =>
+            r is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted });
+
+        var friends = user.OutgoingRelationships.Count(r =>
+            r is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted } &&
+            user.IncomingRelationships.Any(i =>
+                i is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted } &&
+                i.SourceUserId == r.TargetUserId));
+
+        var areYouBlocked = user.IncomingRelationships.Any(r =>
+            r.TargetUserId == currentUserId &&
+            r.Type == UserRelationshipType.Block);
+
+        var isHeBlocked = user.OutgoingRelationships.Any(r =>
+            r.TargetUserId == user.Id &&
+            r.Type == UserRelationshipType.Block);
+
+        var areYouFollowed = user.IncomingRelationships.Any(r =>
+            r.TargetUserId == currentUserId &&
+            r.Type == UserRelationshipType.Follow);
+
+        var doYouFollow = user.OutgoingRelationships.Any(r =>
+            r.TargetUserId == user.Id &&
+            r.Type == UserRelationshipType.Follow);
+
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
             return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.AvatarUrl, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe,
-                user.IsFollowed,
-                user.IsBlocked);
+                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, areYouFollowed,
+                doYouFollow, areYouBlocked, isHeBlocked);
 
         switch (user.ProfileVisibilty)
         {
@@ -86,8 +92,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         }
 
         return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.AvatarUrl, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe,
-            user.IsFollowed,
-            user.IsFollowed);
+            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, areYouFollowed,
+            doYouFollow, areYouBlocked, isHeBlocked);
     }
 }
