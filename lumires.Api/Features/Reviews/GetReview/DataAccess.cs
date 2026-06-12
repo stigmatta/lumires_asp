@@ -35,6 +35,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                         c.UserId,
                         c.Commentator.Username,
                         c.Commentator.AvatarUrl,
+                        c.Text,
                         c.LikesCount,
                         currentUserId != Guid.Empty && c.Likes.Any(l => l.UserId == currentUserId),
                         c.IsSpoilerFree,
