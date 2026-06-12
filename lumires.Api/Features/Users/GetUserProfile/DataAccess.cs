@@ -24,6 +24,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 Pronouns = u.Pronouns.ToString(),
                 u.Location,
                 u.Tagline,
+                u.AvatarUrl,
                 u.Biography,
                 Followers = u.IncomingRelationships.Count(r =>
                     r.Type == UserRelationshipType.Follow &&
@@ -56,7 +57,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
 
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
             return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe, user.IsFollowed,
+                user.Tagline, user.AvatarUrl, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe,
+                user.IsFollowed,
                 user.IsBlocked);
 
         switch (user.ProfileVisibilty)
@@ -67,7 +69,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             {
                 if (currentUser is null)
                     return Result.Forbidden();
-                
+
                 var isFollower = await db.Relationships.AnyAsync(r =>
                         r.SourceUserId == currentUser.Id &&
                         r.TargetUserId == user.Id &&
@@ -85,7 +87,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         }
 
         return new Response(user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe, user.IsFollowed,
+            user.Tagline, user.AvatarUrl, user.Biography, user.Followers, user.Followings, user.Friends, user.IsMe,
+            user.IsFollowed,
             user.IsFollowed);
     }
 }

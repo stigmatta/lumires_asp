@@ -13,6 +13,7 @@ internal sealed record Response(
     string Pronouns,
     string? Location,
     string? Tagline,
+    string? AvatarUrl,
     string? Biography,
     int Followers,
     int Followings,
@@ -35,6 +36,12 @@ internal sealed class Endpoint(
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
         var response = await db.GetUserProfile(query.Username, ct);
+        
+        if (!response.IsSuccess)
+        {
+            await HttpContext.SendErrorAsync(response.Status, ct);
+            return;
+        }
 
         await Send.OkAsync(response, ct);
     }
