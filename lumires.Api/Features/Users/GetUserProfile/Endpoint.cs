@@ -13,6 +13,7 @@ internal sealed record Response(
     string Pronouns,
     string? Location,
     string? Tagline,
+    string? AvatarUrl,
     string? Biography,
     int Followers,
     int Followings,
