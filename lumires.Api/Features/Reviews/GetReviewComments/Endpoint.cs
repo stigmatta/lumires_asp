@@ -18,6 +18,7 @@ internal sealed record CommentItemResponse(
     Guid UserId,
     string Username,
     string? AvatarUrl,
+    string Text,
     int LikesCount,
     bool IsLikedByMe,
     bool IsSpoilerFree,
