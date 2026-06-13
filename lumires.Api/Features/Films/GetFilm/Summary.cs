@@ -21,7 +21,7 @@ internal sealed class Summary : Summary<Endpoint>
                       ### Headers
 
                       - **Accept-Language** — Preferred language (e.g., `uk-UA`, `en-US`)
-                      - **Authorization Bearer** — Optional. When supplied, `isLikedByMe` and `isWatchedByMe` reflect the current user's state; otherwise both are `false`.
+                      - **Authorization Bearer** — Optional. When supplied, `isLikedByMe`, `isWatchedByMe` and `myRating` reflect the current user's state; otherwise `isLikedByMe`/`isWatchedByMe` are `false` and `myRating` is `null`. `myRating` is also `null` when the authenticated user hasn't rated the film.
                       """;
 
         ExampleRequest = new Query(550);

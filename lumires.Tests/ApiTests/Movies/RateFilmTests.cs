@@ -15,6 +15,7 @@ public class RateMovieTests
 
     private DataAccess _dataAccess = null!;
     private Mock<IAppDbContext> _dbContextMock = null!;
+    private Mock<IFilmResolver> _filmResolverMock = null!;
 
     [Before(Test)]
     public void Setup()
@@ -24,6 +25,12 @@ public class RateMovieTests
 
         _currentUserMock.Setup(x => x.UserId)
             .Returns(Guid.NewGuid());
+        _currentUserMock.Setup(x => x.LangCulture).Returns("en-US");
+
+        _filmResolverMock = new Mock<IFilmResolver>();
+        _filmResolverMock
+            .Setup(x => x.EnsureFilmExistsAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
         _dataAccess = new DataAccess(_dbContextMock.Object);
     }
@@ -32,7 +39,8 @@ public class RateMovieTests
     {
         return Factory.Create<Endpoint>(
             _currentUserMock.Object,
-            dataAccess ?? _dataAccess);
+            dataAccess ?? _dataAccess,
+            _filmResolverMock.Object);
     }
 
     private void SetupFilms(List<Film> films)

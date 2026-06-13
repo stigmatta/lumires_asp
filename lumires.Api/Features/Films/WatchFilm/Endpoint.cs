@@ -1,4 +1,4 @@
-﻿using FastEndpoints;
+using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
 
@@ -7,11 +7,14 @@ namespace lumires.Api.Features.Films.WatchFilm;
 [UsedImplicitly]
 internal sealed record Command(int FilmId);
 
+[UsedImplicitly]
+internal sealed record Response(bool IsWatched);
+
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
     DataAccess dataAccess,
     IFilmResolver filmResolver)
-    : Endpoint<Command, EmptyResponse>
+    : Endpoint<Command, Response>
 {
     public override void Configure()
     {
@@ -27,13 +30,13 @@ internal sealed class Endpoint(
 
         await filmResolver.EnsureFilmExistsAsync(command.FilmId, lang, ct);
 
-        var result = await dataAccess.MarkWatchedAsync(command, currentUserId, ct);
+        var result = await dataAccess.ToggleWatchedAsync(command, currentUserId, ct);
         if (!result.IsSuccess)
         {
             await HttpContext.SendErrorAsync(result.Status, ct);
             return;
         }
 
-        await Send.NoContentAsync(ct);
+        await Send.OkAsync(result.Value, ct);
     }
 }

@@ -10,13 +10,15 @@ internal sealed class Summary : Summary<Endpoint>
     {
         Summary = "WatchFilm";
         Description = """
-                      Marks a specific movie as a watched only once.
+                      Toggles the watched state of a specific movie for the current user.
+
+                      If the film was not marked as watched, it is marked as watched and the response is `{ "isWatched": true }`.
+
+                      If the film was already marked as watched, the mark is removed and the response is `{ "isWatched": false }`.
 
                       If the film was not found - returns 404 Not Found.
 
                       If some of the fields are not valid - returns 400 Bad Request.
-
-                      If already watched - 204 No Content
 
                       ### Notes
 
@@ -24,7 +26,7 @@ internal sealed class Summary : Summary<Endpoint>
                       """;
 
         ExampleRequest = new Command(550);
-        Response(204, "Film is successfully marked as watched");
+        Response<Response>(200, "Watched state toggled successfully.");
         Response(400);
         Response(404);
     }
