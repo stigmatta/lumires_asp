@@ -8,6 +8,7 @@ namespace lumires.Api.Features.Films.GetUserFavouriteFilms;
 [UsedImplicitly]
 internal sealed record Query(string Username);
 
+[UsedImplicitly]
 internal sealed record FavouriteFilm(
     int Id,
     string Title,

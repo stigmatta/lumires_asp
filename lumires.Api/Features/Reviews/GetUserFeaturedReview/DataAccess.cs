@@ -10,11 +10,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    internal async Task<ProfileFeaturedReview?> GetFeaturedReview(Guid userId, string lang, Guid currentUserId,
+    internal async Task<ProfileFeaturedReview?> GetFeaturedReview(string username, string lang, Guid currentUserId,
         CancellationToken ct)
     {
         return await db.Reviews
-            .Where(r => r.UserId == userId)
+            .Where(r => r.Reviewer.Username == username )
             .OrderByDescending(r => r.LikesCount)
             .Select(r => new ProfileFeaturedReview(
                 r.Id,
@@ -46,6 +46,7 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 r.Text,
                 r.UserId,
                 r.Reviewer.Username,
+                r.Reviewer.AvatarUrl,
                 r.CreatedAt,
                 r.Rating,
                 r.LikesCount,

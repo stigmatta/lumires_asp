@@ -25,7 +25,10 @@ internal sealed record Response(
     int Friends,
     bool IsMe,
     Relationship? IncomingRelationship,
-    Relationship? OutgoingRelationship);
+    Relationship? OutgoingRelationship,
+    int ReviewsWritten,
+    int ThreadsWritten,
+    int ListsCreated);
 
 internal sealed class Endpoint(
     DataAccess db)

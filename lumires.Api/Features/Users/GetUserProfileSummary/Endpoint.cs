@@ -12,6 +12,8 @@ internal sealed record Response(
     int TotalFilmsRated,
     int ListsCreated,
     int ReviewsWritten,
+    int WatchlistFilms,
+    int LikesCount,
     DateTimeOffset JoinedAt);
 
 internal sealed class Endpoint(

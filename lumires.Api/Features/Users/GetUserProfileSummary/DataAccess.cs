@@ -15,6 +15,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                     u.FilmRatings.Count,
                     u.FilmsLists.Count,
                     u.Reviews.Count,
+                    u.WatchlistFilms.Count,
+                    db.Films.Count(f => f.Likes.Any(l => l.UserId == u.Id))
+                    + db.FilmsLists.Count(f => f.Likes.Any(l => l.UserId == u.Id))
+                    + db.Reviews.Count(r => r.Likes.Any(l => l.UserId == u.Id)),
                     u.CreatedAt
             ))
             .FirstOrDefaultAsync(ct);

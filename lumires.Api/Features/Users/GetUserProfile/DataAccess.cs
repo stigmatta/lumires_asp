@@ -29,7 +29,10 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 u.IncomingRelationships,
                 u.OutgoingRelationships,
                 IsMe = currentUserId != Guid.Empty && currentUserId == u.Id,
-                ProfileVisibilty = u.UserSettings.ProfileVisibility
+                ProfileVisibilty = u.UserSettings.ProfileVisibility,
+                ReviewsWritten = u.Reviews.Count,
+                ThreadsWritten = u.UserThreads.Count,
+                ListsCreated = u.FilmsLists.Count
             })
             .FirstOrDefaultAsync(ct);
 
@@ -47,7 +50,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             user.IncomingRelationships.Any(i =>
                 i is { Type: UserRelationshipType.Follow, Status: UserRelationshipStatus.Accepted } &&
                 i.SourceUserId == r.TargetUserId));
-        
+
         var outgoing = user.IncomingRelationships
             .Where(r => r.SourceUserId == currentUserId)
             .Select(x => new Relationship(x.Type, x.Status))
@@ -57,15 +60,13 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             .Where(r => r.TargetUserId == currentUserId)
             .Select(x => new Relationship(x.Type, x.Status))
             .FirstOrDefault();
-    
-        if (incoming is not null && incoming.Type == UserRelationshipType.Block)
-        {
-            return Result.Forbidden();
-        }
+
+        if (incoming is not null && incoming.Type == UserRelationshipType.Block) return Result.Forbidden();
 
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
             return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming, outgoing);
+                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming,
+                outgoing, user.ReviewsWritten, user.ThreadsWritten, user.ListsCreated);
 
         switch (user.ProfileVisibilty)
         {
@@ -90,6 +91,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         }
 
         return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe,  incoming, outgoing);
+            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming, outgoing,
+            user.ReviewsWritten, user.ThreadsWritten, user.ListsCreated);
     }
 }

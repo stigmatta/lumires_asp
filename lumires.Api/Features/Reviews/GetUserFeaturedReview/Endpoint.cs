@@ -6,7 +6,7 @@ using lumires.Core.Abstractions.Services;
 namespace lumires.Api.Features.Reviews.GetUserFeaturedReview;
 
 [UsedImplicitly]
-internal sealed record Query(Guid UserId);
+internal sealed record Query(string Username);
 
 [UsedImplicitly]
 internal sealed record ProfileFeaturedReview(
@@ -24,6 +24,7 @@ internal sealed record ProfileFeaturedReview(
     string Text,
     Guid UserId,
     string Username,
+    string? AvatarUrl,
     DateTime CreatedAt,
     float? Rating,
     int LikesCount,
@@ -31,7 +32,7 @@ internal sealed record ProfileFeaturedReview(
     bool IsLikedByMe,
     bool IsEditorPick,
     int MinutesRead,
-    bool IsMyList) : FeaturedReviewResponse(Id, FilmId, FilmTitle, FilmSlug, PosterPath, ReleaseYear, Genres, Runtime,
+    bool IsMyReview) : FeaturedReviewResponse(Id, FilmId, FilmTitle, FilmSlug, PosterPath, ReleaseYear, Genres, Runtime,
     DirectorId, DirectorName, Title, Text, UserId, Username, CreatedAt, Rating, LikesCount, RepliesCount, IsLikedByMe,
     IsEditorPick, MinutesRead);
 
@@ -49,7 +50,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var lang = currentUserService.LangCulture;
         var currentUserId = currentUserService.UserId;
 
-        var response = await db.GetFeaturedReview(query.UserId, lang, currentUserId, ct);
+        var response = await db.GetFeaturedReview(query.Username, lang, currentUserId, ct);
         
         if (response is null)
         {
