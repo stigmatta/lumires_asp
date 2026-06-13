@@ -1,4 +1,4 @@
-﻿using Ardalis.Result;
+using Ardalis.Result;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Domain.Entities;
@@ -9,21 +9,29 @@ namespace lumires.Api.Features.Films.WatchFilm;
 [UsedImplicitly]
 internal class DataAccess(IAppDbContext db) : IDataAccess
 {
-    internal async Task<Result<Guid>> MarkWatchedAsync(Command command, Guid userId, CancellationToken ct)
+    internal async Task<Result<Response>> ToggleWatchedAsync(Command command, Guid userId, CancellationToken ct)
     {
         var existingFilm = await db.Films.FirstOrDefaultAsync(f => f.ExternalId == command.FilmId, ct);
 
         if (existingFilm is null) return Result.NotFound();
-        var alreadyWatched =
-            await db.WatchedFilms.AnyAsync(f => f.Film.ExternalId == command.FilmId && f.UserId == userId, ct);
 
-        if (alreadyWatched) return Result.NoContent();
+        var watchedFilm = await db.WatchedFilms
+            .FirstOrDefaultAsync(f => f.FilmId == existingFilm.Id && f.UserId == userId, ct);
 
-        var newLog = new WatchedFilm(userId, existingFilm.Id);
-        db.WatchedFilms.Add(newLog);
+        bool isWatched;
+        if (watchedFilm is null)
+        {
+            db.WatchedFilms.Add(new WatchedFilm(userId, existingFilm.Id));
+            isWatched = true;
+        }
+        else
+        {
+            db.WatchedFilms.Remove(watchedFilm);
+            isWatched = false;
+        }
 
         await db.SaveChangesAsync(ct);
 
-        return newLog.Id; 
+        return Result.Success(new Response(isWatched));
     }
 }

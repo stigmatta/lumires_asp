@@ -43,7 +43,8 @@ internal sealed record Response(
     float VoteAverage,
     int VoteCount,
     bool IsLikedByMe,
-    bool IsWatchedByMe
+    bool IsWatchedByMe,
+    float? MyRating
 );
 
 [UsedImplicitly]
