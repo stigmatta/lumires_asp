@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
+using lumires.Core.Abstractions.Services;
 using lumires.Core.Constants;
 using lumires.Core.Helpers;
 using lumires.Domain.Entities;
@@ -8,12 +9,14 @@ using Microsoft.EntityFrameworkCore;
 namespace lumires.Api.Features.Films.GetFilm;
 
 [UsedImplicitly]
-internal class DataAccess(IAppDbContext db) : IDataAccess
+internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserService) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
     internal async Task<Response?> GetFilmByIdAsync(int tmdbId, string lang, CancellationToken ct)
     {
+        var currentUserId = currentUserService.UserId;
+
         var raw = await db.Films
             .AsNoTracking()
             .Where(m => m.ExternalId == tmdbId)
@@ -63,7 +66,10 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 m.VoteCount,
                 Ratings = m.UserRatings
                     .Select(ur => ur.Rating),
-                RatingCount = m.UserRatings.Count
+                RatingCount = m.UserRatings.Count,
+                IsLikedByMe = currentUserId != Guid.Empty && m.Likes.Any(l => l.UserId == currentUserId),
+                IsWatchedByMe = currentUserId != Guid.Empty &&
+                                db.WatchedFilms.Any(w => w.FilmId == m.Id && w.UserId == currentUserId)
             })
             .SingleOrDefaultAsync(ct);
 
@@ -98,7 +104,9 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             raw.ProductionCompany,
             raw.Runtime,
             rating,
-            totalVotes
+            totalVotes,
+            raw.IsLikedByMe,
+            raw.IsWatchedByMe
         );
     }
 

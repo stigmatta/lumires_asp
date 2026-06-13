@@ -21,12 +21,14 @@ internal sealed class Summary : Summary<Endpoint>
                       ### Notes
 
                       - **Authorization Bearer** — Is required
-                      - **TargetedUserId** — Optional, used when replying to a specific comment
+                      - **TargetedUserId** — Optional, the user being @mentioned in the reply
+                      - **ParentCommentId** — Optional, set when replying to an existing comment (nested replies)
                       """;
 
         ExampleRequest = new Command(
             new Guid("a3f1c9e2-7b4a-4c1f-9d2a-123456789abc"),
             "Totally agree with your take on the third act.",
+            null,
             null,
             true
         );

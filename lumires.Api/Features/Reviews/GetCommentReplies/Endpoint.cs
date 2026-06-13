@@ -1,13 +1,14 @@
-﻿using FastEndpoints;
+using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Models;
 
-namespace lumires.Api.Features.Reviews.GetReviewComments;
+namespace lumires.Api.Features.Reviews.GetCommentReplies;
 
 [UsedImplicitly]
 internal sealed class Query
 {
     public Guid ReviewId { get; init; }
+    public Guid ReplyId { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
 }
@@ -33,15 +34,15 @@ internal sealed class Endpoint(DataAccess db)
 {
     public override void Configure()
     {
-        Get("/films/{filmId}/reviews/{reviewId}/replies");
+        Get("/films/{filmId}/reviews/{reviewId}/replies/{replyId}/replies");
         Description(x => x.WithTags("Reviews"));
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        var response = await db.GetCommentsByReviewId(query, ct);
-        var count = await db.GetReviewsCountAsync(query, ct);
+        var response = await db.GetRepliesByCommentId(query, ct);
+        var count = await db.GetRepliesCountAsync(query, ct);
 
         var paged = new PagedResponse<CommentItemResponse>(
             response,

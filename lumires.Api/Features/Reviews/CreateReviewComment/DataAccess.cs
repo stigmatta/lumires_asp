@@ -49,7 +49,7 @@ internal class DataAccess(
             .FirstOrDefaultAsync(ct);
 
         if (review is null) return Result.NotFound();
-        
+
         User? targetedUser = null;
         if (command.TargetedUserId.HasValue)
         {
@@ -62,11 +62,26 @@ internal class DataAccess(
                 return Result.Invalid(new ValidationError("TargetedUserId", localizer["ValidationError_UserId_Invalid"]));
         }
 
+        Guid? parentCommentAuthorId = null;
+        if (command.ParentCommentId.HasValue)
+        {
+            var parentComment = await db.ReviewComments
+                .Where(c => c.Id == command.ParentCommentId.Value)
+                .Select(c => new { c.UserId, c.ReviewId })
+                .FirstOrDefaultAsync(ct);
+
+            if (parentComment is null || parentComment.ReviewId != command.ReviewId)
+                return Result.Invalid(new ValidationError("ParentCommentId", localizer["ValidationError_ReviewId_Invalid"]));
+
+            parentCommentAuthorId = parentComment.UserId;
+        }
+
         var reviewComment = new ReviewComment(
-            review.UserId,
+            currentUserId,
             command.ReviewId,
             command.Text,
             command.TargetedUserId,
+            command.ParentCommentId,
             command.IsSpoilerFree);
 
         db.ReviewComments.Add(reviewComment);
@@ -82,14 +97,15 @@ internal class DataAccess(
                 review.FilmTitle,
                 DateTime.UtcNow);
 
-            if (targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions)
-            {
-                notificationService.SendToUsers(review.UserId, targetedUser.Id, message);
-            }
-            else
-            {
-                notificationService.SendToUser(review.UserId, message);
-            }
+            // Whom to notify: the author of the comment being replied to (nested reply),
+            // otherwise the review author. Plus the explicitly mentioned user, if any.
+            var primaryRecipientId = parentCommentAuthorId ?? review.UserId;
+            Guid? mentionedRecipientId =
+                targetedUser is not null && targetedUser.UserSettings.Notifications.RepliesAndMentions
+                    ? targetedUser.Id
+                    : null;
+
+            notificationService.SendToUsers(primaryRecipientId, mentionedRecipientId, message);
         }
 
         await db.SaveChangesAsync(ct);

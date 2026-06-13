@@ -21,6 +21,7 @@ internal sealed class Summary : Summary<Endpoint>
                       ### Headers
 
                       - **Accept-Language** — Preferred language (e.g., `uk-UA`, `en-US`)
+                      - **Authorization Bearer** — Optional. When supplied, `isLikedByMe` and `isWatchedByMe` reflect the current user's state; otherwise both are `false`.
                       """;
 
         ExampleRequest = new Query(550);

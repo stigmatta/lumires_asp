@@ -3,6 +3,7 @@ using FluentAssertions;
 using lumires.Api.Features.Reviews.CreateReviewComment;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Constants;
 using lumires.Core.Messaging;
 using lumires.Core.Resources;
 using lumires.Domain.Entities;
@@ -21,6 +22,7 @@ internal sealed class CreateReviewCommentTests
     private Mock<IAppDbContext> _dbContextMock = null!;
     private Mock<INotificationService> _notificationMock = null!;
     private Mock<IStringLocalizer<SharedResource>> _localizerMock = null!;
+    private List<User> _users = null!;
 
     [Before(Test)]
     public void Setup()
@@ -30,7 +32,11 @@ internal sealed class CreateReviewCommentTests
         _notificationMock = new Mock<INotificationService>();
         _localizerMock = new Mock<IStringLocalizer<SharedResource>>();
 
-        _currentUserMock.Setup(x => x.UserId).Returns(Guid.NewGuid());
+        var currentUserId = Guid.NewGuid();
+        _currentUserMock.Setup(x => x.UserId).Returns(currentUserId);
+
+        _users = [new User(currentUserId, "current", "current@mail.com")];
+        SetupUsers();
 
         _dbContextMock
             .Setup(x => x.ReviewComments)
@@ -44,6 +50,20 @@ internal sealed class CreateReviewCommentTests
             .Setup(x => x.SendToUsers(It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<NotificationMessage>()));
 
         _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
+    }
+
+    private void SetupUsers()
+    {
+        _dbContextMock.Setup(x => x.Users).Returns(_users.BuildMockDbSet().Object);
+    }
+
+    // Registers a user (with default notification preferences) so the data access can resolve it.
+    private User RegisterUser(Guid id, string name)
+    {
+        var user = new User(id, name, $"{name}@mail.com");
+        _users.Add(user);
+        SetupUsers();
+        return user;
     }
 
     private Endpoint CreateEndpoint(DataAccess? dataAccess = null)
@@ -65,6 +85,18 @@ internal sealed class CreateReviewCommentTests
 
     private void SetupReviews(List<Review> reviews)
     {
+        // Wire up the navigation graph the data access projects over:
+        // reviewer (carries default notification prefs) and a localized film title.
+        // Building the reviewer with the review's own UserId keeps review.UserId stable.
+        foreach (var review in reviews)
+        {
+            review.SetReviewer(new User(review.UserId, "reviewer", "reviewer@mail.com"));
+
+            var film = new Film(1, DateOnly.FromDateTime(DateTime.UtcNow), "/poster.jpg", 4.0f, 100, 50f, 200, "HBO");
+            film.AddLocalization(new FilmLocalization(LocalizationConstants.DefaultCulture, "Film Title", null, null));
+            review.SetFilm(film);
+        }
+
         var mock = reviews.BuildMockDbSet();
         _dbContextMock.Setup(x => x.Reviews).Returns(mock.Object);
         _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
@@ -79,7 +111,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Great review!", null, true),
+            new Command(review.Id, "Great review!", null, null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -92,7 +124,7 @@ internal sealed class CreateReviewCommentTests
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
-        var command = new Command(review.Id, "Great review!", null, true);
+        var command = new Command(review.Id, "Great review!", null, null, true);
 
         await ep.HandleAsync(command, CancellationToken.None);
 
@@ -108,7 +140,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(Guid.NewGuid(), "Some comment", null, true),
+            new Command(Guid.NewGuid(), "Some comment", null, null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(404);
@@ -123,7 +155,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Nice review!", null, true),
+            new Command(review.Id, "Nice review!", null, null, true),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -135,13 +167,15 @@ internal sealed class CreateReviewCommentTests
     public async Task CreateReviewComment_Should_Send_Notification_To_Both_When_TargetedUserId_Provided()
     {
         var targetedUserId = Guid.NewGuid();
+        RegisterUser(targetedUserId, "targeted");
+
         var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
 
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Replying to your comment!", targetedUserId, true),
+            new Command(review.Id, "Replying to your comment!", targetedUserId, null, true),
             CancellationToken.None);
 
         _notificationMock.Verify(
@@ -158,7 +192,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint();
 
         await ep.HandleAsync(
-            new Command(review.Id, "Just a comment", null, true),
+            new Command(review.Id, "Just a comment", null, null, true),
             CancellationToken.None);
 
         ep.HttpContext.Response.StatusCode.Should().Be(201);
@@ -170,6 +204,7 @@ internal sealed class CreateReviewCommentTests
     {
         var expectedUserId = Guid.NewGuid();
         _currentUserMock.Setup(x => x.UserId).Returns(expectedUserId);
+        RegisterUser(expectedUserId, "expected");
 
         var review = new Review(Guid.NewGuid(), Guid.NewGuid(), null, "Review text", 4.0f, false);
         SetupReviews([review]);
@@ -178,7 +213,7 @@ internal sealed class CreateReviewCommentTests
         var ep = CreateEndpoint(dataAccess);
 
         await ep.HandleAsync(
-            new Command(review.Id, "Comment text", null, true),
+            new Command(review.Id, "Comment text", null, null, true),
             CancellationToken.None);
 
         _notificationMock.Verify(

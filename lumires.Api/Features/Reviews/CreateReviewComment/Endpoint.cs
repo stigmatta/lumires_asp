@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace lumires.Api.Features.Reviews.CreateReviewComment;
 
 [UsedImplicitly]
-internal sealed record Command(Guid ReviewId, string Text, Guid? TargetedUserId, bool IsSpoilerFree);
+internal sealed record Command(Guid ReviewId, string Text, Guid? TargetedUserId, Guid? ParentCommentId, bool IsSpoilerFree);
 
 [UsedImplicitly]
 internal sealed record Response(
