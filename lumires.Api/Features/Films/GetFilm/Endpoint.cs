@@ -41,7 +41,9 @@ internal sealed record Response(
     string ProductionCompany,
     int Runtime,
     float VoteAverage,
-    int VoteCount
+    int VoteCount,
+    bool IsLikedByMe,
+    bool IsWatchedByMe
 );
 
 [UsedImplicitly]
