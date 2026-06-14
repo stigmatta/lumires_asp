@@ -69,7 +69,13 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 RatingCount = m.UserRatings.Count,
                 IsLikedByMe = currentUserId != Guid.Empty && m.Likes.Any(l => l.UserId == currentUserId),
                 IsWatchedByMe = currentUserId != Guid.Empty &&
-                                db.WatchedFilms.Any(w => w.FilmId == m.Id && w.UserId == currentUserId)
+                                db.WatchedFilms.Any(w => w.FilmId == m.Id && w.UserId == currentUserId),
+                MyRating = currentUserId == Guid.Empty
+                    ? (float?)null
+                    : m.UserRatings
+                        .Where(ur => ur.UserId == currentUserId)
+                        .Select(ur => (float?)ur.Rating)
+                        .FirstOrDefault()
             })
             .SingleOrDefaultAsync(ct);
 
@@ -106,7 +112,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
             rating,
             totalVotes,
             raw.IsLikedByMe,
-            raw.IsWatchedByMe
+            raw.IsWatchedByMe,
+            raw.MyRating
         );
     }
 

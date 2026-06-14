@@ -32,7 +32,7 @@ internal sealed class GetMovieTests
             .Setup(x => x.Films)
             .Returns(new List<Film>().BuildMockDbSet().Object);
 
-        _dataAccess = new DataAccess(_dbContextMock.Object);
+        _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
     }
 
 
@@ -77,7 +77,7 @@ internal sealed class GetMovieTests
         var movies = new List<Film> { movie }.BuildMockDbSet();
 
         _dbContextMock.Setup(x => x.Films).Returns(movies.Object);
-        var dataAccess = new DataAccess(_dbContextMock.Object);
+        var dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object);
 
         var ep = CreateEndpoint(dataAccess);
 
