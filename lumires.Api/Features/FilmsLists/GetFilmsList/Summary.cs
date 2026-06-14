@@ -23,8 +23,6 @@ internal sealed class Summary : Summary<Endpoint>
                       - **Accept-Language** — Preferred language (e.g., `uk-UA`, `en-US`)
                       """;
 
-        ExampleRequest = new Query(Guid.NewGuid());
-
         Response(200, "Collection retrieved successfully.");
         //     , example: new Response(
         //     Guid.NewGuid(),

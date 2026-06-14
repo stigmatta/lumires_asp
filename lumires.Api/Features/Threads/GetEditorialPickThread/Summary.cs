@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Features.FilmsLists.GetFilmsList;
 
 namespace lumires.Api.Features.Threads.GetEditorialPickThread;
 
@@ -15,8 +14,6 @@ internal sealed class Summary : Summary<Endpoint>
                           
                           Returns 204 No Content if no thread
                       """;
-
-        ExampleRequest = new Query(Guid.NewGuid());
 
         Response(200, "Thread successfully retrieved");
     }

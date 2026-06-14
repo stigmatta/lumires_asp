@@ -1,11 +1,24 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Services;
+using lumires.Core.Models;
 
 namespace lumires.Api.Features.FilmsLists.GetFilmsList;
 
 [UsedImplicitly]
-internal sealed record Query(Guid Id);
+internal sealed class Query
+{
+    public Guid Id { get; init; }
+    public int Page { get; init; } = 1;
+    public int PageSize { get; init; } = 10;
+}
+
+[UsedImplicitly]
+internal sealed record ListFilmItem(
+    int FilmId,
+    string Title,
+    string? PosterPath,
+    int Order);
 
 [UsedImplicitly]
 internal sealed record Response(
@@ -16,14 +29,7 @@ internal sealed record Response(
     DateTime LastActivity,
     bool IsLikedByMe,
     bool IsSavedByMe,
-    IReadOnlyCollection<ListFilmItem> Films);
-
-[UsedImplicitly]
-internal sealed record ListFilmItem(
-    int FilmId,
-    string Title,
-    string? PosterPath,
-    int Order);
+    PagedResponse<ListFilmItem> Films);
 
 internal sealed class Endpoint(
     ICurrentUserService currentUserService,
@@ -38,24 +44,22 @@ internal sealed class Endpoint(
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        var id = query.Id;
+        if (query.Id == Guid.Empty)
+        {
+            await Send.NotFoundAsync(ct);
+            return;
+        }
+
         var lang = currentUserService.LangCulture;
         var currentUserId = currentUserService.UserId;
 
-        if (id == Guid.Empty)
+        var result = await dataAccess.GetFilmsListAsync(query.Id, lang, currentUserId, query.Page, query.PageSize, ct);
+        if (!result.IsSuccess)
         {
-            await Send.NotFoundAsync(ct);
+            await HttpContext.SendErrorAsync(result.Status, ct);
             return;
         }
 
-        var result = await dataAccess.GetFilmsListAsync(id, lang, currentUserId, ct);
-
-        if (result is null)
-        {
-            await Send.NotFoundAsync(ct);
-            return;
-        }
-
-        await Send.OkAsync(result, ct);
+        await Send.OkAsync(result.Value, ct);
     }
 }

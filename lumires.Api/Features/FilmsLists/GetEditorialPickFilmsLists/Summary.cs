@@ -1,6 +1,5 @@
 ﻿using FastEndpoints;
 using JetBrains.Annotations;
-using lumires.Api.Features.FilmsLists.GetFilmsList;
 
 namespace lumires.Api.Features.FilmsLists.GetEditorialPickFilmsLists;
 
@@ -16,8 +15,6 @@ internal sealed class Summary : Summary<Endpoint>
                       Available to anonymous users. Private collections are only visible to their owner.
 
                       """;
-
-        ExampleRequest = new Query(Guid.NewGuid());
 
         Response(200, "Collections retrieved successfully.", example: new Response(
         [

@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using lumires.Core.Abstractions.Data;
 using lumires.Core.Constants;
+using lumires.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace lumires.Api.Features.FilmsLists.GetFilmsList;
@@ -11,7 +12,13 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 {
     private const string DefLang = LocalizationConstants.DefaultCulture;
 
-    public async Task<Result<Response?>> GetFilmsListAsync(Guid id, string lang, Guid userId, CancellationToken ct)
+    public async Task<Result<Response>> GetFilmsListAsync(
+        Guid id,
+        string lang,
+        Guid userId,
+        int page,
+        int pageSize,
+        CancellationToken ct)
     {
         var list = await db.FilmsLists
             .Where(fl => fl.Id == id)
@@ -25,8 +32,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 LastActivity = fl.UpdatedAt ?? fl.CreatedAt,
                 IsLikedByMe = fl.Likes.Any(l => l.UserId == userId),
                 IsSavedByMe = fl.SavedLists.Any(l => l.UserId == userId),
+                TotalFilms = fl.Films.Count,
                 Films = fl.Films
                     .OrderBy(m => m.Order)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
                     .Select(m => new ListFilmItem(
                         m.Film.ExternalId,
                         m.Film.Localizations
@@ -41,13 +51,17 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             })
             .FirstOrDefaultAsync(ct);
 
-
         if (list is null) return Result.NotFound();
+        if (list.IsPrivate && list.UserId != userId) return Result.Forbidden();
 
-        if (list.IsPrivate && list.UserId != userId)
-            return Result.Forbidden();
+        var pagedFilms = new PagedResponse<ListFilmItem>(
+            list.Films,
+            list.TotalFilms,
+            page,
+            pageSize
+        );
 
-        return new Response(
+        var response = new Response(
             list.Id,
             list.Title,
             list.UserId,
@@ -55,7 +69,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
             list.LastActivity,
             list.IsLikedByMe,
             list.IsSavedByMe,
-            list.Films
+            pagedFilms
         );
+
+        return Result.Success(response);
     }
+
+
 }

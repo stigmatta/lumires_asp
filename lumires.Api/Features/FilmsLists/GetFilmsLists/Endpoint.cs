@@ -44,6 +44,8 @@ internal sealed record ListItemResponse(
     int FilmsCount,
     bool IsLikedByMe,
     bool IsSavedByMe,
+    bool IsPrivate,
+    bool IsMyList,
     IReadOnlyCollection<FilmListItem> Films
 );
 
@@ -65,7 +67,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
         var userId = currentUserService.UserId;
 
         var response = await db.GetListsAsync(query, userId, ct);
-        var count = await db.GetListsCountAsync(query, ct);
+        var count = await db.GetListsCountAsync(query, userId, ct);
 
         var paged = new PagedResponse<ListItemResponse>(
             response,

@@ -36,11 +36,11 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
 
         var queryable = db.FilmsLists
             .ApplyFilter(filter)
+            .Where(x => !x.IsPrivate || x.UserId == userId)
             .ApplySorting(sort)
             .ApplyPaging(query.Page, query.PageSize);
 
         return await queryable
-            .Where(x => !x.IsPrivate)
             .Select(l => new ListItemResponse(
                 l.Id,
                 l.Title,
@@ -49,20 +49,20 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 l.Films.Count,
                 l.Likes.Any(x => x.UserId == userId),
                 l.SavedLists.Any(x => x.UserId == userId),
-                l.Films
-                    .Select(f => new FilmListItem(f.Film.BackdropPath))
-                    .Take(6)
-                    .ToList()
+                l.IsPrivate,
+                l.UserId == userId,
+                l.Films.Select(f => new FilmListItem(f.Film.BackdropPath)).Take(6).ToList()
             ))
             .ToListAsync(ct);
     }
 
-    internal async Task<int> GetListsCountAsync(Query query, CancellationToken ct)
+    internal async Task<int> GetListsCountAsync(Query query, Guid currentUserId, CancellationToken ct)
     {
         var filter = Specifications.BuildFilter(query);
 
         return await db.FilmsLists
             .ApplyFilter(filter)
+            .Where(x => !x.IsPrivate || x.UserId == currentUserId)
             .CountAsync(ct);
     }
 }

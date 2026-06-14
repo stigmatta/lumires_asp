@@ -32,7 +32,8 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 ProfileVisibilty = u.UserSettings.ProfileVisibility,
                 ReviewsWritten = u.Reviews.Count,
                 ThreadsWritten = u.UserThreads.Count,
-                ListsCreated = u.FilmsLists.Count
+                ListsCreated = u.FilmsLists
+                    .Count(x => !x.IsPrivate || x.UserId == currentUserId)
             })
             .FirstOrDefaultAsync(ct);
 
