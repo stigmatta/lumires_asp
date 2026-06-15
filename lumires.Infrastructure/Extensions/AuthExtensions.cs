@@ -101,7 +101,6 @@ internal static partial class AuthExtensions
                     {
                         if (context.Response.HasStarted) return;
 
-                        Console.WriteLine($"[Auth Failed] {context.Exception.GetType().Name}: {context.Exception.Message}");
 
                         var localizer = context.HttpContext.RequestServices
                             .GetRequiredService<IStringLocalizer<SharedResource>>();

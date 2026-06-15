@@ -30,6 +30,7 @@ internal sealed class Query
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ListContentOrderEnum? SortBy { get; init; } = ListContentOrderEnum.MostRecent;
     public int? FilmId { get; init; }
+    public bool? ContainsFilm { get; init; }
     public Guid? UserId { get; init; } //if requested from profile
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 6;
@@ -46,7 +47,8 @@ internal sealed record ListItemResponse(
     bool IsSavedByMe,
     bool IsPrivate,
     bool IsMyList,
-    IReadOnlyCollection<FilmListItem> Films
+    IReadOnlyCollection<FilmListItem> Films,
+    bool? ContainsFilm
 );
 
 [UsedImplicitly]

@@ -63,6 +63,17 @@ public sealed class FilmsList : LikeableEntity<FilmsListLike>
 
         UpdateTimestamp();
     }
+    
+    public void RemoveFilm(Film film)
+    {
+        if (_films.All(m => m.FilmId != film.Id))
+            return;
+
+        var nextOrder = _films.Count > 0 ? _films.Max(m => m.Order) - 1 : 0;
+        _films.Remove(new ListFilm(Id, film, nextOrder));
+
+        UpdateTimestamp();
+    }
 
     public void SetUser(User user)
     {

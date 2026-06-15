@@ -19,6 +19,7 @@ internal sealed class Query
 {
     public ContentFilterEnum? Category { get; init; } = ContentFilterEnum.All;
     public ContentOrderEnum? SortBy { get; init; } = ContentOrderEnum.MostRecent;
+    public Guid? UserId { get; init; }
 
     public int Page { get; init; } = 1;
 

@@ -41,6 +41,14 @@ public class UserSettings
         FavoriteFilms = films;
     }
 
+    public void UpdateAccountSettings(string? email)
+    {
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            User.SetEmail(email);
+        }
+    }
+
     public void UpdatePrivacySettings(ProfileVisibility profileVisibility, bool isAnyoneCanFollow,
         bool isWatchlistPublic, bool areLikesPublic, bool areRatingsShowInFeeds)
     {

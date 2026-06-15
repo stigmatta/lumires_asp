@@ -13,7 +13,7 @@ internal static class Specifications
         var contentFilter = BuildCategory(req, friendIds);
         filter = filter.And(contentFilter);
 
-        if (req.FilmId.HasValue)
+        if (req is { FilmId: not null, ContainsFilm: false })
             filter = filter.And(fl =>
                 fl.Films.Any(f => f.Film.ExternalId == req.FilmId.Value)
             );

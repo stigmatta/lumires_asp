@@ -51,7 +51,8 @@ internal class DataAccess(IAppDbContext db) : IDataAccess
                 l.SavedLists.Any(x => x.UserId == userId),
                 l.IsPrivate,
                 l.UserId == userId,
-                l.Films.Select(f => new FilmListItem(f.Film.BackdropPath)).Take(6).ToList()
+                l.Films.Select(f => new FilmListItem(f.Film.BackdropPath)).Take(6).ToList(),
+                query.FilmId.HasValue && l.Films.Any(f => f.Film.ExternalId == query.FilmId.Value)
             ))
             .ToListAsync(ct);
     }

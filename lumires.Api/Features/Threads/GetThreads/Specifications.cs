@@ -15,6 +15,10 @@ internal static class Specifications
 
         var contentFilter = BuildCategory(req, friendIds);
         filter = filter.And(contentFilter);
+        
+        if (req.UserId.HasValue)
+            filter = filter.And(fl =>
+                fl.UserId == req.UserId.Value);
 
         return filter;
     }

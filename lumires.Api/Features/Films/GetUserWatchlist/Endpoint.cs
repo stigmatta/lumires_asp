@@ -24,7 +24,7 @@ internal sealed class Endpoint(DataAccess db, ICurrentUserService currentUserSer
 {
     public override void Configure()
     {
-        Get("/user/{username}/watchlist");
+        Get("/users/{username}/watchlist");
         Description(x => x.WithTags("Films"));
         AllowAnonymous();
     }

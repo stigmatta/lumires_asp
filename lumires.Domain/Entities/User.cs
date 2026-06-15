@@ -103,6 +103,12 @@ public sealed partial class User
         AvatarUrl = avatarUrl;
     }
 
+    public void SetEmail(string email)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        AvatarUrl = email;
+    }
+
     public static bool IsUsernameValid(string username)
     {
         return UsernameRegex().IsMatch(username);

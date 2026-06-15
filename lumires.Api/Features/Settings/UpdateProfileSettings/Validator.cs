@@ -30,10 +30,5 @@ internal sealed class Validator : Validator<Command>
         RuleFor(x => x.Biography)
             .MaximumLength(StringLimits.Biography)
             .When(x => x.Biography is not null);
-
-        RuleFor(x => x.AvatarUrl)
-            .Must(url => Uri.TryCreate(url, UriKind.Absolute, out _))
-            .WithMessage("ValidationError_AvatarUrl_Invalid")
-            .When(x => x.AvatarUrl is not null);
     }
 }
