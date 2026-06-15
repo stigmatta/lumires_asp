@@ -201,9 +201,11 @@ internal static partial class AuthExtensions
             options.AddPolicy("Frontend", policy =>
             {
                 policy.WithOrigins(
-                        "http://localhost:3000", //TODO CHANGE
+                        "http://localhost:3000",
                         "http://localhost:5500",
-                        "http://localhost:8080"
+                        "http://localhost:8080",
+                        "https://www.supabase.win",
+                        "https://supabase.win"
                     )
                     .AllowAnyHeader()
                     .AllowAnyMethod()
