@@ -10,6 +10,7 @@ internal sealed record Query(string Username);
 
 [UsedImplicitly]
 internal sealed record NotificationItem(
+    Guid Id,
     NotificationType Type,
     string SenderId,
     string? SenderName,
@@ -23,6 +24,7 @@ internal sealed record NotificationItem(
 internal sealed record Response(List<NotificationItem> Notifications);
 
 internal sealed class Endpoint(
+    ICurrentUserService currentUserService,
     DataAccess db)
     : Endpoint<Query, Response>
 {
@@ -35,7 +37,8 @@ internal sealed class Endpoint(
 
     public override async Task HandleAsync(Query query, CancellationToken ct)
     {
-        var response = await db.GetUserNotifications(query.Username, ct);
+        var currentUserId = currentUserService.UserId;
+        var response = await db.GetUserNotifications(query.Username, currentUserId, ct);
 
         if (!response.IsSuccess)
         {

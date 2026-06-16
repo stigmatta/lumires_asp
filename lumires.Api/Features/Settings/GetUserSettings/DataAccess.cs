@@ -16,6 +16,7 @@ internal sealed class DataAccess(IAppDbContext db) : IDataAccess
         var user = await db.Users
             .Include(u => u.UserSettings)
             .ThenInclude(s => s.FavoriteFilms)
+            .ThenInclude(s => s.Film)
             .FirstOrDefaultAsync(u => u.Id == userId, ct);
 
         if (user is null) return Result.NotFound();

@@ -57,7 +57,7 @@ internal sealed class GetCollectionTests
             dataAccess);
 
         // Act
-        await ep.HandleAsync(new Query(collection.Id), CancellationToken.None);
+        await ep.HandleAsync(new Query { Id =collection.Id, Page = 1, PageSize = 5 }, CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(200);
@@ -92,7 +92,7 @@ internal sealed class GetCollectionTests
         var randGuid = Guid.CreateVersion7();
 
         // Act
-        await ep.HandleAsync(new Query(randGuid), CancellationToken.None);
+        await ep.HandleAsync(new Query { Id =collection.Id, Page = 1, PageSize = 5 }, CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(404);
@@ -125,7 +125,7 @@ internal sealed class GetCollectionTests
         var emptyGuid = Guid.Empty;
 
         // Act
-        await ep.HandleAsync(new Query(emptyGuid), CancellationToken.None);
+        await ep.HandleAsync(new Query { Id =collection.Id, Page = 1, PageSize = 5 }, CancellationToken.None);
 
         // Assert
         ep.HttpContext.Response.StatusCode.Should().Be(404);

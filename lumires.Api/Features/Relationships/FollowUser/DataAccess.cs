@@ -66,7 +66,6 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
             status);
 
         db.Relationships.Add(relationship);
-        await db.SaveChangesAsync(ct);
 
         var userInfo = await db.Users
             .Where(u => u.Id == userId)
@@ -102,6 +101,8 @@ internal class DataAccess(IAppDbContext db, INotificationService notificationSer
 
             notificationService.SendToUser(targetId, message);
         }
+        
+        await db.SaveChangesAsync(ct);
 
         return Result.Created(relationship.Id);
     }
