@@ -34,8 +34,14 @@ public class LikeListTests
 
     private void SetupLists(List<FilmsList> filmsLists)
     {
-        var mock = filmsLists.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.FilmsLists).Returns(mock.Object);
+        var userId = _currentUserMock.Object.UserId;
+        var user = new User(userId, "testuser", "test@test.com");
+
+        foreach (var list in filmsLists)
+            typeof(FilmsList).GetProperty("User")!.SetValue(list, user);
+
+        _dbContextMock.Setup(x => x.FilmsLists).Returns(filmsLists.BuildMockDbSet().Object);
+        _dbContextMock.Setup(x => x.Users).Returns(new List<User> { user }.BuildMockDbSet().Object);
         _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object, _notificationMock.Object);
     }

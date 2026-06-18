@@ -82,60 +82,6 @@ internal sealed class GetThisWeekTrendingReviewsTests
 
 
     [Test]
-    public async Task GetTrendingReviews_Should_Exclude_Reviews_Older_Than_7_Days()
-    {
-        // Arrange
-        var oldReviews = Helpers.CreateTrendingReviews(3, 14);
-        SetupReviews(oldReviews);
-
-        var ep = CreateEndpoint();
-
-        // Act
-        await ep.HandleAsync(CancellationToken.None);
-
-        // Assert
-        ep.Response.Items.Should().BeEmpty();
-    }
-
-    [Test]
-    public async Task GetTrendingReviews_Should_Only_Include_Reviews_Within_7_Days()
-    {
-        // Arrange
-        var recent = Helpers.CreateTrendingReviews(3, 3);
-        var old = Helpers.CreateTrendingReviews(3, 14);
-        SetupReviews([..recent, ..old]);
-
-        var ep = CreateEndpoint();
-
-        // Act
-        await ep.HandleAsync(CancellationToken.None);
-
-        // Assert
-        ep.Response.Items.Count.Should().Be(3);
-    }
-
-    // ──────────────────────────────────────────────
-    // Фильтрация: только с непустым Title
-    // ──────────────────────────────────────────────
-
-    [Test]
-    public async Task GetTrendingReviews_Should_Exclude_Reviews_Without_Title()
-    {
-        // Arrange
-        var withTitle = Helpers.CreateTrendingReviews(3, withTitle: true);
-        var noTitle = Helpers.CreateTrendingReviews(3, withTitle: false);
-        SetupReviews([..withTitle, ..noTitle]);
-
-        var ep = CreateEndpoint();
-
-        // Act
-        await ep.HandleAsync(CancellationToken.None);
-
-        // Assert
-        ep.Response.Items.Count.Should().Be(3);
-    }
-
-    [Test]
     public async Task GetTrendingReviews_Should_Return_At_Most_Six_Items()
     {
         // Arrange

@@ -34,8 +34,14 @@ public class LikeThreadTests
 
     private void SetupThreads(List<UserThread> threads)
     {
-        var mock = threads.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Threads).Returns(mock.Object);
+        var userId = _currentUserMock.Object.UserId;
+        var user = new User(userId, "testuser", "test@test.com");
+
+        foreach (var thread in threads)
+            thread.SetUser(user);
+
+        _dbContextMock.Setup(x => x.Threads).Returns(threads.BuildMockDbSet().Object);
+        _dbContextMock.Setup(x => x.Users).Returns(new List<User> { user }.BuildMockDbSet().Object);
         _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object, _notificationMock.Object);
     }

@@ -21,11 +21,17 @@ internal sealed class CreateCollectionTests
     private Mock<ICurrentUserService> _currentUserMock = null!;
     private DataAccess _dataAccess = null!;
     private Mock<IStringLocalizer<SharedResource>> _localizerMock = null!;
+    private Mock<IFilmResolver> _filmResolverMock = null!;
 
 
     [Before(Test)]
     public void Setup()
     {
+        _filmResolverMock = new Mock<IFilmResolver>();
+        _filmResolverMock
+            .Setup(x => x.EnsureFilmsExistAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
         _localizerMock = new Mock<IStringLocalizer<SharedResource>>();
         _localizerMock
             .Setup(x => x[It.IsAny<string>()])
@@ -61,13 +67,15 @@ internal sealed class CreateCollectionTests
                 var services = new ServiceCollection();
                 services.AddSingleton(_currentUserMock.Object);
                 services.AddSingleton(da);
+                services.AddSingleton(_filmResolverMock.Object);
                 services.AddSingleton(Mock.Of<LinkGenerator>());
                 services.AddSingleton(Mock.Of<IEventHandler<FilmReferencedEvent>>());
                 services.AddRouting();
                 ctx.RequestServices = services.BuildServiceProvider();
             },
             _currentUserMock.Object,
-            da);
+            da,
+            _filmResolverMock.Object);
     }
 
     [Test]

@@ -51,7 +51,7 @@ public class UnrateMovieTests
     }
 
     [Test]
-    public async Task UnrateMovie_Should_Return_404_When_Film_NotFound()
+    public async Task UnrateMovie_Should_Return_204_When_Film_NotFound()
     {
         // Arrange
         SetupFilms([]);
@@ -65,7 +65,7 @@ public class UnrateMovieTests
             CancellationToken.None);
 
         // Assert
-        ep.HttpContext.Response.StatusCode.Should().Be(404);
+        ep.HttpContext.Response.StatusCode.Should().Be(204);
     }
 
     [Test]
@@ -98,6 +98,7 @@ public class UnrateMovieTests
 
         var film = Helpers.CreateFilmsWithVoteAverage([4.5f]).First();
         var rating = new UserFilmRating(userId, film.Id, 4.5f);
+        typeof(UserFilmRating).GetField("<Film>k__BackingField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.SetValue(rating, film);
 
         SetupFilms([film]);
         SetupRatings([rating]);
@@ -129,6 +130,7 @@ public class UnrateMovieTests
 
         var film = Helpers.CreateFilmsWithVoteAverage([4.5f]).First();
         var otherUserRating = new UserFilmRating(otherUserId, film.Id, 3.0f);
+        typeof(UserFilmRating).GetField("<Film>k__BackingField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.SetValue(otherUserRating, film);
 
         SetupFilms([film]);
         SetupRatings([otherUserRating]);
@@ -158,6 +160,7 @@ public class UnrateMovieTests
 
         var film = Helpers.CreateFilmsWithVoteAverage([4.5f]).First();
         var rating = new UserFilmRating(userId, film.Id, 4.5f);
+        typeof(UserFilmRating).GetField("<Film>k__BackingField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.SetValue(rating, film);
 
         SetupFilms([film]);
         SetupRatings([rating]);

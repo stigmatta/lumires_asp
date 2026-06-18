@@ -34,8 +34,18 @@ public class LikeReviewTests
 
     private void SetupReviews(List<Review> reviews)
     {
-        var mock = reviews.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Reviews).Returns(mock.Object);
+        var userId = _currentUserMock.Object.UserId;
+        var user = new User(userId, "testuser", "test@test.com");
+        var film = Helpers.CreatePopularFilm(new DateOnly(2020, 6, 15));
+
+        foreach (var review in reviews)
+        {
+            review.SetReviewer(user);
+            review.SetFilm(film);
+        }
+
+        _dbContextMock.Setup(x => x.Reviews).Returns(reviews.BuildMockDbSet().Object);
+        _dbContextMock.Setup(x => x.Users).Returns(new List<User> { user }.BuildMockDbSet().Object);
         _dbContextMock.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         _dataAccess = new DataAccess(_dbContextMock.Object, _currentUserMock.Object, _notificationMock.Object);
     }

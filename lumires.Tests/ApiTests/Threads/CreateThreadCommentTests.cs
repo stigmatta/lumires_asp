@@ -63,10 +63,19 @@ internal sealed class CreateThreadCommentTests
             da);
     }
 
-    private void SetupThreads(List<UserThread> threads)
+    private void SetupThreads(List<UserThread> threads, List<User>? extraUsers = null)
     {
-        var mock = threads.BuildMockDbSet();
-        _dbContextMock.Setup(x => x.Threads).Returns(mock.Object);
+        var currentUserId = _currentUserMock.Object.UserId;
+        var currentUser = new User(currentUserId, "currentuser", "current@test.com");
+
+        foreach (var thread in threads)
+            thread.SetUser(currentUser);
+
+        var allUsers = new List<User> { currentUser };
+        if (extraUsers != null) allUsers.AddRange(extraUsers);
+
+        _dbContextMock.Setup(x => x.Threads).Returns(threads.BuildMockDbSet().Object);
+        _dbContextMock.Setup(x => x.Users).Returns(allUsers.BuildMockDbSet().Object);
         _dataAccess = new DataAccess(_dbContextMock.Object, _notificationMock.Object, _currentUserMock.Object, _localizerMock.Object);
     }
 
@@ -98,7 +107,7 @@ internal sealed class CreateThreadCommentTests
 
         ep.Response.Text.Should().Be(command.Text);
         ep.Response.Id.Should().NotBe(Guid.Empty);
-        ep.Response.CreatedAt.Should().Be(DateTime.UtcNow);
+        ep.Response.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
     }
 
     [Test]
@@ -127,7 +136,7 @@ internal sealed class CreateThreadCommentTests
             CancellationToken.None);
 
         _notificationMock.Verify(
-            x => x.SendToUsers(thread.UserId, null, It.IsAny<NotificationMessage>()),
+            x => x.SendToUser(thread.UserId, It.IsAny<NotificationMessage>()),
             Times.Once);
     }
 
@@ -135,8 +144,10 @@ internal sealed class CreateThreadCommentTests
     public async Task Should_Send_Notification_To_Both_When_TargetedUserId_Provided()
     {
         var targetedUserId = Guid.NewGuid();
+        var targetedUser = new User(targetedUserId, "targeted", "targeted@test.com");
+
         var thread = new UserThread(Guid.NewGuid(), null, null, "Review text", false);
-        SetupThreads([thread]);
+        SetupThreads([thread], [targetedUser]);
 
         var ep = CreateEndpoint();
 
@@ -182,9 +193,8 @@ internal sealed class CreateThreadCommentTests
             CancellationToken.None);
 
         _notificationMock.Verify(
-            x => x.SendToUsers(
+            x => x.SendToUser(
                 It.IsAny<Guid>(),
-                It.IsAny<Guid?>(),
                 It.Is<NotificationMessage>(m => m.SenderId == expectedUserId.ToString())),
             Times.Once);
     }

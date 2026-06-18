@@ -136,7 +136,7 @@ internal sealed class CreateReviewTests
         var reviewsDbSetMock = new Mock<DbSet<Review>>();
         reviewsDbSetMock
             .Setup(x => x.Add(It.IsAny<Review>()))
-            .Callback<Review, CancellationToken>((r, _) => savedReview = r)
+            .Callback<Review>(r => savedReview = r)
             .Returns((EntityEntry<Review>)null!);
 
         var movie = SetupMovieExists();
