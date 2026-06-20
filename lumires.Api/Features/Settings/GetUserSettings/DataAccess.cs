@@ -13,53 +13,78 @@ internal sealed class DataAccess(IAppDbContext db) : IDataAccess
 
     public async Task<Result<Response>> GetSettings(Guid userId, string lang, CancellationToken ct)
     {
-        var user = await db.Users
-            .Include(u => u.UserSettings)
-            .ThenInclude(s => s.FavoriteFilms)
-            .ThenInclude(s => s.Film)
-            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+        // Project in the database (like GetUserFavouriteFilms) instead of materializing
+        // the entity graph and projecting in memory. The old approach dereferenced
+        // x.Film / x.Film.Localizations / x.Film.Genres, which were never Included,
+        // throwing a NullReferenceException (500) for any user with favourite films.
+        var data = await db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => new
+            {
+                SettingsId = u.UserSettings.Id,
+                u.AvatarUrl,
+                u.DisplayName,
+                u.Username,
+                u.Tagline,
+                u.Email,
+                u.UserSettings.ProfileVisibility,
+                u.UserSettings.IsAnyoneCanFollow,
+                u.UserSettings.IsWatchlistPublic,
+                u.UserSettings.AreLikesPublic,
+                u.UserSettings.AreRatingsShowInFeeds,
+                NewFollower = u.UserSettings.Notifications.NewFollower,
+                LikesOnContent = u.UserSettings.Notifications.LikesOnContent,
+                ActivityFromFollowed = u.UserSettings.Notifications.ActivityFromFollowed,
+                RepliesAndMentions = u.UserSettings.Notifications.RepliesAndMentions,
+                SavesOnLists = u.UserSettings.Notifications.SavesOnLists,
+                WeeklyDigest = u.UserSettings.Notifications.WeeklyDigest,
+                FavouriteFilms = u.UserSettings.FavoriteFilms
+                    .OrderBy(f => f.Order)
+                    .Select(f => new
+                    {
+                        f.Film.ExternalId,
+                        Title = f.Film.Localizations
+                            .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
+                            .OrderByDescending(l => l.LanguageCode == lang)
+                            .Select(l => l.Title)
+                            .FirstOrDefault() ?? string.Empty,
+                        f.Film.PosterPath,
+                        ReleaseYear = f.Film.ReleaseDate.HasValue ? f.Film.ReleaseDate.Value.Year : (int?)null,
+                        Genres = f.Film.Genres
+                            .Select(g => g.Localizations
+                                .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == DefLang)
+                                .OrderByDescending(gl => gl.LanguageCode == lang)
+                                .Select(gl => gl.Name)
+                                .FirstOrDefault() ?? string.Empty)
+                            .ToArray(),
+                        f.Film.VoteAverage,
+                        f.Order
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(ct);
 
-        if (user is null) return Result.NotFound();
+        if (data is null) return Result.NotFound();
 
-        if (user.Id != userId) return Result.Forbidden();
+        var favouriteFilms = data.FavouriteFilms
+            .Select(f => new FavouriteFilmItem(
+                f.ExternalId,
+                f.Title,
+                f.PosterPath,
+                f.ReleaseYear,
+                f.Genres,
+                f.VoteAverage,
+                f.Order))
+            .ToList();
 
-        var settings = user.UserSettings;
-        var notifications = settings.Notifications;
-
-        return new Response(settings.Id,
-            new ProfileSettingsResponse(user.AvatarUrl, user.DisplayName, user.Username,
-                user.Tagline),
-            new FavouriteFilmsResponse(
-                [
-                    .. settings.FavoriteFilms
-                        .Select(x => new FavouriteFilmItem(
-                            x.Film.ExternalId,
-                            x.Film.Localizations
-                                .Where(l => l.LanguageCode == lang || l.LanguageCode == DefLang)
-                                .OrderByDescending(l => l.LanguageCode == lang)
-                                .Select(l => l.Title)
-                                .FirstOrDefault() ?? string.Empty,
-                            x.Film.PosterPath,
-                            x.Film.ReleaseDate?.Year,
-                            [
-                                .. x.Film.Genres
-                                    .Select(g =>
-                                        g.Localizations
-                                            .Where(gl => gl.LanguageCode == lang || gl.LanguageCode == DefLang)
-                                            .OrderByDescending(gl => gl.LanguageCode == lang)
-                                            .Select(gl => gl.Name)
-                                            .FirstOrDefault()!)
-                            ],
-                            x.Film.VoteAverage,
-                            x.Order
-                        ))
-                ]
-            ),
-            new AccountSettings(user.Email),
-            new PrivacySettings(settings.ProfileVisibility, settings.IsAnyoneCanFollow, settings.IsWatchlistPublic,
-                settings.AreLikesPublic, settings.AreRatingsShowInFeeds),
-            new NotificationPreferencesResponse(notifications.NewFollower, notifications.LikesOnContent,
-                notifications.ActivityFromFollowed, notifications.RepliesAndMentions, notifications.SavesOnLists,
-                notifications.WeeklyDigest));
+        return new Response(data.SettingsId,
+            new ProfileSettingsResponse(data.AvatarUrl, data.DisplayName, data.Username, data.Tagline),
+            new FavouriteFilmsResponse(favouriteFilms),
+            new AccountSettings(data.Email),
+            new PrivacySettings(data.ProfileVisibility, data.IsAnyoneCanFollow, data.IsWatchlistPublic,
+                data.AreLikesPublic, data.AreRatingsShowInFeeds),
+            new NotificationPreferencesResponse(data.NewFollower, data.LikesOnContent,
+                data.ActivityFromFollowed, data.RepliesAndMentions, data.SavesOnLists,
+                data.WeeklyDigest));
     }
 }
