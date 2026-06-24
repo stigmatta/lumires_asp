@@ -20,6 +20,7 @@ internal sealed record Response(
     string? Tagline,
     string? AvatarUrl,
     string? Biography,
+    string? AccentTheme,
     int Followers,
     int Followings,
     int Friends,

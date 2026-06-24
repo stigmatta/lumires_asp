@@ -45,6 +45,10 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
            .IsRequired(false)
            .HasMaxLength(StringLimits.Biography);
 
+       builder.Property(x => x.AccentTheme)
+           .IsRequired(false)
+           .HasMaxLength(40);
+
         builder.Property(x => x.Email)
             .HasMaxLength(StringLimits.Name);
 

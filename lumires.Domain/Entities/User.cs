@@ -53,7 +53,14 @@ public sealed partial class User
     public string? Location { get; private set; }
     public string? Tagline { get; private set; }
     public string? Biography { get; private set; }
+    public string? AccentTheme { get; private set; }
     public UserSettings UserSettings { get; private set; } = null!;
+
+    private static readonly string[] AllowedAccentThemes =
+    [
+        "golden-hour", "film-noir", "crimson", "rose-pavilion",
+        "twilight", "midnight", "blue-velvet", "celluloid"
+    ];
 
     public IReadOnlyCollection<FilmsList> FilmsLists => _filmsLists.AsReadOnly();
     public IReadOnlyCollection<Review> Reviews => _reviews.AsReadOnly();
@@ -96,6 +103,14 @@ public sealed partial class User
         }
     }
     
+
+    public void SetAccentTheme(string? theme)
+    {
+        if (theme is not null && !AllowedAccentThemes.Contains(theme))
+            throw new DomainException("AccentTheme is not valid", nameof(theme));
+
+        AccentTheme = theme;
+    }
 
     public void SetAvatarUrl(string avatarUrl)
     {

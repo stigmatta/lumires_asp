@@ -26,6 +26,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
                 u.Tagline,
                 u.AvatarUrl,
                 u.Biography,
+                u.AccentTheme,
                 u.IncomingRelationships,
                 u.OutgoingRelationships,
                 IsMe = currentUserId != Guid.Empty && currentUserId == u.Id,
@@ -66,7 +67,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
 
         if (user.ProfileVisibilty == ProfileVisibility.Everyone || user.IsMe)
             return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
-                user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming,
+                user.Tagline, user.AvatarUrl, user.Biography, user.AccentTheme, followers, followings, friends, user.IsMe, incoming,
                 outgoing, user.ReviewsWritten, user.ThreadsWritten, user.ListsCreated);
 
         switch (user.ProfileVisibilty)
@@ -92,7 +93,7 @@ internal class DataAccess(IAppDbContext db, ICurrentUserService currentUserServi
         }
 
         return new Response(user.Id, user.Username, user.DisplayName, user.Pronouns, user.Location,
-            user.Tagline, user.AvatarUrl, user.Biography, followers, followings, friends, user.IsMe, incoming, outgoing,
+            user.Tagline, user.AvatarUrl, user.Biography, user.AccentTheme, followers, followings, friends, user.IsMe, incoming, outgoing,
             user.ReviewsWritten, user.ThreadsWritten, user.ListsCreated);
     }
 }
